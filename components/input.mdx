@@ -1,0 +1,323 @@
+---
+title: Input
+description: Inputs let users enter and edit text in forms.
+---
+
+Input is a text field component that allows users to enter and edit text. It supports labels, captions, icons, and various states for validation feedback.
+
+## Import
+
+```tsx
+import { Input } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { Input } from '@ui-kitten/components';
+
+export const InputExample = () => {
+  const [value, setValue] = React.useState('');
+
+  return (
+    <Input
+      placeholder='Enter text'
+      value={value}
+      onChangeText={setValue}
+    />
+  );
+};
+```
+
+## With Label and Caption
+
+Inputs can display labels above and captions below the field.
+
+```tsx
+<Input
+  label='Email'
+  placeholder='Enter your email'
+  caption='Should contain @ symbol'
+  value={email}
+  onChangeText={setEmail}
+/>
+```
+
+## Status
+
+Use status to indicate validation state.
+
+```tsx
+<Input
+  status='success'
+  value={validInput}
+  onChangeText={setValidInput}
+  caption='Looks good!'
+/>
+
+<Input
+  status='danger'
+  value={invalidInput}
+  onChangeText={setInvalidInput}
+  caption='Invalid email format'
+/>
+
+<Input
+  status='warning'
+  value={warningInput}
+  onChangeText={setWarningInput}
+  caption='Email already in use'
+/>
+```
+
+## Sizes
+
+Inputs come in three sizes: `small`, `medium` (default), and `large`.
+
+```tsx
+<Input size='small' placeholder='Small input' />
+<Input size='medium' placeholder='Medium input' />
+<Input size='large' placeholder='Large input' />
+```
+
+## Accessories
+
+Add icons or custom components to the left or right of the input.
+
+```tsx
+import { Input, Icon } from '@ui-kitten/components';
+
+const EmailIcon = (props) => (
+  <Icon {...props} name='email' />
+);
+
+const EyeIcon = (props) => (
+  <Icon {...props} name='eye' />
+);
+
+export const InputWithAccessories = () => (
+  <>
+    <Input
+      placeholder='Email'
+      accessoryLeft={EmailIcon}
+    />
+    <Input
+      placeholder='Password'
+      secureTextEntry
+      accessoryRight={EyeIcon}
+    />
+  </>
+);
+```
+
+## States
+
+Inputs support disabled state.
+
+```tsx
+<Input
+  placeholder='Disabled input'
+  disabled
+  value='Cannot edit'
+/>
+```
+
+## Props
+
+<ParamField path="value" type="string">
+  The value displayed in the input field.
+</ParamField>
+
+<ParamField path="onChangeText" type="(text: string) => void">
+  Called when the text value changes.
+</ParamField>
+
+<ParamField path="placeholder" type="string">
+  Placeholder text displayed when the input is empty.
+</ParamField>
+
+<ParamField path="label" type="RenderProp<TextProps> | React.ReactText">
+  String, number or a function component to render above the input field.
+</ParamField>
+
+<ParamField path="caption" type="RenderProp<TextProps> | React.ReactText">
+  String, number or a function component to render below the input field. Useful for validation messages.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="basic">
+  Status of the component. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="medium">
+  Size of the input field.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start of the input. Expected to return an Image or Icon.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end of the input. Expected to return an Image or Icon.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the input is disabled. Overrides the `editable` prop of TextInput.
+</ParamField>
+
+<ParamField path="textStyle" type="StyleProp<TextStyle>">
+  Customizes the style of the text field.
+</ParamField>
+
+<ParamField path="onFocus" type="(event) => void">
+  Called when the input field receives focus.
+</ParamField>
+
+<ParamField path="onBlur" type="(event) => void">
+  Called when the input field loses focus.
+</ParamField>
+
+## Methods
+
+<ParamField path="focus()" type="() => void">
+  Focuses the input field.
+</ParamField>
+
+<ParamField path="blur()" type="() => void">
+  Removes focus from the input field.
+</ParamField>
+
+<ParamField path="isFocused()" type="() => boolean">
+  Returns whether the input field is currently focused.
+</ParamField>
+
+<ParamField path="clear()" type="() => void">
+  Clears all text from the input field.
+</ParamField>
+
+## Form Examples
+
+### Login Form
+
+```tsx
+import React from 'react';
+import { Input, Button, Layout, Icon } from '@ui-kitten/components';
+
+const LoginForm = () => {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [secureTextEntry, setSecureTextEntry] = React.useState(true);
+
+  const EmailIcon = (props) => <Icon {...props} name='email' />;
+  const LockIcon = (props) => <Icon {...props} name='lock' />;
+  const EyeIcon = (props) => (
+    <Icon 
+      {...props} 
+      name={secureTextEntry ? 'eye-off' : 'eye'}
+      onPress={() => setSecureTextEntry(!secureTextEntry)}
+    />
+  );
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Input
+        label='Email'
+        placeholder='Enter your email'
+        value={email}
+        onChangeText={setEmail}
+        accessoryLeft={EmailIcon}
+        keyboardType='email-address'
+        autoCapitalize='none'
+      />
+      <Input
+        label='Password'
+        placeholder='Enter your password'
+        value={password}
+        onChangeText={setPassword}
+        accessoryLeft={LockIcon}
+        accessoryRight={EyeIcon}
+        secureTextEntry={secureTextEntry}
+      />
+      <Button>LOG IN</Button>
+    </Layout>
+  );
+};
+```
+
+### Validated Input
+
+```tsx
+import React from 'react';
+import { Input } from '@ui-kitten/components';
+
+const ValidatedInput = () => {
+  const [email, setEmail] = React.useState('');
+  const [touched, setTouched] = React.useState(false);
+
+  const isValidEmail = (text) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+  };
+
+  const getStatus = () => {
+    if (!touched || !email) return 'basic';
+    return isValidEmail(email) ? 'success' : 'danger';
+  };
+
+  const getCaption = () => {
+    if (!touched || !email) return 'Enter your email address';
+    return isValidEmail(email) 
+      ? 'Email is valid' 
+      : 'Please enter a valid email';
+  };
+
+  return (
+    <Input
+      label='Email'
+      placeholder='example@email.com'
+      value={email}
+      onChangeText={setEmail}
+      onBlur={() => setTouched(true)}
+      status={getStatus()}
+      caption={getCaption()}
+    />
+  );
+};
+```
+
+### Search Input
+
+```tsx
+import React from 'react';
+import { Input, Icon } from '@ui-kitten/components';
+
+const SearchInput = ({ onSearch }) => {
+  const [query, setQuery] = React.useState('');
+
+  const SearchIcon = (props) => <Icon {...props} name='search' />;
+  const CloseIcon = (props) => (
+    <Icon 
+      {...props} 
+      name='close'
+      onPress={() => setQuery('')}
+    />
+  );
+
+  React.useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      onSearch(query);
+    }, 300);
+
+    return () => clearTimeout(delaySearch);
+  }, [query]);
+
+  return (
+    <Input
+      placeholder='Search...'
+      value={query}
+      onChangeText={setQuery}
+      accessoryLeft={SearchIcon}
+      accessoryRight={query ? CloseIcon : undefined}
+    />
+  );
+};
+```

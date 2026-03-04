@@ -1,0 +1,338 @@
+---
+title: Icon
+description: Animated icon component with support for multiple icon packs and built-in animations.
+---
+
+The Icon component provides a simple way to render icons from registered icon packs with optional animations.
+
+## Import
+
+```tsx
+import { Icon } from '@ui-kitten/components';
+```
+
+## Setup
+
+Before using icons, you need to register an icon pack. UI Kitten recommends using Eva Icons:
+
+```tsx
+import React from 'react';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import * as eva from '@eva-design/eva';
+
+export default () => (
+  <>
+    <IconRegistry icons={EvaIconsPack} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      {/* Your app content */}
+    </ApplicationProvider>
+  </>
+);
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { Icon } from '@ui-kitten/components';
+
+export const HomeIcon = () => (
+  <Icon name='home' />
+);
+```
+
+## Icon Packs
+
+Use icons from different packs by specifying the `pack` property:
+
+```tsx
+import { Icon } from '@ui-kitten/components';
+
+// Default pack
+<Icon name='star' />
+
+// Specific pack
+<Icon name='star' pack='eva' />
+<Icon name='heart' pack='material' />
+```
+
+## Styling Icons
+
+Icons accept style properties for customization:
+
+<CodeGroup>
+```tsx Size & Color
+<Icon
+  name='heart'
+  style={{ width: 32, height: 32, tintColor: 'red' }}
+/>
+```
+
+```tsx Fill Property
+<Icon
+  name='heart'
+  fill='#FF3D71'
+  style={{ width: 24, height: 24 }}
+/>
+```
+</CodeGroup>
+
+<Note>
+When using Eva Icons, you can style icons using both `style.tintColor` and the `fill` prop.
+</Note>
+
+## Animations
+
+Icon supports three built-in animation types:
+
+<CodeGroup>
+```tsx Zoom (Default)
+<Icon
+  name='star'
+  animation='zoom'
+/>
+```
+
+```tsx Pulse
+<Icon
+  name='heart'
+  animation='pulse'
+/>
+```
+
+```tsx Shake
+<Icon
+  name='bell'
+  animation='shake'
+/>
+```
+
+```tsx No Animation
+<Icon
+  name='home'
+  animation={null}
+/>
+```
+</CodeGroup>
+
+## Animation Control
+
+Control animations programmatically using refs:
+
+```tsx
+import React, { useRef } from 'react';
+import { Button } from 'react-native';
+import { Icon } from '@ui-kitten/components';
+
+export const AnimatedIcon = () => {
+  const iconRef = useRef();
+
+  const startAnimation = () => {
+    iconRef.current?.startAnimation();
+  };
+
+  const stopAnimation = () => {
+    iconRef.current?.stopAnimation();
+  };
+
+  return (
+    <>
+      <Icon
+        ref={iconRef}
+        name='star'
+        animation='pulse'
+      />
+      <Button title='Start' onPress={startAnimation} />
+      <Button title='Stop' onPress={stopAnimation} />
+    </>
+  );
+};
+```
+
+## Animation Configuration
+
+Customize animation behavior with `animationConfig`:
+
+```tsx
+<Icon
+  name='heart'
+  animation='pulse'
+  animationConfig={{
+    cycles: 3,
+    duration: 1000,
+  }}
+/>
+```
+
+## Using Icons in Components
+
+UI Kitten components support icons through accessor props:
+
+```tsx
+import { Button, Input, ListItem, Icon } from '@ui-kitten/components';
+
+const StarIcon = (props) => <Icon {...props} name='star' />;
+const SearchIcon = (props) => <Icon {...props} name='search' />;
+
+// In Button
+<Button accessoryLeft={StarIcon}>Favorite</Button>
+
+// In Input
+<Input accessoryLeft={SearchIcon} placeholder='Search...' />
+
+// In ListItem
+<ListItem
+  title='Home'
+  accessoryLeft={StarIcon}
+  accessoryRight={StarIcon}
+/>
+```
+
+## Props
+
+<ParamField path="name" type="string" required>
+  Name of the icon registered in the icon pack.
+</ParamField>
+
+<ParamField path="pack" type="string">
+  Name of the icon pack to use. If not specified, uses the default pack.
+</ParamField>
+
+<ParamField path="animation" type="string | null" default="zoom">
+  Animation type. Can be:
+  - `zoom` - Scale animation
+  - `pulse` - Pulsing animation
+  - `shake` - Shaking animation
+  - `null` - No animation
+</ParamField>
+
+<ParamField path="animationConfig" type="AnimationConfig">
+  Animation configuration object:
+  ```typescript
+  interface AnimationConfig {
+    cycles?: number;    // Number of animation cycles
+    duration?: number;  // Duration in milliseconds
+  }
+  ```
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ViewStyle>">
+  Custom style for the icon. Use `tintColor` to change icon color.
+</ParamField>
+
+<ParamField path="fill" type="string">
+  Fill color for SVG icons (when using Eva Icons).
+</ParamField>
+
+## Methods
+
+<ParamField path="startAnimation" type="(callback?: Animated.EndCallback) => void">
+  Starts the icon animation. Accepts an optional callback that is called when animation completes.
+</ParamField>
+
+<ParamField path="stopAnimation" type="() => void">
+  Stops the icon animation.
+</ParamField>
+
+## Examples
+
+### Icon Grid
+
+```tsx
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Icon } from '@ui-kitten/components';
+
+const icons = ['home', 'star', 'heart', 'settings', 'menu', 'search'];
+
+export const IconGrid = () => (
+  <View style={styles.container}>
+    {icons.map(iconName => (
+      <Icon
+        key={iconName}
+        name={iconName}
+        style={styles.icon}
+      />
+    ))}
+  </View>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  icon: {
+    width: 32,
+    height: 32,
+  },
+});
+```
+
+### Themed Icon
+
+```tsx
+import React from 'react';
+import { useTheme } from '@ui-kitten/components';
+import { Icon } from '@ui-kitten/components';
+
+export const ThemedIcon = () => {
+  const theme = useTheme();
+
+  return (
+    <Icon
+      name='star'
+      style={{
+        width: 32,
+        height: 32,
+        tintColor: theme['color-primary-500'],
+      }}
+    />
+  );
+};
+```
+
+### Interactive Icon
+
+```tsx
+import React, { useState } from 'react';
+import { TouchableOpacity } from 'react-native';
+import { Icon } from '@ui-kitten/components';
+
+export const InteractiveIcon = () => {
+  const [liked, setLiked] = useState(false);
+
+  return (
+    <TouchableOpacity onPress={() => setLiked(!liked)}>
+      <Icon
+        name='heart'
+        animation='pulse'
+        fill={liked ? '#FF3D71' : '#8F9BB3'}
+        style={{ width: 32, height: 32 }}
+      />
+    </TouchableOpacity>
+  );
+};
+```
+
+## Icon Packages
+
+UI Kitten supports multiple icon packages:
+
+- **@ui-kitten/eva-icons** - Eva Icons (recommended)
+- Custom icon packs using IconRegistry
+
+For more information on icon packages, see the [Eva Icons Guide](/guides/eva-icons) and [Custom Icons Guide](/guides/custom-icons).
+
+## Accessibility
+
+```tsx
+<Icon
+  name='home'
+  accessible={true}
+  accessibilityLabel="Home icon"
+  accessibilityRole="image"
+/>
+```

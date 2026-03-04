@@ -1,0 +1,380 @@
+---
+title: Tooltip
+description: Display informative text when users focus on or tap an element.
+---
+
+Tooltip displays contextual information relative to an anchor element.
+
+## Import
+
+```tsx
+import { Tooltip } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Tooltip } from '@ui-kitten/components';
+
+export const TooltipSimple = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Tooltip
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Tooltip
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      This is a tooltip
+    </Tooltip>
+  );
+};
+```
+
+## Placements
+
+Control where the tooltip appears relative to the anchor:
+
+<CodeGroup>
+```tsx Top
+<Tooltip
+  anchor={renderAnchor}
+  visible={visible}
+  placement='top'
+>
+  Top tooltip
+</Tooltip>
+```
+
+```tsx Bottom (Default)
+<Tooltip
+  anchor={renderAnchor}
+  visible={visible}
+  placement='bottom'
+>
+  Bottom tooltip
+</Tooltip>
+```
+
+```tsx Left
+<Tooltip
+  anchor={renderAnchor}
+  visible={visible}
+  placement='left'
+>
+  Left tooltip
+</Tooltip>
+```
+
+```tsx Right
+<Tooltip
+  anchor={renderAnchor}
+  visible={visible}
+  placement='right'
+>
+  Right tooltip
+</Tooltip>
+```
+</CodeGroup>
+
+### Advanced Placements
+
+Tooltip supports fine-grained placement control:
+
+```tsx
+// Top placements
+<Tooltip placement='top' />
+<Tooltip placement='top start' />
+<Tooltip placement='top end' />
+
+// Bottom placements
+<Tooltip placement='bottom' />
+<Tooltip placement='bottom start' />
+<Tooltip placement='bottom end' />
+
+// Left placements
+<Tooltip placement='left' />
+<Tooltip placement='left start' />
+<Tooltip placement='left end' />
+
+// Right placements
+<Tooltip placement='right' />
+<Tooltip placement='right start' />
+<Tooltip placement='right end' />
+```
+
+## With Accessories
+
+Add icons to the left or right of tooltip text:
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Icon, Tooltip } from '@ui-kitten/components';
+
+const InfoIcon = (props) => <Icon {...props} name='info' />;
+const CloseIcon = (props) => <Icon {...props} name='close' />;
+
+export const TooltipWithAccessories = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Tooltip
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Info
+        </Button>
+      )}
+      visible={visible}
+      accessoryLeft={InfoIcon}
+      accessoryRight={CloseIcon}
+      onBackdropPress={() => setVisible(false)}
+    >
+      Important information
+    </Tooltip>
+  );
+};
+```
+
+## Styled Backdrop
+
+Customize the backdrop appearance:
+
+```tsx
+<Tooltip
+  anchor={renderAnchor}
+  visible={visible}
+  backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
+  onBackdropPress={() => setVisible(false)}
+>
+  Tooltip with styled backdrop
+</Tooltip>
+```
+
+## Custom Tooltip Content
+
+Use function components for advanced styling:
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Text, Tooltip } from '@ui-kitten/components';
+
+export const StyledTooltip = () => {
+  const [visible, setVisible] = useState(false);
+
+  const renderTooltipContent = (evaProps) => (
+    <Text
+      {...evaProps}
+      style={[evaProps.style, { fontWeight: 'bold' }]}
+    >
+      Custom styled tooltip
+    </Text>
+  );
+
+  return (
+    <Tooltip
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Tooltip
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      {renderTooltipContent}
+    </Tooltip>
+  );
+};
+```
+
+## Props
+
+<ParamField path="anchor" type="() => ReactElement" required>
+  A component relative to which the tooltip will be shown. Should be a function that returns a React element.
+</ParamField>
+
+<ParamField path="children" type="React.ReactText | RenderProp<TextProps>" required>
+  String, number, or function component to render within the tooltip. If it is a function, expected to return a Text component.
+</ParamField>
+
+<ParamField path="visible" type="boolean" default="false">
+  Whether the tooltip is visible.
+</ParamField>
+
+<ParamField path="placement" type="string" default="bottom">
+  Position of the tooltip relative to the anchor. Can be:
+  - Basic: `top`, `bottom`, `left`, `right`
+  - Advanced: `top start`, `top end`, `bottom start`, `bottom end`, `left start`, `left end`, `right start`, `right end`
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<ImageProps>">
+  Function component to render at the start of the text. Expected to return an Icon or Image.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<ImageProps>">
+  Function component to render at the end of the text. Expected to return an Icon or Image.
+</ParamField>
+
+<ParamField path="onBackdropPress" type="() => void">
+  Called when the tooltip is visible and the backdrop is pressed. Useful for closing the tooltip.
+</ParamField>
+
+<ParamField path="backdropStyle" type="StyleProp<ViewStyle>">
+  Style of the backdrop overlay.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ViewStyle>">
+  Style of the tooltip container.
+</ParamField>
+
+<ParamField path="fullWidth" type="boolean" default="false">
+  Whether the tooltip should take the full width of the anchor.
+</ParamField>
+
+## Examples
+
+### Toggle Tooltip
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Tooltip } from '@ui-kitten/components';
+
+export const ToggleTooltip = () => {
+  const [visible, setVisible] = useState(false);
+
+  const toggleTooltip = () => {
+    setVisible(!visible);
+  };
+
+  return (
+    <Tooltip
+      anchor={() => (
+        <Button onPress={toggleTooltip}>
+          Toggle Tooltip
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={toggleTooltip}
+    >
+      Click to toggle
+    </Tooltip>
+  );
+};
+```
+
+### Tooltip with Icon Button
+
+```tsx
+import React, { useState } from 'react';
+import { Icon, IconButton, Tooltip } from '@ui-kitten/components';
+
+const InfoIcon = (props) => <Icon {...props} name='info' />;
+
+export const IconTooltip = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Tooltip
+      anchor={() => (
+        <IconButton
+          icon={InfoIcon}
+          onPress={() => setVisible(true)}
+        />
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      Additional information about this feature
+    </Tooltip>
+  );
+};
+```
+
+### Multi-line Tooltip
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Tooltip } from '@ui-kitten/components';
+
+export const MultilineTooltip = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Tooltip
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Help
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+      style={{ maxWidth: 200 }}
+    >
+      This is a longer tooltip text that spans multiple lines to provide more detailed information.
+    </Tooltip>
+  );
+};
+```
+
+### Controlled Tooltip
+
+```tsx
+import React, { useState, useEffect } from 'react';
+import { Button, Tooltip } from '@ui-kitten/components';
+
+export const ControlledTooltip = () => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => setVisible(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [visible]);
+
+  return (
+    <Tooltip
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Tooltip
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      Auto-closes after 3 seconds
+    </Tooltip>
+  );
+};
+```
+
+## Accessibility
+
+```tsx
+<Tooltip
+  anchor={renderAnchor}
+  visible={visible}
+  accessible={true}
+  accessibilityLabel="Tooltip with help information"
+  accessibilityRole="alert"
+>
+  Help text
+</Tooltip>
+```
+
+## Best Practices
+
+- Keep tooltip text concise and informative
+- Use tooltips for supplementary information, not critical content
+- Ensure tooltips are dismissible by tapping the backdrop
+- Position tooltips to avoid obscuring important content
+- Consider using Icons in accessory slots for visual context
+
+## See Also
+
+- [Popover](components/popover) - For more complex content
+- [Modal](components/modal) - For blocking interactions

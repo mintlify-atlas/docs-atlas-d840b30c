@@ -1,80 +1,526 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quick Start"
+description: "Get started with UI Kitten in minutes. Create a new app from a template or add UI Kitten to an existing project with this step-by-step guide."
 ---
 
-## Get started in three steps
+# Quick Start
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+Get up and running with UI Kitten in just a few minutes. This guide will help you create your first UI Kitten application.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  Choose the method that best fits your needs: start a new project with our template or add UI Kitten to an existing app.
+</Note>
+
+## Option 1: Start a New Project
+
+The fastest way to start with UI Kitten is using the official template. This creates a pre-configured React Native app with UI Kitten already set up.
+
+<Steps>
+  <Step title="Install React Native CLI">
+    First, ensure you have the correct React Native CLI installed:
+
+    ```bash
+    npm uninstall -g react-native-cli
+    npm install -g @react-native-community/cli
+    ```
+
+    This ensures you're using the latest CLI tooling.
+  </Step>
+
+  <Step title="Create a new project">
+    Create a new React Native project using the UI Kitten template:
+
+    <Tabs>
+      <Tab title="JavaScript">
+        ```bash
+        npx react-native init MyApp --template @ui-kitten/template-js
+        ```
+      </Tab>
+      <Tab title="TypeScript">
+        ```bash
+        npx react-native init MyApp --template @ui-kitten/template-ts
+        ```
+      </Tab>
+    </Tabs>
+
+    This command will:
+    - Create a new React Native project
+    - Install UI Kitten and all dependencies
+    - Set up ApplicationProvider with Eva theme
+    - Include example code with icons and components
+  </Step>
+
+  <Step title="Navigate to your project">
+    ```bash
+    cd MyApp
+    ```
+  </Step>
+
+  <Step title="Run your app">
+    Start your application on iOS or Android:
+
+    <Tabs>
+      <Tab title="iOS">
+        ```bash
+        npm run ios
+        # or with Yarn
+        yarn ios
+        ```
+      </Tab>
+      <Tab title="Android">
+        ```bash
+        npm run android
+        # or with Yarn
+        yarn android
+        ```
+      </Tab>
+    </Tabs>
+
+    <Note>
+      For iOS, you may need to run `cd ios && pod install && cd ..` before running the app.
+    </Note>
+  </Step>
+</Steps>
+
+### What's Included in the Template
+
+The template project includes:
+
+- ✅ UI Kitten components library
+- ✅ Eva Design System (light and dark themes)
+- ✅ Eva Icons package configured
+- ✅ ApplicationProvider set up
+- ✅ Example components (Button, Text, Layout, Icon)
+- ✅ TypeScript support (if using TS template)
+
+## Option 2: Add to Existing Project
+
+If you already have a React Native project, follow these steps to add UI Kitten.
+
+<Steps>
+  <Step title="Install dependencies">
+    Install UI Kitten and required peer dependencies:
+
+    <Tabs>
+      <Tab title="npm">
+        ```bash
+        npm install @ui-kitten/components @eva-design/eva react-native-svg
+        ```
+      </Tab>
+      <Tab title="yarn">
+        ```bash
+        yarn add @ui-kitten/components @eva-design/eva react-native-svg
+        ```
+      </Tab>
+      <Tab title="Expo">
+        ```bash
+        npm install @ui-kitten/components @eva-design/eva
+        expo install react-native-svg@9.13.6
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Link native dependencies (iOS only, non-Expo)">
+    If you're not using Expo, link the native dependencies for iOS:
+
+    ```bash
+    cd ios
+    pod install
+    cd ..
+    ```
+  </Step>
+
+  <Step title="Configure ApplicationProvider">
+    Open your `App.js` or `App.tsx` and wrap your app with `ApplicationProvider`:
+
+    ```jsx App.js
+    import React from 'react';
+    import * as eva from '@eva-design/eva';
+    import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+
+    const HomeScreen = () => (
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>HOME</Text>
+      </Layout>
+    );
+
+    export default () => (
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <HomeScreen />
+      </ApplicationProvider>
+    );
+    ```
+  </Step>
+
+  <Step title="Restart the bundler">
+    Restart your React Native bundler with cache cleared:
+
+    ```bash
+    npm start -- --reset-cache
+    ```
+  </Step>
+</Steps>
+
+## Your First Component
+
+Now let's create a simple UI Kitten component to see everything in action.
+
+### Basic Example
+
+Here's a complete example with multiple UI Kitten components:
+
+```jsx App.js
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import * as eva from '@eva-design/eva';
+import {
+  ApplicationProvider,
+  Layout,
+  Text,
+  Button,
+} from '@ui-kitten/components';
+
+const HomeScreen = () => {
+  const [count, setCount] = React.useState(0);
+
+  return (
+    <Layout style={styles.container}>
+      <Text category='h1' style={styles.title}>
+        Welcome to UI Kitten
+      </Text>
+      <Text category='s1' style={styles.subtitle}>
+        You clicked the button {count} times
+      </Text>
+      <Button
+        style={styles.button}
+        onPress={() => setCount(count + 1)}
+      >
+        Click Me
+      </Button>
+    </Layout>
+  );
+};
+
+export default () => (
+  <ApplicationProvider {...eva} theme={eva.light}>
+    <HomeScreen />
+  </ApplicationProvider>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  title: {
+    marginBottom: 8,
+  },
+  subtitle: {
+    marginBottom: 16,
+  },
+  button: {
+    marginVertical: 16,
+  },
+});
+```
+
+### Example with Icons
+
+To use icons, first install the Eva Icons package:
+
+```bash
+npm install @ui-kitten/eva-icons
+```
+
+Then update your app:
+
+```jsx App.js
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import * as eva from '@eva-design/eva';
+import {
+  ApplicationProvider,
+  Button,
+  Icon,
+  IconRegistry,
+  Layout,
+  Text,
+} from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+
+// Create an icon component
+const HeartIcon = (props) => (
+  <Icon {...props} name='heart' />
+);
+
+const HomeScreen = () => (
+  <Layout style={styles.container}>
+    <Text category='h1' style={styles.text}>
+      Welcome to UI Kitten 😻
+    </Text>
+    <Text category='s1' style={styles.text}>
+      Start with editing App.js to configure your App
+    </Text>
+    <Text style={styles.text} appearance='hint'>
+      For example, try changing theme to Dark by using eva.dark
+    </Text>
+    <Button style={styles.likeButton} accessoryLeft={HeartIcon}>
+      LIKE
+    </Button>
+  </Layout>
+);
+
+export default () => (
+  <>
+    <IconRegistry icons={EvaIconsPack} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <HomeScreen />
+    </ApplicationProvider>
+  </>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  likeButton: {
+    marginVertical: 16,
+  },
+});
+```
+
+## Understanding Key Concepts
+
+### ApplicationProvider
+
+The `ApplicationProvider` is the root component that:
+- Provides theme context to all UI Kitten components
+- Processes Eva Design System mappings into styles
+- Enables runtime theme switching
+- Should be rendered only once at the application root
+
+**Key Props:**
+- `mapping` - Eva Design System mapping (passed via `{...eva}`)
+- `theme` - Current theme object (`eva.light` or `eva.dark`)
+- `customMapping` - Optional custom design tokens
+
+### Layout Component
+
+The `Layout` component is a theme-aware container:
+- Similar to React Native's `View` but with theme support
+- Background color automatically adapts to the current theme
+- Supports multiple levels (`level='1'` through `level='4'`) for visual hierarchy
+- Should be used as the root component of screens
+
+```jsx
+<Layout style={{ flex: 1 }} level='1'>
+  {/* Your content */}
+</Layout>
+```
+
+### Text Component
+
+The `Text` component provides themed typography:
+- Uses design system typography scale
+- Categories: `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `s1`, `s2`, `p1`, `p2`, `c1`, `c2`, `label`
+- Appearances: `default`, `alternative`, `hint`
+- Automatically applies theme colors
+
+```jsx
+<Text category='h1'>Heading</Text>
+<Text category='p1' appearance='hint'>Secondary text</Text>
+```
+
+### Button Component
+
+Buttons support multiple variants and states:
+- **Status**: `primary`, `success`, `info`, `warning`, `danger`, `basic`, `control`
+- **Size**: `tiny`, `small`, `medium`, `large`, `giant`
+- **Appearance**: `filled`, `outline`, `ghost`
+- **Accessories**: `accessoryLeft` and `accessoryRight` for icons
+
+```jsx
+<Button
+  status='primary'
+  size='medium'
+  appearance='filled'
+  onPress={handlePress}
+>
+  Press Me
+</Button>
+```
+
+## Theme Switching
+
+UI Kitten supports runtime theme switching. Here's how to implement it:
+
+```jsx
+import React, { useState } from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Button, Text } from '@ui-kitten/components';
+
+const App = () => {
+  const [theme, setTheme] = useState('light');
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  return (
+    <ApplicationProvider {...eva} theme={eva[theme]}>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>Current theme: {theme}</Text>
+        <Button onPress={toggleTheme}>Toggle Theme</Button>
+      </Layout>
+    </ApplicationProvider>
+  );
+};
+
+export default App;
+```
+
+## Component Status Colors
+
+All interactive components support status colors from Eva Design System:
+
+<Tabs>
+  <Tab title="Primary">
+    ```jsx
+    <Button status='primary'>Primary</Button>
+    ```
+  </Tab>
+  <Tab title="Success">
+    ```jsx
+    <Button status='success'>Success</Button>
+    ```
+  </Tab>
+  <Tab title="Info">
+    ```jsx
+    <Button status='info'>Info</Button>
+    ```
+  </Tab>
+  <Tab title="Warning">
+    ```jsx
+    <Button status='warning'>Warning</Button>
+    ```
+  </Tab>
+  <Tab title="Danger">
+    ```jsx
+    <Button status='danger'>Danger</Button>
+    ```
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+Now that you have UI Kitten set up, explore these topics:
+
+<CardGroup cols={2}>
+  <Card title="Component Library" icon="cube" href="/components">
+    Explore all 30+ UI components with examples and API reference
+  </Card>
+  <Card title="Theming" icon="palette" href="/guides/branding">
+    Customize themes and create your own brand identity
+  </Card>
+  <Card title="Navigation" icon="map" href="/guides/configure-navigation">
+    Set up navigation in your React Native app
+  </Card>
+  <Card title="Eva Icons" icon="icons" href="/guides/eva-icons">
+    Learn how to use and customize icons
+  </Card>
+</CardGroup>
+
+## Common Patterns
+
+### Creating Themed Components
+
+Create your own components that respond to theme changes:
+
+```jsx
+import { useTheme } from '@ui-kitten/components';
+
+const ThemedCard = () => {
+  const theme = useTheme();
+
+  return (
+    <View style={{
+      backgroundColor: theme['background-basic-color-2'],
+      padding: 16,
+      borderRadius: 8,
+    }}>
+      <Text>Themed content</Text>
+    </View>
+  );
+};
+```
+
+### Customizing Component Styles
+
+You can customize any component using the `style` prop:
+
+```jsx
+<Button
+  style={{
+    backgroundColor: 'blue',
+    borderRadius: 20,
+  }}
+>
+  Custom Button
+</Button>
+```
+
+### Using Multiple Status Colors
+
+```jsx
+<Layout style={styles.container}>
+  <Button status='primary' style={styles.button}>Primary</Button>
+  <Button status='success' style={styles.button}>Success</Button>
+  <Button status='info' style={styles.button}>Info</Button>
+  <Button status='warning' style={styles.button}>Warning</Button>
+  <Button status='danger' style={styles.button}>Danger</Button>
+</Layout>
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Components don't have theme styles">
+    Make sure `ApplicationProvider` wraps your entire app and you're passing `{...eva}` and `theme` props.
+  </Accordion>
+
+  <Accordion title="Icons not showing">
+    - Install `@ui-kitten/eva-icons`
+    - Register icons with `<IconRegistry icons={EvaIconsPack} />`
+    - Place `IconRegistry` before `ApplicationProvider`
+  </Accordion>
+
+  <Accordion title="TypeScript errors">
+    UI Kitten includes TypeScript definitions. Ensure you're using TypeScript 4.8.3 or higher.
+  </Accordion>
+
+  <Accordion title="App crashes on startup">
+    - Verify all packages are installed correctly
+    - Restart the bundler with `--reset-cache`
+    - On iOS, run `cd ios && pod install`
+  </Accordion>
+</AccordionGroup>
+
+## Additional Resources
+
+- [Kitten Tricks Demo App](https://github.com/akveo/kittenTricks) - 40+ screens showcasing UI Kitten
+- [Eva Design System](https://eva.design) - Learn about the design system
+- [Eva Icons](https://akveo.github.io/eva-icons) - Browse all 480+ available icons
+- [Component Documentation](https://akveo.github.io/react-native-ui-kitten/docs) - Comprehensive API reference
+
+<Note>
+  Need help? Ask questions on [Stack Overflow](https://stackoverflow.com/questions/ask) with the `ui-kitten` tag or open an issue on [GitHub](https://github.com/akveo/react-native-ui-kitten/issues).
 </Note>

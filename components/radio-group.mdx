@@ -1,0 +1,294 @@
+---
+title: RadioGroup
+description: RadioGroup provides single selection from multiple radio options.
+---
+
+RadioGroup allows users to select a single option from a set of mutually exclusive options. It manages the selection state and passes it to child Radio components.
+
+## Import
+
+```tsx
+import { RadioGroup, Radio } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { RadioGroup, Radio } from '@ui-kitten/components';
+
+export const RadioGroupExample = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <RadioGroup
+      selectedIndex={selectedIndex}
+      onChange={setSelectedIndex}
+    >
+      <Radio>Option 1</Radio>
+      <Radio>Option 2</Radio>
+      <Radio>Option 3</Radio>
+    </RadioGroup>
+  );
+};
+```
+
+## Props
+
+<ParamField path="selectedIndex" type="number" default="-1">
+  Index of the currently selected radio button. -1 means no selection.
+</ParamField>
+
+<ParamField path="onChange" type="(index: number) => void">
+  Called when one of the radio buttons is pressed. Receives the index of the selected radio.
+</ParamField>
+
+<ParamField path="children" type="ChildrenWithProps<RadioProps>">
+  Radio components to be rendered within the group.
+</ParamField>
+
+## Form Examples
+
+### Basic Selection
+
+```tsx
+import React from 'react';
+import { RadioGroup, Radio, Layout, Text } from '@ui-kitten/components';
+
+const BasicSelection = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const options = ['Option 1', 'Option 2', 'Option 3'];
+
+  return (
+    <Layout style={{ padding: 16, gap: 8 }}>
+      <Text category='label'>Select an option:</Text>
+      <RadioGroup
+        selectedIndex={selectedIndex}
+        onChange={setSelectedIndex}
+      >
+        {options.map((option, index) => (
+          <Radio key={index}>{option}</Radio>
+        ))}
+      </RadioGroup>
+      <Text appearance='hint'>
+        Selected: {options[selectedIndex]}
+      </Text>
+    </Layout>
+  );
+};
+```
+
+### Shipping Method Selector
+
+```tsx
+import React from 'react';
+import { RadioGroup, Radio, Layout, Text } from '@ui-kitten/components';
+
+const ShippingSelector = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const shippingMethods = [
+    { name: 'Standard', price: 5.99, days: '5-7 business days' },
+    { name: 'Express', price: 12.99, days: '2-3 business days' },
+    { name: 'Overnight', price: 24.99, days: '1 business day' },
+  ];
+
+  return (
+    <Layout style={{ padding: 16, gap: 12 }}>
+      <Text category='h6'>Shipping Method</Text>
+      <RadioGroup
+        selectedIndex={selectedIndex}
+        onChange={setSelectedIndex}
+      >
+        {shippingMethods.map((method, index) => (
+          <Radio key={index}>
+            <Layout style={{ gap: 4 }}>
+              <Text>{method.name} - ${method.price}</Text>
+              <Text appearance='hint' category='c1'>
+                {method.days}
+              </Text>
+            </Layout>
+          </Radio>
+        ))}
+      </RadioGroup>
+    </Layout>
+  );
+};
+```
+
+### Payment Method
+
+```tsx
+import React from 'react';
+import { RadioGroup, Radio, Layout, Text, Icon } from '@ui-kitten/components';
+
+const PaymentMethod = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const paymentMethods = [
+    { id: 'card', label: 'Credit Card', icon: 'credit-card' },
+    { id: 'paypal', label: 'PayPal', icon: 'paypal' },
+    { id: 'bank', label: 'Bank Transfer', icon: 'bank' },
+  ];
+
+  return (
+    <Layout style={{ padding: 16, gap: 12 }}>
+      <Text category='h6'>Payment Method</Text>
+      <RadioGroup
+        selectedIndex={selectedIndex}
+        onChange={setSelectedIndex}
+      >
+        {paymentMethods.map((method, index) => (
+          <Radio key={index}>
+            {method.label}
+          </Radio>
+        ))}
+      </RadioGroup>
+    </Layout>
+  );
+};
+```
+
+### Survey Question
+
+```tsx
+import React from 'react';
+import { RadioGroup, Radio, Button, Layout, Text } from '@ui-kitten/components';
+
+const SurveyQuestion = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(-1);
+
+  const handleSubmit = () => {
+    if (selectedIndex === -1) {
+      alert('Please select an option');
+      return;
+    }
+    // Submit answer
+    console.log('Answer:', selectedIndex);
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>
+        How satisfied are you with our service?
+      </Text>
+      
+      <RadioGroup
+        selectedIndex={selectedIndex}
+        onChange={setSelectedIndex}
+      >
+        <Radio>Very Satisfied</Radio>
+        <Radio>Satisfied</Radio>
+        <Radio>Neutral</Radio>
+        <Radio>Dissatisfied</Radio>
+        <Radio>Very Dissatisfied</Radio>
+      </RadioGroup>
+      
+      <Button 
+        onPress={handleSubmit}
+        disabled={selectedIndex === -1}
+      >
+        SUBMIT
+      </Button>
+    </Layout>
+  );
+};
+```
+
+### Settings with RadioGroup
+
+```tsx
+import React from 'react';
+import { RadioGroup, Radio, Layout, Text, Divider } from '@ui-kitten/components';
+
+const SettingsForm = () => {
+  const [theme, setTheme] = React.useState(0);
+  const [language, setLanguage] = React.useState(0);
+  const [fontSize, setFontSize] = React.useState(1);
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Layout style={{ gap: 8 }}>
+        <Text category='label'>Theme</Text>
+        <RadioGroup selectedIndex={theme} onChange={setTheme}>
+          <Radio>Light</Radio>
+          <Radio>Dark</Radio>
+          <Radio>Auto</Radio>
+        </RadioGroup>
+      </Layout>
+      
+      <Divider />
+      
+      <Layout style={{ gap: 8 }}>
+        <Text category='label'>Language</Text>
+        <RadioGroup selectedIndex={language} onChange={setLanguage}>
+          <Radio>English</Radio>
+          <Radio>Spanish</Radio>
+          <Radio>French</Radio>
+        </RadioGroup>
+      </Layout>
+      
+      <Divider />
+      
+      <Layout style={{ gap: 8 }}>
+        <Text category='label'>Font Size</Text>
+        <RadioGroup selectedIndex={fontSize} onChange={setFontSize}>
+          <Radio>Small</Radio>
+          <Radio>Medium</Radio>
+          <Radio>Large</Radio>
+        </RadioGroup>
+      </Layout>
+    </Layout>
+  );
+};
+```
+
+### With Validation
+
+```tsx
+import React from 'react';
+import { RadioGroup, Radio, Button, Layout, Text } from '@ui-kitten/components';
+
+const ValidatedRadioGroup = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(-1);
+  const [error, setError] = React.useState('');
+
+  const handleSubmit = () => {
+    if (selectedIndex === -1) {
+      setError('Please select an option');
+      return;
+    }
+    setError('');
+    // Submit form
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Layout style={{ gap: 8 }}>
+        <Text category='label'>Select your plan *</Text>
+        <RadioGroup
+          selectedIndex={selectedIndex}
+          onChange={(index) => {
+            setSelectedIndex(index);
+            setError('');
+          }}
+        >
+          <Radio>Free Plan</Radio>
+          <Radio>Pro Plan - $9.99/month</Radio>
+          <Radio>Enterprise Plan - $29.99/month</Radio>
+        </RadioGroup>
+        {error && (
+          <Text status='danger' category='c1'>
+            {error}
+          </Text>
+        )}
+      </Layout>
+      
+      <Button onPress={handleSubmit}>
+        CONTINUE
+      </Button>
+    </Layout>
+  );
+};
+```

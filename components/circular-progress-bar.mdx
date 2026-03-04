@@ -1,0 +1,295 @@
+---
+title: 'Circular Progress Bar'
+description: 'A circular indicator that displays progress with percentage or custom icons'
+---
+
+## Overview
+
+The CircularProgressBar component displays progress in a circular format, with options to show percentage text or custom icons in the center. It's ideal for compact progress displays, dashboard widgets, and status indicators.
+
+## Basic Usage
+
+```jsx
+import { CircularProgressBar } from '@ui-kitten/components';
+
+const BasicCircularProgress = () => (
+  <CircularProgressBar progress={0.65} />
+);
+```
+
+## Props
+
+<ParamField path="progress" type="number" default="0">
+  The current progress value, ranging from `0` to `1`. For example, `0.65` represents 65% completion.
+</ParamField>
+
+<ParamField path="animating" type="boolean" default="true">
+  Whether the progress bar animates when the progress value changes. Set to `false` for instant updates.
+</ParamField>
+
+<ParamField path="renderIcon" type="RenderProp<IconProps>">
+  Function component to render a custom icon in the center of the circular progress bar instead of the percentage text. Expected to return an Icon component.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="primary">
+  Determines the color of the progress indicator. Available values:
+  - `basic`
+  - `primary`
+  - `success`
+  - `info`
+  - `warning`
+  - `danger`
+  - `control` - Use when displaying on high-contrast backgrounds
+</ParamField>
+
+<ParamField path="size" type="EvaSize" default="medium">
+  Controls the size of the circular progress bar. Available values:
+  - `tiny`
+  - `small`
+  - `medium`
+  - `large`
+  - `giant`
+</ParamField>
+
+<ParamField path="textStyle" type="TextStyle">
+  Custom style object for the percentage text in the center.
+</ParamField>
+
+<ParamField path="iconStyle" type="IconStyle">
+  Custom style object for the icon rendered in the center (when using `renderIcon`).
+</ParamField>
+
+<ParamField path="animationConfig" type="CircularProgressBarAnimationConfig">
+  Configuration object for customizing the animation behavior. Can include properties like duration and easing function.
+</ParamField>
+
+<ParamField path="style" type="ViewStyle">
+  Custom style object to override default styling.
+</ParamField>
+
+## Examples
+
+### Different Sizes
+
+<CodeGroup>
+```jsx Sizes
+import { CircularProgressBar, Layout } from '@ui-kitten/components';
+
+const CircularProgressSizes = () => (
+  <Layout style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+    <CircularProgressBar progress={0.75} size='tiny' />
+    <CircularProgressBar progress={0.75} size='small' />
+    <CircularProgressBar progress={0.75} size='medium' />
+    <CircularProgressBar progress={0.75} size='large' />
+    <CircularProgressBar progress={0.75} size='giant' />
+  </Layout>
+);
+```
+</CodeGroup>
+
+### Different Statuses
+
+<CodeGroup>
+```jsx Statuses
+import { CircularProgressBar, Layout } from '@ui-kitten/components';
+
+const CircularProgressStatuses = () => (
+  <Layout style={{ flexDirection: 'row', gap: 16, flexWrap: 'wrap' }}>
+    <CircularProgressBar progress={0.8} status='primary' />
+    <CircularProgressBar progress={0.8} status='success' />
+    <CircularProgressBar progress={0.8} status='info' />
+    <CircularProgressBar progress={0.8} status='warning' />
+    <CircularProgressBar progress={0.8} status='danger' />
+  </Layout>
+);
+```
+</CodeGroup>
+
+### With Custom Icon
+
+<CodeGroup>
+```jsx Custom Icon
+import { CircularProgressBar, Icon } from '@ui-kitten/components';
+
+const CheckIcon = (props) => (
+  <Icon {...props} name='checkmark-outline' />
+);
+
+const ErrorIcon = (props) => (
+  <Icon {...props} name='close-outline' />
+);
+
+const ProgressWithIcons = () => (
+  <Layout style={{ flexDirection: 'row', gap: 16 }}>
+    <CircularProgressBar 
+      progress={1} 
+      status='success'
+      renderIcon={CheckIcon}
+    />
+    <CircularProgressBar 
+      progress={0.3} 
+      status='danger'
+      renderIcon={ErrorIcon}
+    />
+  </Layout>
+);
+```
+</CodeGroup>
+
+### Task Completion Tracker
+
+<CodeGroup>
+```jsx Task Tracker
+import React, { useState } from 'react';
+import { CircularProgressBar, Layout, Text, CheckBox } from '@ui-kitten/components';
+
+const TaskCompletionTracker = () => {
+  const [tasks, setTasks] = useState([
+    { id: 1, title: 'Design mockups', completed: true },
+    { id: 2, title: 'Write documentation', completed: true },
+    { id: 3, title: 'Code review', completed: false },
+    { id: 4, title: 'Deploy to production', completed: false },
+  ]);
+
+  const completedCount = tasks.filter(t => t.completed).length;
+  const progress = completedCount / tasks.length;
+
+  const toggleTask = (id) => {
+    setTasks(tasks.map(task => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+  };
+
+  const getStatus = () => {
+    if (progress === 1) return 'success';
+    if (progress >= 0.5) return 'info';
+    return 'warning';
+  };
+
+  return (
+    <Layout style={{ padding: 20, gap: 16 }}>
+      <Layout style={{ alignItems: 'center' }}>
+        <CircularProgressBar 
+          progress={progress} 
+          status={getStatus()}
+          size='large'
+        />
+        <Text category='h6' style={{ marginTop: 8 }}>
+          {completedCount} of {tasks.length} tasks
+        </Text>
+      </Layout>
+      
+      <Layout style={{ gap: 8 }}>
+        {tasks.map(task => (
+          <CheckBox
+            key={task.id}
+            checked={task.completed}
+            onChange={() => toggleTask(task.id)}
+          >
+            {task.title}
+          </CheckBox>
+        ))}
+      </Layout>
+    </Layout>
+  );
+};
+```
+</CodeGroup>
+
+### Storage Usage Indicator
+
+<CodeGroup>
+```jsx Storage Usage
+import React from 'react';
+import { CircularProgressBar, Layout, Text } from '@ui-kitten/components';
+
+const StorageUsageIndicator = () => {
+  const usedGB = 7.3;
+  const totalGB = 10;
+  const progress = usedGB / totalGB;
+
+  const getStatus = () => {
+    if (progress >= 0.9) return 'danger';
+    if (progress >= 0.7) return 'warning';
+    return 'success';
+  };
+
+  return (
+    <Layout style={{ alignItems: 'center', padding: 20 }}>
+      <Text category='h6'>Storage</Text>
+      <CircularProgressBar 
+        progress={progress} 
+        status={getStatus()}
+        size='giant'
+        style={{ marginVertical: 16 }}
+      />
+      <Text category='s1'>
+        {usedGB.toFixed(1)} GB of {totalGB} GB used
+      </Text>
+      <Text appearance='hint'>
+        {(totalGB - usedGB).toFixed(1)} GB remaining
+      </Text>
+    </Layout>
+  );
+};
+```
+</CodeGroup>
+
+### Custom Text Styling
+
+<CodeGroup>
+```jsx Custom Styling
+import { CircularProgressBar } from '@ui-kitten/components';
+
+const StyledCircularProgress = () => (
+  <CircularProgressBar 
+    progress={0.85} 
+    status='success'
+    textStyle={{
+      fontSize: 24,
+      fontWeight: 'bold',
+    }}
+  />
+);
+```
+</CodeGroup>
+
+### Without Animation
+
+<CodeGroup>
+```jsx Static Progress
+import { CircularProgressBar } from '@ui-kitten/components';
+
+const StaticCircularProgress = () => (
+  <CircularProgressBar 
+    progress={0.5} 
+    animating={false}
+  />
+);
+```
+</CodeGroup>
+
+## Theming
+
+The CircularProgressBar component can be customized using Eva Design System theming. You can override:
+- Track and indicator colors
+- Track width
+- Icon size
+- Text styling (font family, size, weight)
+- Component dimensions
+
+<Note>
+  Progress values are automatically clamped between 0 and 1. Values outside this range will be adjusted to the nearest valid value.
+</Note>
+
+## Accessibility
+
+- The component automatically displays percentage text for screen readers
+- When using custom icons, ensure they have appropriate accessibility labels
+- Use color and text/icon together to convey status (not color alone)
+- Consider adding descriptive labels above or below the progress indicator
+
+## Related Components
+
+- [ProgressBar](/components/progress-bar) - For horizontal progress display
+- [Spinner](/components/spinner) - For indeterminate loading states

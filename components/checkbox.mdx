@@ -1,0 +1,290 @@
+---
+title: CheckBox
+description: Checkboxes allow users to select one or more items from a set.
+---
+
+CheckBox allows users to select multiple options from a set. It supports checked, indeterminate, and disabled states.
+
+## Import
+
+```tsx
+import { CheckBox } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { CheckBox } from '@ui-kitten/components';
+
+export const CheckBoxExample = () => {
+  const [checked, setChecked] = React.useState(false);
+
+  return (
+    <CheckBox
+      checked={checked}
+      onChange={nextChecked => setChecked(nextChecked)}
+    >
+      Accept terms and conditions
+    </CheckBox>
+  );
+};
+```
+
+## States
+
+CheckBox supports checked, unchecked, and disabled states.
+
+```tsx
+<CheckBox checked={true}>
+  Checked
+</CheckBox>
+
+<CheckBox checked={false}>
+  Unchecked
+</CheckBox>
+
+<CheckBox checked={true} disabled>
+  Disabled Checked
+</CheckBox>
+
+<CheckBox checked={false} disabled>
+  Disabled Unchecked
+</CheckBox>
+```
+
+## Indeterminate State
+
+CheckBox supports an indeterminate state, useful for parent checkboxes in nested lists.
+
+```tsx
+import React from 'react';
+import { CheckBox } from '@ui-kitten/components';
+
+const IndeterminateExample = () => {
+  const [checked, setChecked] = React.useState(false);
+  const [indeterminate, setIndeterminate] = React.useState(true);
+
+  return (
+    <CheckBox
+      checked={checked}
+      indeterminate={indeterminate}
+      onChange={(nextChecked, nextIndeterminate) => {
+        setChecked(nextChecked);
+        setIndeterminate(nextIndeterminate);
+      }}
+    >
+      Select All
+    </CheckBox>
+  );
+};
+```
+
+<Note>
+The indeterminate state is automatically set to `false` when the checked state changes.
+</Note>
+
+## Status
+
+CheckBox can be styled with different status colors.
+
+```tsx
+<CheckBox status='primary' checked={true}>
+  Primary
+</CheckBox>
+
+<CheckBox status='success' checked={true}>
+  Success
+</CheckBox>
+
+<CheckBox status='info' checked={true}>
+  Info
+</CheckBox>
+
+<CheckBox status='warning' checked={true}>
+  Warning
+</CheckBox>
+
+<CheckBox status='danger' checked={true}>
+  Danger
+</CheckBox>
+
+<CheckBox status='control' checked={true}>
+  Control
+</CheckBox>
+```
+
+## Props
+
+<ParamField path="checked" type="boolean" default="false">
+  Whether the checkbox is checked.
+</ParamField>
+
+<ParamField path="onChange" type="(checked: boolean, indeterminate: boolean) => void">
+  Called when the checkbox should switch its value. Receives the new checked state and indeterminate state.
+</ParamField>
+
+<ParamField path="children" type="RenderProp<TextProps> | React.ReactText">
+  String, number or a function component to render next to the checkbox. If it is a function, expected to return a Text component.
+</ParamField>
+
+<ParamField path="indeterminate" type="boolean" default="false">
+  Whether the checked status is indeterminate. Will be set to false when the checked property changes.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="basic">
+  Status of the component. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the checkbox is disabled.
+</ParamField>
+
+## Form Examples
+
+### Terms and Conditions
+
+```tsx
+import React from 'react';
+import { CheckBox, Button, Layout, Text } from '@ui-kitten/components';
+
+const TermsForm = () => {
+  const [termsAccepted, setTermsAccepted] = React.useState(false);
+  const [newsletterOptIn, setNewsletterOptIn] = React.useState(false);
+
+  const handleSubmit = () => {
+    if (!termsAccepted) {
+      alert('Please accept the terms and conditions');
+      return;
+    }
+    // Submit form
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <CheckBox
+        checked={termsAccepted}
+        onChange={setTermsAccepted}
+      >
+        I accept the terms and conditions
+      </CheckBox>
+      
+      <CheckBox
+        checked={newsletterOptIn}
+        onChange={setNewsletterOptIn}
+      >
+        Subscribe to newsletter
+      </CheckBox>
+      
+      <Button 
+        onPress={handleSubmit}
+        disabled={!termsAccepted}
+      >
+        SUBMIT
+      </Button>
+    </Layout>
+  );
+};
+```
+
+### Nested Checkbox List
+
+```tsx
+import React from 'react';
+import { CheckBox, Layout } from '@ui-kitten/components';
+
+const NestedCheckboxList = () => {
+  const [items, setItems] = React.useState([
+    { id: 1, label: 'Item 1', checked: false },
+    { id: 2, label: 'Item 2', checked: false },
+    { id: 3, label: 'Item 3', checked: false },
+  ]);
+
+  const allChecked = items.every(item => item.checked);
+  const someChecked = items.some(item => item.checked) && !allChecked;
+
+  const handleParentChange = (checked) => {
+    setItems(items.map(item => ({ ...item, checked })));
+  };
+
+  const handleItemChange = (id, checked) => {
+    setItems(items.map(item => 
+      item.id === id ? { ...item, checked } : item
+    ));
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 12 }}>
+      <CheckBox
+        checked={allChecked}
+        indeterminate={someChecked}
+        onChange={handleParentChange}
+      >
+        Select All
+      </CheckBox>
+      
+      <Layout style={{ paddingLeft: 24, gap: 8 }}>
+        {items.map(item => (
+          <CheckBox
+            key={item.id}
+            checked={item.checked}
+            onChange={(checked) => handleItemChange(item.id, checked)}
+          >
+            {item.label}
+          </CheckBox>
+        ))}
+      </Layout>
+    </Layout>
+  );
+};
+```
+
+### Filter Checkboxes
+
+```tsx
+import React from 'react';
+import { CheckBox, Layout, Text } from '@ui-kitten/components';
+
+const FilterCheckboxes = () => {
+  const [filters, setFilters] = React.useState({
+    inStock: false,
+    onSale: false,
+    freeShipping: false,
+  });
+
+  const toggleFilter = (key) => {
+    setFilters(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const activeFiltersCount = Object.values(filters).filter(Boolean).length;
+
+  return (
+    <Layout style={{ padding: 16, gap: 12 }}>
+      <Text category='h6'>
+        Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+      </Text>
+      
+      <CheckBox
+        checked={filters.inStock}
+        onChange={() => toggleFilter('inStock')}
+      >
+        In Stock
+      </CheckBox>
+      
+      <CheckBox
+        checked={filters.onSale}
+        onChange={() => toggleFilter('onSale')}
+      >
+        On Sale
+      </CheckBox>
+      
+      <CheckBox
+        checked={filters.freeShipping}
+        onChange={() => toggleFilter('freeShipping')}
+      >
+        Free Shipping
+      </CheckBox>
+    </Layout>
+  );
+};
+```

@@ -1,0 +1,456 @@
+---
+title: Web Support
+description: Run your UI Kitten application on the web using React Native Web for cross-platform development
+---
+
+Starting from version 4.1, UI Kitten includes built-in support for web platforms using [React Native Web](https://necolas.github.io/react-native-web/). This allows you to run your mobile app in the browser with minimal configuration.
+
+<Warning>
+Web support is considered experimental and hasn't been widely used in production. While functional, you may encounter edge cases. We encourage you to try it and report any issues.
+</Warning>
+
+## Quick Start with Expo
+
+The easiest way to start a new project with web support is using Expo.
+
+<Steps>
+  <Step title="Install Expo CLI">
+    Follow the [Expo Installation Guide](https://docs.expo.io/get-started/installation/) to set up Expo on your system
+  </Step>
+  <Step title="Create New Project">
+    Initialize a new Expo project:
+    ```bash
+    npx create-expo-app my-app
+    cd my-app
+    ```
+  </Step>
+  <Step title="Install UI Kitten">
+    Follow the [Installation guide](/installation) to add UI Kitten to your project
+  </Step>
+  <Step title="Run on Web">
+    Start the web development server:
+    ```bash
+    npx expo start --web
+    ```
+  </Step>
+</Steps>
+
+Expo handles all the React Native Web configuration automatically.
+
+## Existing Expo Applications
+
+If you already have an Expo application, adding web support is straightforward.
+
+### Add Web Support
+
+Expo projects created recently already include web support. If yours doesn't, follow these steps:
+
+<Steps>
+  <Step title="Install Dependencies">
+    Install React Native Web and related packages:
+    ```bash
+    npx expo install react-native-web react-dom @expo/webpack-config
+    ```
+  </Step>
+  <Step title="Run on Web">
+    Start your app on web:
+    ```bash
+    npx expo start --web
+    ```
+  </Step>
+</Steps>
+
+For more details, read the [Expo web documentation](https://docs.expo.dev/workflow/web/).
+
+## Regular React Native Applications
+
+For bare React Native projects (created with `react-native init`), you'll need to manually configure React Native Web.
+
+### Manual Configuration
+
+Follow the [React Native Web multi-platform guide](https://necolas.github.io/react-native-web/docs/multi-platform/) for complete setup instructions.
+
+### Key Steps
+
+<Steps>
+  <Step title="Install Dependencies">
+    ```bash
+    npm install react-native-web react-dom
+    npm install --save-dev babel-plugin-react-native-web webpack webpack-cli webpack-dev-server
+    ```
+  </Step>
+  <Step title="Configure Webpack">
+    Create `webpack.config.js` in your project root:
+    ```js
+    const path = require('path');
+
+    module.exports = {
+      entry: './index.web.js',
+      output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js',
+      },
+      module: {
+        rules: [
+          {
+            test: /\.(js|jsx|ts|tsx)$/,
+            exclude: /node_modules/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  '@babel/preset-react',
+                  '@babel/preset-typescript',
+                ],
+                plugins: ['react-native-web'],
+              },
+            },
+          },
+        ],
+      },
+      resolve: {
+        alias: {
+          'react-native$': 'react-native-web',
+        },
+        extensions: ['.web.js', '.js', '.web.ts', '.ts', '.web.tsx', '.tsx'],
+      },
+      devServer: {
+        static: {
+          directory: path.join(__dirname, 'public'),
+        },
+        compress: true,
+        port: 3000,
+      },
+    };
+    ```
+  </Step>
+  <Step title="Create Web Entry Point">
+    Create `index.web.js`:
+    ```js
+    import { AppRegistry } from 'react-native';
+    import App from './App';
+    import { name as appName } from './app.json';
+
+    AppRegistry.registerComponent(appName, () => App);
+    AppRegistry.runApplication(appName, {
+      rootTag: document.getElementById('root'),
+    });
+    ```
+  </Step>
+  <Step title="Create HTML Template">
+    Create `public/index.html`:
+    ```html
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>My App</title>
+        <style>
+          html, body, #root {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+          }
+          #root {
+            display: flex;
+            flex-direction: column;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="root"></div>
+        <script src="../dist/bundle.js"></script>
+      </body>
+    </html>
+    ```
+  </Step>
+  <Step title="Add NPM Scripts">
+    Update `package.json`:
+    ```json
+    {
+      "scripts": {
+        "web": "webpack serve --mode development",
+        "build:web": "webpack --mode production"
+      }
+    }
+    ```
+  </Step>
+  <Step title="Run on Web">
+    ```bash
+    npm run web
+    ```
+  </Step>
+</Steps>
+
+## UI Kitten Web Configuration
+
+UI Kitten doesn't require any special web-specific configuration. Once React Native Web is set up, UI Kitten components work out of the box.
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
+
+export default () => (
+  <ApplicationProvider {...eva} theme={eva.light}>
+    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text category='h1'>Hello Web!</Text>
+      <Button>Click Me</Button>
+    </Layout>
+  </ApplicationProvider>
+);
+```
+
+## Platform-Specific Code
+
+Use React Native's `Platform` module for platform-specific code:
+
+```tsx
+import { Platform, StyleSheet } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const PlatformDemo = () => (
+  <Layout style={styles.container}>
+    <Text>Running on: {Platform.OS}</Text>
+  </Layout>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: Platform.select({
+      web: 32,
+      ios: 16,
+      android: 16,
+    }),
+  },
+});
+```
+
+### File Extensions
+
+Create platform-specific files using extensions:
+
+- `Component.web.tsx` - Web only
+- `Component.ios.tsx` - iOS only
+- `Component.android.tsx` - Android only
+- `Component.tsx` - All platforms
+
+React Native Web automatically picks the most specific file:
+
+```tsx
+// Navigation.web.tsx - Web-specific navigation
+import { BrowserRouter } from 'react-router-dom';
+
+export const Navigation = () => (
+  <BrowserRouter>
+    {/* Web navigation */}
+  </BrowserRouter>
+);
+
+// Navigation.tsx - Mobile navigation
+import { NavigationContainer } from '@react-navigation/native';
+
+export const Navigation = () => (
+  <NavigationContainer>
+    {/* Mobile navigation */}
+  </NavigationContainer>
+);
+```
+
+## Web-Specific Considerations
+
+### Hover States
+
+Web supports hover interactions that aren't available on mobile:
+
+```tsx
+import React, { useState } from 'react';
+import { Button } from '@ui-kitten/components';
+import { Platform } from 'react-native';
+
+export const HoverButton = () => {
+  const [hovered, setHovered] = useState(false);
+
+  const webProps = Platform.OS === 'web' ? {
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+  } : {};
+
+  return (
+    <Button
+      {...webProps}
+      appearance={hovered ? 'outline' : 'filled'}
+    >
+      Hover Me
+    </Button>
+  );
+};
+```
+
+### Responsive Design
+
+Use `useWindowDimensions` for responsive layouts:
+
+```tsx
+import React from 'react';
+import { useWindowDimensions } from 'react-native';
+import { Layout, Card } from '@ui-kitten/components';
+
+export const ResponsiveGrid = () => {
+  const { width } = useWindowDimensions();
+  const columns = width > 1200 ? 3 : width > 768 ? 2 : 1;
+
+  return (
+    <Layout style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+      {items.map((item) => (
+        <Card
+          key={item.id}
+          style={{ width: `${100 / columns}%` }}
+        >
+          {/* Card content */}
+        </Card>
+      ))}
+    </Layout>
+  );
+};
+```
+
+### SEO and Meta Tags
+
+For web, add proper SEO tags using `react-helmet` or similar:
+
+```tsx
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const HomePage = () => (
+  <>
+    <Helmet>
+      <title>My App - Home</title>
+      <meta name="description" content="Welcome to my app" />
+      <meta property="og:title" content="My App" />
+    </Helmet>
+    <Layout style={{ flex: 1 }}>
+      <Text category='h1'>Home</Text>
+    </Layout>
+  </>
+);
+```
+
+## Icons on Web
+
+Eva Icons work seamlessly on web with react-native-svg-web:
+
+```tsx
+import React from 'react';
+import { Icon } from '@ui-kitten/components';
+
+export const WebIcon = () => (
+  <Icon
+    name='star'
+    style={{ width: 32, height: 32 }}
+    fill='#FFD700'
+  />
+);
+```
+
+## Building for Production
+
+### Expo
+
+```bash
+npx expo export:web
+```
+
+This creates an optimized production build in the `web-build` directory.
+
+### Bare React Native
+
+```bash
+npm run build:web
+```
+
+Deploy the contents of the `dist` directory to your web host.
+
+## Performance Optimization
+
+<AccordionGroup>
+  <Accordion title="Code Splitting">
+    Use dynamic imports to split your bundle:
+    ```tsx
+    const HeavyComponent = React.lazy(() => import('./HeavyComponent'));
+
+    <Suspense fallback={<Spinner />}>
+      <HeavyComponent />
+    </Suspense>
+    ```
+  </Accordion>
+
+  <Accordion title="Tree Shaking">
+    Import only what you need from UI Kitten:
+    ```tsx
+    // Good - tree shakeable
+    import { Button, Layout } from '@ui-kitten/components';
+
+    // Avoid - imports everything
+    import * as UIKitten from '@ui-kitten/components';
+    ```
+  </Accordion>
+
+  <Accordion title="Image Optimization">
+    Use optimized image formats and lazy loading:
+    ```tsx
+    import { Image } from 'react-native';
+
+    <Image
+      source={{ uri: 'image.webp' }}
+      style={{ width: 200, height: 200 }}
+      loading="lazy"
+    />
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Known Limitations
+
+- **Animations**: Some complex animations may not work identically on web
+- **Native Modules**: Platform-specific native modules won't work on web
+- **Navigation**: React Navigation drawer may behave differently on web
+- **Performance**: Large lists may need web-specific optimizations
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Components Not Rendering">
+    - Ensure React Native Web is properly aliased in your webpack config
+    - Check that all dependencies are web-compatible
+    - Verify your entry point correctly registers the app
+  </Accordion>
+
+  <Accordion title="Styling Issues">
+    - React Native Web doesn't support all React Native styles
+    - Test your components on web early in development
+    - Use `Platform.select()` for platform-specific styles
+  </Accordion>
+
+  <Accordion title="Icons Not Displaying">
+    - Ensure `react-native-svg` is installed
+    - Webpack may need configuration for SVG loading
+    - Check that IconRegistry is properly configured
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Branding" icon="palette" href="/guides/branding">
+    Create custom themes that work across all platforms
+  </Card>
+  <Card title="Improving Performance" icon="gauge" href="/guides/improving-performance">
+    Optimize your multi-platform app for production
+  </Card>
+</CardGroup>

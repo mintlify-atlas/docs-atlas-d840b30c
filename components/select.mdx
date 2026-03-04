@@ -1,0 +1,420 @@
+---
+title: Select
+description: A dropdown menu for displaying and selecting options from a list.
+---
+
+Select is a dropdown component that displays a list of options for users to choose from. It supports single and multiple selection, grouping, and custom rendering.
+
+## Import
+
+```tsx
+import { Select, SelectItem, SelectGroup } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
+
+export const SelectExample = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Select
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+      value='Option 1'
+    >
+      <SelectItem title='Option 1' />
+      <SelectItem title='Option 2' />
+      <SelectItem title='Option 3' />
+    </Select>
+  );
+};
+```
+
+## IndexPath
+
+Select uses IndexPath to represent the selected option. For simple lists, IndexPath only has a `row` property. For grouped lists, it has both `row` and `section` properties.
+
+```tsx
+// Simple list
+const index = new IndexPath(0); // First item
+
+// Grouped list
+const index = new IndexPath(0, 1); // First item in second group
+```
+
+## Display Value
+
+Use the `value` prop to control what's displayed when an option is selected.
+
+```tsx
+import React from 'react';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
+
+const SelectWithValue = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+  
+  const data = ['Option 1', 'Option 2', 'Option 3'];
+  const displayValue = data[selectedIndex.row];
+
+  return (
+    <Select
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+      value={displayValue}
+    >
+      {data.map((title, index) => (
+        <SelectItem key={index} title={title} />
+      ))}
+    </Select>
+  );
+};
+```
+
+## Multi-Select
+
+Enable multiple selection with the `multiSelect` prop.
+
+```tsx
+import React from 'react';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
+
+const MultiSelect = () => {
+  const [selectedIndices, setSelectedIndices] = React.useState([
+    new IndexPath(0),
+    new IndexPath(1),
+  ]);
+
+  const displayValue = selectedIndices
+    .map(index => `Option ${index.row + 1}`)
+    .join(', ');
+
+  return (
+    <Select
+      multiSelect
+      selectedIndex={selectedIndices}
+      onSelect={indices => setSelectedIndices(indices)}
+      value={displayValue}
+    >
+      <SelectItem title='Option 1' />
+      <SelectItem title='Option 2' />
+      <SelectItem title='Option 3' />
+      <SelectItem title='Option 4' />
+    </Select>
+  );
+};
+```
+
+## Grouped Options
+
+Use SelectGroup to organize options into categories.
+
+```tsx
+import { Select, SelectItem, SelectGroup, IndexPath } from '@ui-kitten/components';
+
+const GroupedSelect = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0, 0));
+
+  return (
+    <Select
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+      value='Option 1'
+    >
+      <SelectGroup title='Group 1'>
+        <SelectItem title='Option 1' />
+        <SelectItem title='Option 2' />
+      </SelectGroup>
+      <SelectGroup title='Group 2'>
+        <SelectItem title='Option 3' />
+        <SelectItem title='Option 4' />
+      </SelectGroup>
+    </Select>
+  );
+};
+```
+
+## With Label and Caption
+
+```tsx
+<Select
+  label='Country'
+  placeholder='Select a country'
+  caption='Choose your country'
+  selectedIndex={selectedIndex}
+  onSelect={setSelectedIndex}
+  value={selectedCountry}
+>
+  <SelectItem title='United States' />
+  <SelectItem title='Canada' />
+  <SelectItem title='Mexico' />
+</Select>
+```
+
+## Status
+
+Use status for validation feedback.
+
+```tsx
+<Select
+  status='success'
+  label='Valid Selection'
+  caption='Selection is valid'
+  selectedIndex={selectedIndex}
+  onSelect={setSelectedIndex}
+>
+  <SelectItem title='Option 1' />
+  <SelectItem title='Option 2' />
+</Select>
+
+<Select
+  status='danger'
+  label='Invalid Selection'
+  caption='Please select an option'
+  placeholder='Select an option'
+>
+  <SelectItem title='Option 1' />
+  <SelectItem title='Option 2' />
+</Select>
+```
+
+## Sizes
+
+```tsx
+<Select size='small' placeholder='Small select' />
+<Select size='medium' placeholder='Medium select' />
+<Select size='large' placeholder='Large select' />
+```
+
+## Accessories
+
+```tsx
+import { Select, SelectItem, Icon } from '@ui-kitten/components';
+
+const LocationIcon = (props) => <Icon {...props} name='pin' />;
+
+<Select
+  accessoryLeft={LocationIcon}
+  placeholder='Select location'
+>
+  <SelectItem title='New York' />
+  <SelectItem title='London' />
+  <SelectItem title='Tokyo' />
+</Select>
+```
+
+## Disabled Options
+
+```tsx
+<Select>
+  <SelectItem title='Available Option' />
+  <SelectItem title='Disabled Option' disabled />
+  <SelectItem title='Another Available' />
+</Select>
+```
+
+## Props
+
+<ParamField path="selectedIndex" type="IndexPath | IndexPath[]">
+  Index or array of indices of selected options. For grouped selects, use IndexPath with section property.
+</ParamField>
+
+<ParamField path="onSelect" type="(index: IndexPath | IndexPath[]) => void">
+  Called when an option is selected. Receives IndexPath or array of IndexPath if multiSelect is true.
+</ParamField>
+
+<ParamField path="value" type="RenderProp<TextProps> | React.ReactText">
+  String, number or function component to display for selected options. By default, calls toString() for each selected index.
+</ParamField>
+
+<ParamField path="multiSelect" type="boolean" default="false">
+  Whether multiple options can be selected. If true, onSelect is called with array of IndexPath.
+</ParamField>
+
+<ParamField path="placeholder" type="RenderProp<TextProps> | React.ReactText" default="'Select Option'">
+  Text to display when no option is selected.
+</ParamField>
+
+<ParamField path="label" type="RenderProp<TextProps> | React.ReactText">
+  String, number or function component to render above the select.
+</ParamField>
+
+<ParamField path="caption" type="RenderProp<TextProps> | React.ReactText">
+  String, number or function component to render below the select.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="basic">
+  Status of the component. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="medium">
+  Size of the select.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start. Expected to return an Image or Icon.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end. Expected to return an Image or Icon.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the select is disabled.
+</ParamField>
+
+## Methods
+
+<ParamField path="focus()" type="() => void">
+  Focuses the select and shows the options list.
+</ParamField>
+
+<ParamField path="blur()" type="() => void">
+  Removes focus and hides the options list.
+</ParamField>
+
+<ParamField path="isFocused()" type="() => boolean">
+  Returns whether the select is currently focused and options list is visible.
+</ParamField>
+
+<ParamField path="clear()" type="() => void">
+  Clears the selection.
+</ParamField>
+
+## Form Examples
+
+### Country Selector
+
+```tsx
+import React from 'react';
+import { Select, SelectItem, IndexPath, Layout } from '@ui-kitten/components';
+
+const CountrySelector = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+  
+  const countries = [
+    'United States',
+    'Canada',
+    'United Kingdom',
+    'Australia',
+    'Germany',
+    'France',
+  ];
+
+  return (
+    <Layout style={{ padding: 16 }}>
+      <Select
+        label='Country'
+        placeholder='Select your country'
+        selectedIndex={selectedIndex}
+        onSelect={index => setSelectedIndex(index)}
+        value={countries[selectedIndex.row]}
+      >
+        {countries.map((country, index) => (
+          <SelectItem key={index} title={country} />
+        ))}
+      </Select>
+    </Layout>
+  );
+};
+```
+
+### Form with Validation
+
+```tsx
+import React from 'react';
+import { Select, SelectItem, IndexPath, Button } from '@ui-kitten/components';
+
+const ValidatedForm = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(null);
+  const [error, setError] = React.useState('');
+
+  const options = ['Option 1', 'Option 2', 'Option 3'];
+
+  const handleSubmit = () => {
+    if (!selectedIndex) {
+      setError('Please select an option');
+      return;
+    }
+    setError('');
+    // Submit form
+  };
+
+  return (
+    <>
+      <Select
+        label='Select an option *'
+        placeholder='Choose one'
+        selectedIndex={selectedIndex}
+        onSelect={(index) => {
+          setSelectedIndex(index);
+          setError('');
+        }}
+        value={selectedIndex ? options[selectedIndex.row] : undefined}
+        status={error ? 'danger' : 'basic'}
+        caption={error}
+      >
+        {options.map((option, index) => (
+          <SelectItem key={index} title={option} />
+        ))}
+      </Select>
+      <Button onPress={handleSubmit}>SUBMIT</Button>
+    </>
+  );
+};
+```
+
+### Dynamic Options
+
+```tsx
+import React from 'react';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
+
+const DynamicSelect = () => {
+  const [category, setCategory] = React.useState(new IndexPath(0));
+  const [product, setProduct] = React.useState(null);
+
+  const categories = ['Electronics', 'Clothing', 'Books'];
+  const productsByCategory = {
+    0: ['Laptop', 'Phone', 'Tablet'],
+    1: ['Shirt', 'Pants', 'Shoes'],
+    2: ['Fiction', 'Non-fiction', 'Biography'],
+  };
+
+  const availableProducts = productsByCategory[category.row] || [];
+
+  return (
+    <>
+      <Select
+        label='Category'
+        selectedIndex={category}
+        onSelect={(index) => {
+          setCategory(index);
+          setProduct(null);
+        }}
+        value={categories[category.row]}
+      >
+        {categories.map((cat, index) => (
+          <SelectItem key={index} title={cat} />
+        ))}
+      </Select>
+
+      <Select
+        label='Product'
+        placeholder='Select a product'
+        selectedIndex={product}
+        onSelect={setProduct}
+        value={product ? availableProducts[product.row] : undefined}
+        disabled={!availableProducts.length}
+      >
+        {availableProducts.map((prod, index) => (
+          <SelectItem key={index} title={prod} />
+        ))}
+      </Select>
+    </>
+  );
+};
+```

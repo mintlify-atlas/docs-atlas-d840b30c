@@ -1,0 +1,246 @@
+---
+title: Divider
+description: A thin line component that groups content and creates visual separation in lists and layouts
+---
+
+## Overview
+
+Divider is a simple component that renders a thin horizontal or vertical line to visually separate content. It uses theme colors to ensure consistency across light and dark modes.
+
+## Basic Usage
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+export const SimpleDivider = () => (
+  <Layout style={{ padding: 16 }}>
+    <Text>Section 1</Text>
+    <Divider />
+    <Text>Section 2</Text>
+  </Layout>
+);
+```
+
+## Horizontal Divider
+
+By default, Divider renders as a horizontal line:
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+export const HorizontalDivider = () => (
+  <Layout style={{ padding: 16 }}>
+    <Text category='h6'>Header</Text>
+    <Divider style={{ marginVertical: 8 }} />
+    <Text>Content below the divider</Text>
+  </Layout>
+);
+```
+
+## Vertical Divider
+
+You can create vertical dividers by applying custom styles:
+
+```jsx
+import React from 'react';
+import { View } from 'react-native';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+export const VerticalDivider = () => (
+  <Layout style={{ padding: 16 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Text>Left</Text>
+      <Divider style={{ width: 1, height: 40, marginHorizontal: 16 }} />
+      <Text>Right</Text>
+    </View>
+  </Layout>
+);
+```
+
+## Props
+
+<ParamField path="appearance" type="'default'" default="'default'">
+  Visual appearance of the divider. Currently only supports `'default'`.
+</ParamField>
+
+<ParamField path="...ViewProps" type="ViewProps">
+  Divider extends React Native's `View` component and accepts all standard [View props](https://reactnative.dev/docs/view#props).
+  
+  Common props include:
+  - `style` - Customize the divider's appearance (margins, width, height, color)
+  - `testID` - For testing purposes
+</ParamField>
+
+## Common Patterns
+
+### List Item Separator
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+const items = ['Item 1', 'Item 2', 'Item 3', 'Item 4'];
+
+export const ListWithDividers = () => (
+  <Layout>
+    {items.map((item, index) => (
+      <React.Fragment key={index}>
+        <Layout style={{ padding: 16 }}>
+          <Text>{item}</Text>
+        </Layout>
+        {index < items.length - 1 && <Divider />}
+      </React.Fragment>
+    ))}
+  </Layout>
+);
+```
+
+### Section Divider with Spacing
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+export const SectionDivider = () => (
+  <Layout style={{ padding: 16 }}>
+    <Text category='h5'>Section Title</Text>
+    <Text appearance='hint'>Section description</Text>
+    <Divider style={{ marginVertical: 16 }} />
+    <Text>Section content goes here...</Text>
+  </Layout>
+);
+```
+
+### Card Divider
+
+Dividers are commonly used within Card components to separate header, body, and footer:
+
+```jsx
+import React from 'react';
+import { Card, Text, Divider } from '@ui-kitten/components';
+
+export const CardWithDividers = () => (
+  <Card>
+    <Text category='h6'>Card Header</Text>
+    <Divider style={{ marginVertical: 8 }} />
+    <Text>Card body content...</Text>
+    <Divider style={{ marginVertical: 8 }} />
+    <Text appearance='hint'>Card footer</Text>
+  </Card>
+);
+```
+
+### Form Section Divider
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider, Input } from '@ui-kitten/components';
+
+export const FormSections = () => (
+  <Layout style={{ padding: 16 }}>
+    <Text category='h6'>Personal Information</Text>
+    <Input placeholder='Name' style={{ marginTop: 8 }} />
+    <Input placeholder='Email' style={{ marginTop: 8 }} />
+    
+    <Divider style={{ marginVertical: 16 }} />
+    
+    <Text category='h6'>Address</Text>
+    <Input placeholder='Street' style={{ marginTop: 8 }} />
+    <Input placeholder='City' style={{ marginTop: 8 }} />
+  </Layout>
+);
+```
+
+## Styling
+
+### Custom Color
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+export const ColoredDivider = () => (
+  <Layout style={{ padding: 16 }}>
+    <Text>Section 1</Text>
+    <Divider style={{ backgroundColor: '#3366FF', height: 2 }} />
+    <Text>Section 2</Text>
+  </Layout>
+);
+```
+
+### Custom Thickness
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+export const ThickDivider = () => (
+  <Layout style={{ padding: 16 }}>
+    <Text>Thin divider:</Text>
+    <Divider style={{ marginVertical: 8 }} />
+    
+    <Text>Medium divider:</Text>
+    <Divider style={{ marginVertical: 8, height: 2 }} />
+    
+    <Text>Thick divider:</Text>
+    <Divider style={{ marginVertical: 8, height: 4 }} />
+  </Layout>
+);
+```
+
+### Inset Divider
+
+```jsx
+import React from 'react';
+import { Layout, Text, Divider } from '@ui-kitten/components';
+
+export const InsetDivider = () => (
+  <Layout>
+    <Layout style={{ padding: 16 }}>
+      <Text>Full width divider</Text>
+    </Layout>
+    <Divider />
+    
+    <Layout style={{ padding: 16 }}>
+      <Text>Inset divider</Text>
+    </Layout>
+    <Divider style={{ marginHorizontal: 16 }} />
+    
+    <Layout style={{ padding: 16 }}>
+      <Text>Another item</Text>
+    </Layout>
+  </Layout>
+);
+```
+
+## Theme Customization
+
+Divider colors are defined in your theme configuration:
+
+```json
+{
+  "Divider": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {
+          "backgroundColor": "color-basic-400",
+          "height": 1
+        }
+      }
+    }
+  }
+}
+```
+
+## Accessibility
+
+<Note>
+Divider is a purely visual component. Screen readers typically ignore decorative elements like dividers. If the divider serves a semantic purpose, consider using proper semantic markup or ARIA attributes on surrounding elements.
+</Note>
+
+## Source Code
+
+View the source code on GitHub: [divider.component.tsx](https://github.com/akveo/react-native-ui-kitten/blob/master/src/components/ui/divider/divider.component.tsx)

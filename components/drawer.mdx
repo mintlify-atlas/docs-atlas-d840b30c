@@ -1,0 +1,383 @@
+---
+title: Drawer
+description: A navigation panel that slides from the side of the screen, commonly used for app-wide navigation menus.
+---
+
+# Drawer
+
+Drawer is a navigation panel which slides from the side of the screen. It should contain `DrawerItem` or `DrawerGroup` components to provide a useful navigation component.
+
+## Import
+
+```tsx
+import { Drawer, DrawerItem, DrawerGroup, IndexPath } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { Drawer, DrawerItem, IndexPath } from '@ui-kitten/components';
+
+export const DrawerSimple = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Drawer
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <DrawerItem title='Users'/>
+      <DrawerItem title='Orders'/>
+      <DrawerItem title='Settings'/>
+    </Drawer>
+  );
+};
+```
+
+## Props
+
+### Drawer
+
+<ParamField path="children" type="ReactElement<DrawerItemProps> | ReactElement<DrawerItemProps>[]">
+  Items to be rendered within the drawer. Should contain `DrawerItem` or `DrawerGroup` components.
+</ParamField>
+
+<ParamField path="selectedIndex" type="IndexPath">
+  Index of the selected item. For non-grouped items, use `new IndexPath(row)`. For grouped items, use `new IndexPath(row, section)`.
+</ParamField>
+
+<ParamField path="onSelect" type="(index: IndexPath) => void">
+  Callback called when an item is pressed. Receives an `IndexPath` object with `row` and optional `section` properties.
+</ParamField>
+
+<ParamField path="header" type="ReactElement | (ViewProps) => ReactElement">
+  Function component or element to render above the content.
+</ParamField>
+
+<ParamField path="footer" type="ReactElement | (ViewProps) => ReactElement">
+  Function component or element to render below the content.
+</ParamField>
+
+<ParamField path="appearance" type="'default' | 'noDivider'" default="'default'">
+  Appearance of the component. Use `'noDivider'` to hide dividers between items.
+</ParamField>
+
+<ParamField path="...ListProps" type="ListProps">
+  Accepts all React Native [FlatList](https://reactnative.dev/docs/flatlist) component props, excluding `renderItem` and `data`.
+</ParamField>
+
+### DrawerItem
+
+<ParamField path="title" type="RenderProp<TextProps> | ReactText">
+  String, number, or a function component to render within the item. If it is a function, it should return a `Text` component.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start of the title. Expected to return an `Image` or icon component.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end of the title. Expected to return an `Image` or icon component.
+</ParamField>
+
+<ParamField path="...TouchableOpacityProps" type="TouchableOpacityProps">
+  Accepts all React Native [TouchableOpacity](https://reactnative.dev/docs/touchableopacity) component props.
+</ParamField>
+
+### DrawerGroup
+
+<ParamField path="children" type="ReactElement<DrawerItemProps> | ReactElement<DrawerItemProps>[]">
+  Items to be rendered within the group.
+</ParamField>
+
+<ParamField path="title" type="RenderProp<TextProps> | ReactText">
+  String, number, or a function component to render as the group title.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start of the title.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end of the title.
+</ParamField>
+
+<ParamField path="initiallyExpanded" type="boolean">
+  Whether the group should be initially expanded.
+</ParamField>
+
+<ParamField path="...TouchableOpacityProps" type="TouchableOpacityProps">
+  Accepts all React Native [TouchableOpacity](https://reactnative.dev/docs/touchableopacity) component props.
+</ParamField>
+
+## IndexPath
+
+Drawer uses a special `IndexPath` object to identify items:
+
+```tsx
+interface IndexPath {
+  row: number;      // Index of item
+  section?: number; // Index of group (optional)
+}
+```
+
+- For non-grouped items: `new IndexPath(0)` - only `row` is used
+- For grouped items: `new IndexPath(1, 2)` - `row` is the item index within the group, `section` is the group index
+
+## Examples
+
+### With Icons
+
+Add icons to drawer items for better visual recognition.
+
+```tsx
+import React from 'react';
+import { Drawer, DrawerItem, IndexPath, Icon } from '@ui-kitten/components';
+
+const PersonIcon = (props) => (
+  <Icon {...props} name='person-outline'/>
+);
+
+const ShoppingCartIcon = (props) => (
+  <Icon {...props} name='shopping-cart-outline'/>
+);
+
+const SettingsIcon = (props) => (
+  <Icon {...props} name='settings-outline'/>
+);
+
+export const DrawerWithIcons = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Drawer
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <DrawerItem title='Users' accessoryLeft={PersonIcon}/>
+      <DrawerItem title='Orders' accessoryLeft={ShoppingCartIcon}/>
+      <DrawerItem title='Settings' accessoryLeft={SettingsIcon}/>
+    </Drawer>
+  );
+};
+```
+
+### With Header and Footer
+
+Add header and footer sections to the drawer.
+
+```tsx
+import React from 'react';
+import { View } from 'react-native';
+import { Drawer, DrawerItem, IndexPath, Avatar, Text } from '@ui-kitten/components';
+
+const Header = () => (
+  <View style={{ padding: 20, backgroundColor: '#3366FF' }}>
+    <Avatar
+      size='giant'
+      source={{ uri: 'https://via.placeholder.com/150' }}
+    />
+    <Text category='h6' style={{ marginTop: 10, color: 'white' }}>
+      John Doe
+    </Text>
+    <Text category='c1' style={{ color: 'white' }}>
+      john.doe@example.com
+    </Text>
+  </View>
+);
+
+const Footer = () => (
+  <View style={{ padding: 20 }}>
+    <Text category='c1' appearance='hint'>
+      Version 1.0.0
+    </Text>
+  </View>
+);
+
+export const DrawerWithHeaderFooter = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Drawer
+      header={Header}
+      footer={Footer}
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <DrawerItem title='Users'/>
+      <DrawerItem title='Orders'/>
+      <DrawerItem title='Settings'/>
+    </Drawer>
+  );
+};
+```
+
+### With Groups
+
+Organize items into expandable groups.
+
+```tsx
+import React from 'react';
+import { Drawer, DrawerItem, DrawerGroup, IndexPath, Icon } from '@ui-kitten/components';
+
+const PersonIcon = (props) => (
+  <Icon {...props} name='person-outline'/>
+);
+
+const SettingsIcon = (props) => (
+  <Icon {...props} name='settings-outline'/>
+);
+
+export const DrawerWithGroups = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Drawer
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <DrawerItem title='Dashboard'/>
+      <DrawerGroup title='User Management' accessoryLeft={PersonIcon}>
+        <DrawerItem title='Users'/>
+        <DrawerItem title='Roles'/>
+        <DrawerItem title='Permissions'/>
+      </DrawerGroup>
+      <DrawerGroup title='Settings' accessoryLeft={SettingsIcon}>
+        <DrawerItem title='General'/>
+        <DrawerItem title='Privacy'/>
+        <DrawerItem title='Security'/>
+      </DrawerGroup>
+    </Drawer>
+  );
+};
+```
+
+### With React Navigation
+
+Integrate Drawer with React Navigation's Drawer Navigator.
+
+```tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Drawer, DrawerItem, Layout, Text, IndexPath } from '@ui-kitten/components';
+
+const { Navigator, Screen } = createDrawerNavigator();
+
+const UsersScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>USERS</Text>
+  </Layout>
+);
+
+const OrdersScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>ORDERS</Text>
+  </Layout>
+);
+
+const DrawerContent = ({ navigation, state }) => (
+  <Drawer
+    selectedIndex={new IndexPath(state.index)}
+    onSelect={index => navigation.navigate(state.routeNames[index.row])}>
+    <DrawerItem title='Users' />
+    <DrawerItem title='Orders' />
+  </Drawer>
+);
+
+export const DrawerNavigator = () => (
+  <Navigator drawerContent={props => <DrawerContent {...props}/>}>
+    <Screen name='Users' component={UsersScreen}/>
+    <Screen name='Orders' component={OrdersScreen}/>
+  </Navigator>
+);
+
+export const AppNavigator = () => (
+  <NavigationContainer>
+    <DrawerNavigator/>
+  </NavigationContainer>
+);
+```
+
+### Without Selection Markers
+
+Handle item presses without showing selection state.
+
+```tsx
+import React from 'react';
+import { Drawer, DrawerItem } from '@ui-kitten/components';
+
+export const DrawerNoMarkers = () => {
+  const handleSelect = (index) => {
+    console.log('Selected:', index.row);
+  };
+
+  return (
+    <Drawer onSelect={handleSelect}>
+      <DrawerItem title='Users'/>
+      <DrawerItem title='Orders'/>
+      <DrawerItem title='Settings'/>
+    </Drawer>
+  );
+};
+```
+
+### Custom Styling
+
+Customize the appearance of drawer items.
+
+```tsx
+import React from 'react';
+import { Drawer, DrawerItem, IndexPath, Text } from '@ui-kitten/components';
+
+export const CustomStyledDrawer = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Drawer
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+      style={{ backgroundColor: '#222B45' }}>
+      <DrawerItem
+        title={evaProps => (
+          <Text {...evaProps} style={[evaProps.style, { fontWeight: 'bold' }]}>
+            Users
+          </Text>
+        )}
+      />
+      <DrawerItem
+        title={evaProps => (
+          <Text {...evaProps} style={[evaProps.style, { fontWeight: 'bold' }]}>
+            Orders
+          </Text>
+        )}
+      />
+    </Drawer>
+  );
+};
+```
+
+<Note>
+Drawer extends the Menu component internally, so it inherits all Menu functionality and styling options.
+</Note>
+
+## Theming
+
+Drawer can be themed using Eva Design System:
+
+```json
+{
+  "Drawer": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {},
+        "variantGroups": {}
+      },
+      "noDivider": {
+        "mapping": {},
+        "variantGroups": {}
+      }
+    }
+  }
+}
+```
+
+For detailed theming instructions, refer to the [Branding Guide](/guides/branding).

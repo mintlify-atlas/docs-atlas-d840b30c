@@ -1,0 +1,534 @@
+---
+title: Custom Component Mapping
+description: Create custom component mappings to build your own Eva-styled components
+---
+
+Creating a mapping for a custom component allows you to leverage the Eva Design System's theming and styling capabilities in your own components. This guide will walk you through building a custom `CircleButton` component with full Eva integration.
+
+## Prerequisites
+
+<Note>
+  For the best developer experience, install and configure the `@babel/plugin-proposal-decorators` module.
+</Note>
+
+<Steps>
+  <Step title="Install Babel Plugin">
+    ```bash
+    npm install --save-dev @babel/plugin-proposal-decorators
+    # or
+    yarn add -D @babel/plugin-proposal-decorators
+    ```
+  </Step>
+  
+  <Step title="Configure Babel">
+    Update your `babel.config.js`:
+    
+    ```js
+    module.exports = {
+      // Your existing configuration
+      
+      plugins: [
+        ["@babel/plugin-proposal-decorators", { "legacy": true }]
+      ]
+    };
+    ```
+  </Step>
+</Steps>
+
+## Creating the Component
+
+### Step 1: Component Boilerplate
+
+Create your component using the `@styled` decorator:
+
+```tsx
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import { styled } from '@ui-kitten/components';
+
+@styled('CircleButton')
+export class CircleButton extends React.Component {
+  render() {
+    const { eva, style, ...restProps } = this.props;
+    
+    return (
+      <TouchableOpacity style={[eva.style, style]} {...restProps} />
+    );
+  }
+}
+```
+
+<Note>
+  The `@styled` decorator injects the `eva` prop, which contains the computed styles from your mapping.
+</Note>
+
+### Step 2: Create the Mapping
+
+Create a `mapping.json` file with the initial configuration:
+
+```json
+{
+  "components": {
+    "CircleButton": {
+      "meta": {
+        "parameters": {},
+        "variantGroups": {},
+        "states": {},
+        "appearances": {
+          "filled": {
+            "default": true
+          }
+        }
+      },
+      "appearances": {
+        "filled": {
+          "mapping": {}
+        } 
+      }
+    }
+  }
+}
+```
+
+### Step 3: Apply the Mapping
+
+Pass your custom mapping to `ApplicationProvider`:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout } from '@ui-kitten/components';
+import { default as mapping } from './mapping.json';
+import { CircleButton } from './CircleButton';
+
+export default () => (
+  <ApplicationProvider
+    {...eva}
+    customMapping={mapping}
+    theme={eva.light}>
+    <Layout style={{ padding: 64, alignItems: 'center' }}>
+      <CircleButton />
+    </Layout>
+  </ApplicationProvider>
+);
+```
+
+<Note>
+  If you're using `@ui-kitten/metro-config`, custom mappings are applied automatically. Check your `metro.config.js` to verify.
+</Note>
+
+## Defining Component Parameters
+
+### Register and Apply Parameters
+
+Define the visual properties of your component:
+
+```json
+{
+  "components": {
+    "CircleButton": {
+      "meta": {
+        "parameters": {
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "borderRadius": {
+            "type": "number"
+          },
+          "backgroundColor": {
+            "type": "string"
+          }
+        },
+        "variantGroups": {},
+        "states": {},
+        "appearances": {
+          "filled": {
+            "default": true
+          }
+        }
+      },
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "width": 64,
+            "height": 64,
+            "borderRadius": 32,
+            "backgroundColor": "color-primary-default"
+          }
+        } 
+      }
+    }
+  }
+}
+```
+
+<Note>
+  The `backgroundColor` uses `color-primary-default`, which references the theme variable. This makes your component automatically adapt to theme changes.
+</Note>
+
+## Adding Variants
+
+Variants allow components to have different visual styles:
+
+```json
+{
+  "components": {
+    "CircleButton": {
+      "meta": {
+        "parameters": {
+          // ... previous parameters
+        },
+        "variantGroups": {
+          "shape": {
+            "rounded": {
+              "default": false
+            }
+          }
+        },
+        "appearances": {
+          "filled": {
+            "default": true
+          }
+        }
+      },
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "width": 64,
+            "height": 64,
+            "borderRadius": 32,
+            "backgroundColor": "color-primary-default"
+          },
+          "variantGroups": {
+            "shape": {
+              "rounded": {
+                "borderRadius": 16
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Now you can use the variant:
+
+```tsx
+<CircleButton shape='rounded' />
+```
+
+<Tabs>
+  <Tab title="Default">
+    ```tsx
+    <CircleButton />
+    // Renders as a circle with borderRadius: 32
+    ```
+  </Tab>
+  <Tab title="Rounded">
+    ```tsx
+    <CircleButton shape='rounded' />
+    // Renders with borderRadius: 16
+    ```
+  </Tab>
+</Tabs>
+
+## Implementing States
+
+States allow components to change appearance based on user interaction:
+
+### Update the Mapping
+
+```json
+{
+  "components": {
+    "CircleButton": {
+      "meta": {
+        "parameters": {
+          // ... previous parameters
+        },
+        "variantGroups": {
+          // ... previous variants
+        },
+        "states": {
+          "active": {
+            "default": false
+          }
+        },
+        "appearances": {
+          "filled": {
+            "default": true
+          }
+        }
+      },
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "width": 64,
+            "height": 64,
+            "borderRadius": 32,
+            "backgroundColor": "color-primary-default",
+            "state": {
+              "active": {
+                "backgroundColor": "color-primary-active"
+              }
+            }
+          },
+          "variantGroups": {
+            // ... previous variants
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Dispatch States from Component
+
+```tsx
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import { styled, Interaction } from '@ui-kitten/components';
+
+@styled('CircleButton')
+export class CircleButton extends React.Component {
+  
+  onPressIn = () => {
+    // Dispatch active state
+    this.props.eva.dispatch([Interaction.ACTIVE]);
+  };
+  
+  onPressOut = () => {
+    // Return to default state
+    this.props.eva.dispatch([]);
+  };
+  
+  render() {
+    const { eva, style, ...restProps } = this.props;
+    
+    return (
+      <TouchableOpacity 
+        {...restProps}
+        activeOpacity={1.0}
+        style={[eva.style, style]}
+        onPressIn={this.onPressIn}
+        onPressOut={this.onPressOut}
+      />
+    );
+  }
+}
+```
+
+<Note>
+  The `dispatch` function is provided by the `@styled` decorator and allows you to request different style configurations based on component state.
+</Note>
+
+## Available Interactions
+
+The Eva Design System supports several interaction states:
+
+```tsx
+import { Interaction } from '@ui-kitten/components';
+
+// Available interactions:
+Interaction.HOVER
+Interaction.ACTIVE
+Interaction.FOCUSED
+Interaction.INDETERMINATE
+Interaction.VISIBLE
+```
+
+## Complete Example
+
+Here's a complete custom component with multiple features:
+
+<CodeGroup>
+```tsx Component
+import React from 'react';
+import { TouchableOpacity, Text } from 'react-native';
+import { styled, Interaction } from '@ui-kitten/components';
+
+interface CircleButtonProps {
+  shape?: 'circle' | 'rounded';
+  status?: 'primary' | 'success' | 'danger';
+  children?: React.ReactNode;
+}
+
+@styled('CircleButton')
+export class CircleButton extends React.Component<CircleButtonProps> {
+  
+  onPressIn = () => {
+    this.props.eva.dispatch([Interaction.ACTIVE]);
+  };
+  
+  onPressOut = () => {
+    this.props.eva.dispatch([]);
+  };
+  
+  render() {
+    const { eva, style, children, ...restProps } = this.props;
+    
+    return (
+      <TouchableOpacity 
+        {...restProps}
+        activeOpacity={1.0}
+        style={[eva.style, style]}
+        onPressIn={this.onPressIn}
+        onPressOut={this.onPressOut}
+      >
+        {children}
+      </TouchableOpacity>
+    );
+  }
+}
+```
+
+```json Mapping
+{
+  "components": {
+    "CircleButton": {
+      "meta": {
+        "parameters": {
+          "width": { "type": "number" },
+          "height": { "type": "number" },
+          "borderRadius": { "type": "number" },
+          "backgroundColor": { "type": "string" }
+        },
+        "variantGroups": {
+          "shape": {
+            "rounded": { "default": false }
+          },
+          "status": {
+            "primary": { "default": true },
+            "success": { "default": false },
+            "danger": { "default": false }
+          }
+        },
+        "states": {
+          "active": { "default": false }
+        },
+        "appearances": {
+          "filled": { "default": true }
+        }
+      },
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "width": 64,
+            "height": 64,
+            "borderRadius": 32,
+            "state": {
+              "active": {}
+            }
+          },
+          "variantGroups": {
+            "shape": {
+              "rounded": {
+                "borderRadius": 16
+              }
+            },
+            "status": {
+              "primary": {
+                "backgroundColor": "color-primary-default",
+                "state": {
+                  "active": {
+                    "backgroundColor": "color-primary-active"
+                  }
+                }
+              },
+              "success": {
+                "backgroundColor": "color-success-default",
+                "state": {
+                  "active": {
+                    "backgroundColor": "color-success-active"
+                  }
+                }
+              },
+              "danger": {
+                "backgroundColor": "color-danger-default",
+                "state": {
+                  "active": {
+                    "backgroundColor": "color-danger-active"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+```tsx Usage
+import { CircleButton } from './CircleButton';
+
+// Different variants
+<CircleButton>Primary</CircleButton>
+<CircleButton shape='rounded'>Rounded</CircleButton>
+<CircleButton status='success'>Success</CircleButton>
+<CircleButton status='danger' shape='rounded'>Danger</CircleButton>
+```
+</CodeGroup>
+
+## Mapping Structure Reference
+
+<Tabs>
+  <Tab title="Meta">
+    Defines the component's available configurations:
+    
+    - `parameters`: Style properties the component can use
+    - `variantGroups`: Logical groupings of style variations
+    - `states`: Interaction states the component supports
+    - `appearances`: High-level visual styles
+  </Tab>
+  
+  <Tab title="Appearances">
+    Contains the actual style values:
+    
+    - `mapping`: Default styles applied to the component
+    - `variantGroups`: Styles for each variant
+    - `state`: Styles for interaction states
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+<Steps>
+  <Step title="Use Theme Variables">
+    Reference theme variables (e.g., `color-primary-default`) instead of hardcoded colors to ensure your component adapts to theme changes.
+  </Step>
+  
+  <Step title="Define Default Values">
+    Always specify which appearance and variants are default in the `meta` section.
+  </Step>
+  
+  <Step title="Leverage State System">
+    Use the Eva state system for interactive components instead of managing state manually.
+  </Step>
+  
+  <Step title="Follow Naming Conventions">
+    Use camelCase for parameters and kebab-case for variant values to maintain consistency.
+  </Step>
+  
+  <Step title="Test All Combinations">
+    Ensure all variant and state combinations render correctly.
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Customize Mapping" icon="sliders" href="/design-system/customize-mapping">
+    Learn how to customize existing component mappings
+  </Card>
+  <Card title="Glossary" icon="book" href="/design-system/glossary">
+    Understand Eva Design System terminology
+  </Card>
+</CardGroup>

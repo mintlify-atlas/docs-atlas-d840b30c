@@ -1,0 +1,233 @@
+---
+title: 'Progress Bar'
+description: 'A horizontal bar that displays the progress of a task or operation'
+---
+
+## Overview
+
+The ProgressBar component displays a horizontal bar indicating the completion percentage of a task or process. It supports both animated and static modes, making it ideal for file uploads, downloads, or multi-step processes.
+
+## Basic Usage
+
+```jsx
+import { ProgressBar } from '@ui-kitten/components';
+
+const BasicProgress = () => (
+  <ProgressBar progress={0.6} />
+);
+```
+
+## Props
+
+<ParamField path="progress" type="number" default="0">
+  The current progress value, ranging from `0` to `1`. For example, `0.5` represents 50% completion.
+</ParamField>
+
+<ParamField path="animating" type="boolean" default="true">
+  Whether the progress bar animates when the progress value changes. Set to `false` for instant updates without animation.
+</ParamField>
+
+<ParamField path="animationConfig" type="ProgressBarAnimationConfig">
+  Configuration object for customizing the animation behavior. Can include properties like:
+  - `duration` - Animation duration in milliseconds
+  - `easing` - Easing function for the animation
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="primary">
+  Determines the color of the progress indicator. Available values:
+  - `basic`
+  - `primary`
+  - `success`
+  - `info`
+  - `warning`
+  - `danger`
+  - `control` - Use when displaying on high-contrast backgrounds
+</ParamField>
+
+<ParamField path="size" type="EvaSize" default="small">
+  Controls the height of the progress bar. Available values:
+  - `tiny`
+  - `small`
+  - `medium`
+  - `large`
+  - `giant`
+</ParamField>
+
+<ParamField path="style" type="ViewStyle">
+  Custom style object to override default styling.
+</ParamField>
+
+## Examples
+
+### Different Sizes
+
+<CodeGroup>
+```jsx Sizes
+import { ProgressBar, Layout } from '@ui-kitten/components';
+
+const ProgressBarSizes = () => (
+  <Layout style={{ gap: 16, padding: 20 }}>
+    <ProgressBar progress={0.7} size='tiny' />
+    <ProgressBar progress={0.7} size='small' />
+    <ProgressBar progress={0.7} size='medium' />
+    <ProgressBar progress={0.7} size='large' />
+    <ProgressBar progress={0.7} size='giant' />
+  </Layout>
+);
+```
+</CodeGroup>
+
+### Different Statuses
+
+<CodeGroup>
+```jsx Statuses
+import { ProgressBar, Layout } from '@ui-kitten/components';
+
+const ProgressBarStatuses = () => (
+  <Layout style={{ gap: 16, padding: 20 }}>
+    <ProgressBar progress={0.6} status='primary' />
+    <ProgressBar progress={0.6} status='success' />
+    <ProgressBar progress={0.6} status='info' />
+    <ProgressBar progress={0.6} status='warning' />
+    <ProgressBar progress={0.6} status='danger' />
+  </Layout>
+);
+```
+</CodeGroup>
+
+### File Upload Progress
+
+<CodeGroup>
+```jsx Upload Progress
+import React, { useState, useEffect } from 'react';
+import { ProgressBar, Layout, Text, Button } from '@ui-kitten/components';
+
+const FileUploadProgress = () => {
+  const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+
+  const startUpload = () => {
+    setUploading(true);
+    setProgress(0);
+    
+    // Simulate upload progress
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 1) {
+          clearInterval(interval);
+          setUploading(false);
+          return 1;
+        }
+        return prev + 0.1;
+      });
+    }, 500);
+  };
+
+  return (
+    <Layout style={{ padding: 20, gap: 12 }}>
+      <Text category='h6'>File Upload</Text>
+      <ProgressBar 
+        progress={progress} 
+        status={progress === 1 ? 'success' : 'primary'}
+      />
+      <Text appearance='hint'>
+        {Math.round(progress * 100)}% uploaded
+      </Text>
+      <Button 
+        onPress={startUpload} 
+        disabled={uploading}
+      >
+        {uploading ? 'Uploading...' : 'Start Upload'}
+      </Button>
+    </Layout>
+  );
+};
+```
+</CodeGroup>
+
+### Multi-Step Process
+
+<CodeGroup>
+```jsx Multi-Step
+import React, { useState } from 'react';
+import { ProgressBar, Layout, Text, Button } from '@ui-kitten/components';
+
+const MultiStepProcess = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 5;
+  const progress = currentStep / totalSteps;
+
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  return (
+    <Layout style={{ padding: 20, gap: 12 }}>
+      <Text category='h6'>Setup Process</Text>
+      <ProgressBar progress={progress} />
+      <Text appearance='hint'>
+        Step {currentStep} of {totalSteps}
+      </Text>
+      <Layout style={{ flexDirection: 'row', gap: 8 }}>
+        <Button 
+          onPress={prevStep} 
+          disabled={currentStep === 1}
+          size='small'
+        >
+          Previous
+        </Button>
+        <Button 
+          onPress={nextStep} 
+          disabled={currentStep === totalSteps}
+          size='small'
+        >
+          Next
+        </Button>
+      </Layout>
+    </Layout>
+  );
+};
+```
+</CodeGroup>
+
+### Without Animation
+
+<CodeGroup>
+```jsx Static Progress
+import { ProgressBar } from '@ui-kitten/components';
+
+const StaticProgress = () => (
+  <ProgressBar 
+    progress={0.75} 
+    animating={false}
+  />
+);
+```
+</CodeGroup>
+
+## Theming
+
+The ProgressBar component can be customized using Eva Design System theming. You can override track color, indicator color, sizes, and border radius in your custom theme.
+
+<Note>
+  Progress values are clamped between 0 and 1. Values greater than 1 are treated as 1, and values less than 0 are treated as 0.
+</Note>
+
+## Accessibility
+
+- Use descriptive text to indicate what process is being tracked
+- Consider adding a percentage label for screen readers
+- Announce progress updates to assistive technologies when significant milestones are reached
+
+## Related Components
+
+- [Spinner](/components/spinner) - For indeterminate loading states
+- [CircularProgressBar](/components/circular-progress-bar) - For circular progress display

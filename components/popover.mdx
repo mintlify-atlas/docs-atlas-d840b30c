@@ -1,0 +1,475 @@
+---
+title: Popover
+description: Display content positioned relative to another view with flexible placement options.
+---
+
+Popover displays a floating container with content relative to an anchor element.
+
+## Import
+
+```tsx
+import { Popover } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Layout, Popover, Text } from '@ui-kitten/components';
+
+export const PopoverSimple = () => {
+  const [visible, setVisible] = useState(false);
+
+  const renderContent = () => (
+    <Layout style={{ padding: 16 }}>
+      <Text>This is popover content</Text>
+    </Layout>
+  );
+
+  return (
+    <Popover
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Popover
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      {renderContent()}
+    </Popover>
+  );
+};
+```
+
+## Placements
+
+Popover supports multiple placement options:
+
+<CodeGroup>
+```tsx Basic Placements
+// Cardinal directions
+<Popover placement='top' />
+<Popover placement='bottom' />
+<Popover placement='left' />
+<Popover placement='right' />
+```
+
+```tsx Start/End Alignments
+// Top placements
+<Popover placement='top start' />
+<Popover placement='top end' />
+
+// Bottom placements
+<Popover placement='bottom start' />
+<Popover placement='bottom end' />
+
+// Left placements
+<Popover placement='left start' />
+<Popover placement='left end' />
+
+// Right placements
+<Popover placement='right start' />
+<Popover placement='right end' />
+```
+
+```tsx Inner Placements
+// Inner placements (popover inside anchor)
+<Popover placement='inner' />
+<Popover placement='inner top' />
+<Popover placement='inner bottom' />
+```
+</CodeGroup>
+
+<Note>
+The default placement is `bottom`.
+</Note>
+
+## Full Width
+
+Make the popover take the full width of the anchor:
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Layout, Popover, Text } from '@ui-kitten/components';
+
+export const PopoverFullWidth = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Popover
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Full Width Popover
+        </Button>
+      )}
+      visible={visible}
+      fullWidth={true}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <Layout style={{ padding: 16 }}>
+        <Text>Full width content</Text>
+      </Layout>
+    </Popover>
+  );
+};
+```
+
+## Styled Backdrop
+
+Customize the backdrop overlay:
+
+```tsx
+<Popover
+  anchor={renderAnchor}
+  visible={visible}
+  backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
+  onBackdropPress={() => setVisible(false)}
+>
+  <Layout style={{ padding: 16 }}>
+    <Text>Content with styled backdrop</Text>
+  </Layout>
+</Popover>
+```
+
+## With Indicator
+
+Popover can display a directional indicator (arrow):
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Layout, Popover, Text } from '@ui-kitten/components';
+
+export const PopoverWithIndicator = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Popover
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Popover
+        </Button>
+      )}
+      visible={visible}
+      placement='top'
+      onBackdropPress={() => setVisible(false)}
+    >
+      <Layout style={{ padding: 16 }}>
+        <Text>Popover with indicator</Text>
+      </Layout>
+    </Popover>
+  );
+};
+```
+
+## Complex Content
+
+Popover can contain any React elements:
+
+```tsx
+import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
+import {
+  Button,
+  Card,
+  Divider,
+  Layout,
+  List,
+  ListItem,
+  Popover,
+  Text,
+} from '@ui-kitten/components';
+
+export const PopoverComplex = () => {
+  const [visible, setVisible] = useState(false);
+
+  const data = [
+    { title: 'Option 1' },
+    { title: 'Option 2' },
+    { title: 'Option 3' },
+  ];
+
+  const renderItem = ({ item, index }) => (
+    <ListItem
+      title={item.title}
+      onPress={() => {
+        console.log(item.title);
+        setVisible(false);
+      }}
+    />
+  );
+
+  return (
+    <Popover
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Show Options
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <Layout style={styles.content}>
+        <Text category='h6' style={styles.title}>
+          Select an option
+        </Text>
+        <Divider />
+        <List
+          data={data}
+          renderItem={renderItem}
+          style={styles.list}
+        />
+      </Layout>
+    </Popover>
+  );
+};
+
+const styles = StyleSheet.create({
+  content: {
+    minWidth: 200,
+  },
+  title: {
+    padding: 16,
+  },
+  list: {
+    maxHeight: 200,
+  },
+});
+```
+
+## Props
+
+<ParamField path="anchor" type="() => ReactElement" required>
+  A function that returns the component relative to which the popover will be shown.
+</ParamField>
+
+<ParamField path="children" type="ReactElement" required>
+  Content to display within the popover.
+</ParamField>
+
+<ParamField path="visible" type="boolean" default="false">
+  Whether the popover is visible. More specific than show/hide methods.
+</ParamField>
+
+<ParamField path="placement" type="string" default="bottom">
+  Position of the popover relative to the anchor. Can be:
+  - Basic: `top`, `bottom`, `left`, `right`
+  - With alignment: `top start`, `top end`, `bottom start`, `bottom end`, `left start`, `left end`, `right start`, `right end`
+  - Inner: `inner`, `inner top`, `inner bottom`
+</ParamField>
+
+<ParamField path="fullWidth" type="boolean" default="false">
+  Whether the popover should take the full width of the anchor.
+</ParamField>
+
+<ParamField path="onBackdropPress" type="() => void">
+  Called when the popover is visible and the backdrop is pressed. Useful for closing the popover.
+</ParamField>
+
+<ParamField path="backdropStyle" type="StyleProp<ViewStyle>">
+  Style of the backdrop overlay.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ViewStyle>">
+  Style of the popover container.
+</ParamField>
+
+<ParamField path="contentContainerStyle" type="StyleProp<ViewStyle>">
+  Style of the popover content container.
+</ParamField>
+
+<ParamField path="indicator" type="(props: ViewProps) => ReactElement">
+  Custom indicator (arrow) component.
+</ParamField>
+
+<ParamField path="animationType" type="'none' | 'slide' | 'fade'" default="none">
+  Animation type when showing/hiding the popover.
+</ParamField>
+
+<ParamField path="hardwareAccelerated" type="boolean" default="false">
+  Controls whether to force hardware acceleration for the underlying modal window.
+</ParamField>
+
+<ParamField path="supportedOrientations" type="Orientation[]">
+  Allowed device orientations. On iOS, the modal is still restricted by your app's Info.plist settings.
+</ParamField>
+
+<ParamField path="onShow" type="(event: NativeSyntheticEvent<any>) => void">
+  Callback called once the popover has been shown.
+</ParamField>
+
+## Examples
+
+### Placement Showcase
+
+```tsx
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, Layout, Popover, Text } from '@ui-kitten/components';
+
+export const PopoverPlacements = () => {
+  const [topVisible, setTopVisible] = useState(false);
+  const [bottomVisible, setBottomVisible] = useState(false);
+  const [leftVisible, setLeftVisible] = useState(false);
+  const [rightVisible, setRightVisible] = useState(false);
+
+  const renderContent = (placement) => (
+    <Layout style={styles.content}>
+      <Text>{placement} placement</Text>
+    </Layout>
+  );
+
+  return (
+    <View style={styles.container}>
+      <Popover
+        anchor={() => <Button onPress={() => setTopVisible(true)}>Top</Button>}
+        visible={topVisible}
+        placement='top'
+        onBackdropPress={() => setTopVisible(false)}
+      >
+        {renderContent('Top')}
+      </Popover>
+
+      <Popover
+        anchor={() => <Button onPress={() => setBottomVisible(true)}>Bottom</Button>}
+        visible={bottomVisible}
+        placement='bottom'
+        onBackdropPress={() => setBottomVisible(false)}
+      >
+        {renderContent('Bottom')}
+      </Popover>
+
+      <Popover
+        anchor={() => <Button onPress={() => setLeftVisible(true)}>Left</Button>}
+        visible={leftVisible}
+        placement='left'
+        onBackdropPress={() => setLeftVisible(false)}
+      >
+        {renderContent('Left')}
+      </Popover>
+
+      <Popover
+        anchor={() => <Button onPress={() => setRightVisible(true)}>Right</Button>}
+        visible={rightVisible}
+        placement='right'
+        onBackdropPress={() => setRightVisible(false)}
+      >
+        {renderContent('Right')}
+      </Popover>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 16,
+  },
+  content: {
+    padding: 16,
+  },
+});
+```
+
+### Form in Popover
+
+```tsx
+import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { Button, Input, Layout, Popover, Text } from '@ui-kitten/components';
+
+export const PopoverForm = () => {
+  const [visible, setVisible] = useState(false);
+  const [value, setValue] = useState('');
+
+  const handleSubmit = () => {
+    console.log('Submitted:', value);
+    setVisible(false);
+    setValue('');
+  };
+
+  return (
+    <Popover
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Edit Name
+        </Button>
+      )}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <Layout style={styles.form}>
+        <Text category='h6' style={styles.title}>
+          Enter your name
+        </Text>
+        <Input
+          value={value}
+          onChangeText={setValue}
+          placeholder='Name'
+          style={styles.input}
+        />
+        <Button onPress={handleSubmit} size='small'>
+          Submit
+        </Button>
+      </Layout>
+    </Popover>
+  );
+};
+
+const styles = StyleSheet.create({
+  form: {
+    padding: 16,
+    width: 250,
+  },
+  title: {
+    marginBottom: 12,
+  },
+  input: {
+    marginBottom: 12,
+  },
+});
+```
+
+### Animated Popover
+
+```tsx
+<Popover
+  anchor={renderAnchor}
+  visible={visible}
+  animationType='fade'
+  onBackdropPress={() => setVisible(false)}
+>
+  <Layout style={{ padding: 16 }}>
+    <Text>Animated content</Text>
+  </Layout>
+</Popover>
+```
+
+## Accessibility
+
+```tsx
+<Popover
+  anchor={renderAnchor}
+  visible={visible}
+  accessible={true}
+  accessibilityLabel="Options popover"
+  accessibilityRole="menu"
+>
+  {content}
+</Popover>
+```
+
+## Best Practices
+
+- Use Popover for contextual actions and information
+- Ensure popovers are dismissible via backdrop press
+- Consider using `fullWidth` for select-like interfaces
+- Test placement on different screen sizes
+- Use appropriate placement to avoid content being cut off
+
+## See Also
+
+- [Tooltip](components/tooltip) - For simple text hints
+- [OverflowMenu](components/overflow-menu) - For action menus
+- [Modal](components/modal) - For blocking interactions

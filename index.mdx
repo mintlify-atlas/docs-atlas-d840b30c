@@ -1,97 +1,271 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: UI Kitten Documentation
+description: React Native UI Library based on Eva Design System with 30+ customizable components
+mode: "custom"
 ---
 
-## Setting up
+<div className="relative bg-gradient-to-br from-[#0f45ec] via-[#1a52f0] to-[#84a4f4] dark:from-[#0a2d9e] dark:via-[#0f45ec] dark:to-[#1a52f0] py-20 overflow-hidden">
+  <div className="absolute inset-0 bg-black/20 dark:bg-black/40"></div>
+  <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="lg:col-span-7">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+          Build stunning React Native apps with UI Kitten
+        </h1>
+        <p className="text-lg sm:text-xl text-white/90 max-w-2xl mb-8">
+          A complete UI library with 30+ customizable components based on Eva Design System. Create beautiful, consistent mobile applications with light and dark themes out of the box.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <a
+            href="/quickstart"
+            className="inline-flex items-center px-6 py-3 bg-white text-[#0f45ec] font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            Get Started
+            <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+          <a
+            href="/components/button"
+            className="inline-flex items-center px-6 py-3 border-2 border-white/30 bg-white/10 text-white font-semibold rounded-lg hover:bg-white/20 hover:border-white/50 transition-colors"
+          >
+            Explore Components
+          </a>
+        </div>
+      </div>
+      <div className="lg:col-span-5 hidden lg:block">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-2xl blur-xl"></div>
+          <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 shadow-2xl">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-white font-semibold">30+ Components</div>
+                  <div className="text-white/70 text-sm">Ready to use</div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-white font-semibold">Light & Dark Themes</div>
+                  <div className="text-white/70 text-sm">Runtime switching</div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-white font-semibold">TypeScript Support</div>
+                  <div className="text-white/70 text-sm">Full type definitions</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-Get your documentation site up and running in minutes.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Quick Start</h2>
+    <p className="text-lg text-gray-600 dark:text-gray-400">Get up and running with UI Kitten in minutes</p>
+  </div>
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+  <Steps>
+    <Step title="Install UI Kitten">
+      Create a new React Native project with UI Kitten template or add it to an existing project.
 
-## Make it yours
+      <CodeGroup>
+      ```bash npm
+      npx react-native init MyApp --template @ui-kitten/template-ts
+      ```
 
-Design a docs site that looks great and empowers your users.
+      ```bash yarn
+      npx react-native init MyApp --template @ui-kitten/template-ts
+      ```
+      </CodeGroup>
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+      <Note>Use `@ui-kitten/template-js` for JavaScript projects</Note>
+    </Step>
 
-## Create beautiful pages
+    <Step title="Wrap your app with ApplicationProvider">
+      Import the ApplicationProvider and Eva themes to enable UI Kitten components.
 
-Everything you need to create world-class documentation.
+      ```tsx
+      import React from 'react';
+      import { ApplicationProvider } from '@ui-kitten/components';
+      import * as eva from '@eva-design/eva';
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+      export default () => (
+        <ApplicationProvider {...eva} theme={eva.light}>
+          {/* Your app content */}
+        </ApplicationProvider>
+      );
+      ```
+    </Step>
 
-## Need inspiration?
+    <Step title="Use UI Kitten components">
+      Start building your interface with ready-to-use components.
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+      ```tsx
+      import React from 'react';
+      import { Layout, Text, Button } from '@ui-kitten/components';
+
+      export const HomeScreen = () => (
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text category='h1'>Welcome to UI Kitten</Text>
+          <Button onPress={() => {}}>Get Started</Button>
+        </Layout>
+      );
+      ```
+
+      <Tip>All components support theming, styling variants, and status modifiers out of the box</Tip>
+    </Step>
+  </Steps>
+</div>
+
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Explore Components</h2>
+    <p className="text-lg text-gray-600 dark:text-gray-400">Discover our comprehensive component library</p>
+  </div>
+
+  <CardGroup cols={3}>
+    <Card title="Layout" icon="table-layout" href="/components/layout">
+      Structure your app with Layout, Card, and Divider components
+    </Card>
+    <Card title="Forms" icon="input-text" href="/components/button">
+      Build interactive forms with Button, Input, Checkbox, and more
+    </Card>
+    <Card title="Navigation" icon="bars" href="/components/bottom-navigation">
+      Create intuitive navigation with BottomNavigation, TopNavigation, and Tabs
+    </Card>
+    <Card title="Display" icon="image" href="/components/text">
+      Present content with Text, Avatar, Icon, and List components
+    </Card>
+    <Card title="Feedback" icon="spinner" href="/components/spinner">
+      Show loading states and modals with Spinner, ProgressBar, and Modal
+    </Card>
+    <Card title="Eva Icons" icon="icons" href="/guides/eva-icons">
+      Access 480+ beautiful icons designed for UI Kitten
+    </Card>
+  </CardGroup>
+</div>
+
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Key Features</h2>
+    <p className="text-lg text-gray-600 dark:text-gray-400">Everything you need to build professional mobile apps</p>
+  </div>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="bg-gray-50 dark:bg-[#1a1d27] border border-gray-200 dark:border-[#27272a] rounded-xl p-6">
+      <div className="flex items-start space-x-4">
+        <div className="w-10 h-10 bg-[#0f45ec]/10 dark:bg-[#0f45ec]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg className="w-6 h-6 text-[#0f45ec]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+          </svg>
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Eva Design System</h3>
+          <p className="text-gray-600 dark:text-gray-400">Built on a comprehensive design system ensuring consistency and scalability across your entire application.</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-gray-50 dark:bg-[#1a1d27] border border-gray-200 dark:border-[#27272a] rounded-xl p-6">
+      <div className="flex items-start space-x-4">
+        <div className="w-10 h-10 bg-[#0f45ec]/10 dark:bg-[#0f45ec]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg className="w-6 h-6 text-[#0f45ec]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Runtime Theming</h3>
+          <p className="text-gray-600 dark:text-gray-400">Switch between light and dark themes at runtime without reloading your app. Customize colors and create your own themes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-gray-50 dark:bg-[#1a1d27] border border-gray-200 dark:border-[#27272a] rounded-xl p-6">
+      <div className="flex items-start space-x-4">
+        <div className="w-10 h-10 bg-[#0f45ec]/10 dark:bg-[#0f45ec]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg className="w-6 h-6 text-[#0f45ec]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+          </svg>
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Web Support</h3>
+          <p className="text-gray-600 dark:text-gray-400">Run your React Native app in the browser with React Native Web. Share code between mobile and web platforms.</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-gray-50 dark:bg-[#1a1d27] border border-gray-200 dark:border-[#27272a] rounded-xl p-6">
+      <div className="flex items-start space-x-4">
+        <div className="w-10 h-10 bg-[#0f45ec]/10 dark:bg-[#0f45ec]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg className="w-6 h-6 text-[#0f45ec]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+          </svg>
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">RTL Support</h3>
+          <p className="text-gray-600 dark:text-gray-400">Full right-to-left writing system support for all components, enabling global app deployment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Resources</h2>
+  </div>
+
+  <CardGroup cols={2}>
+    <Card title="Kitten Tricks" icon="mobile" href="https://github.com/akveo/kittenTricks">
+      Explore a complete React Native starter kit with 40+ screens built with UI Kitten
+    </Card>
+    <Card title="Eva Design System" icon="palette" href="https://eva.design">
+      Learn about the design principles and specifications behind UI Kitten
+    </Card>
+    <Card title="GitHub Repository" icon="github" href="https://github.com/akveo/react-native-ui-kitten">
+      View source code, report issues, and contribute to the project
+    </Card>
+    <Card title="Community Support" icon="users" href="https://stackoverflow.com/questions/tagged/ui-kitten">
+      Get help from the community on Stack Overflow
+    </Card>
+  </CardGroup>
+</div>
+
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="bg-gradient-to-r from-[#0f45ec] to-[#84a4f4] dark:from-[#0a2d9e] dark:to-[#0f45ec] rounded-2xl p-8 md:p-12 text-center">
+    <h2 className="text-3xl font-bold text-white mb-4">Ready to build amazing mobile apps?</h2>
+    <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+      Get started with UI Kitten today and create beautiful, consistent React Native applications with ease.
+    </p>
+    <a
+      href="/quickstart"
+      className="inline-flex items-center px-8 py-4 bg-white text-[#0f45ec] font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg"
+    >
+      Start Building Now
+      <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+      </svg>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,623 @@
+---
+title: Customize Component Mapping
+description: Modify existing UI Kitten component mappings to customize their appearance and behavior
+---
+
+UI Kitten components are styled using Eva Design System configuration files called mappings. By customizing these mappings, you can modify the appearance and behavior of built-in components without changing their source code.
+
+## What is a Mapping?
+
+A mapping is a JSON or JavaScript object that describes the styling rules and behavior for each UI Kitten component. These mappings are processed by the Eva Design System to generate the final styles applied to components.
+
+<Note>
+  Working with mappings provides extensive flexibility but requires understanding the Eva Design System structure. This guide covers common customization scenarios.
+</Note>
+
+## Types of Changes
+
+You can make two types of changes to component mappings:
+
+<CardGroup cols={2}>
+  <Card title="Single Parameter" icon="sliders">
+    Change individual style properties like `backgroundColor`, `fontSize`, or `borderRadius`.
+  </Card>
+  <Card title="Semantic Property" icon="palette">
+    Modify entire property groups like appearances, variants, or default values.
+  </Card>
+</CardGroup>
+
+## Changing a Single Parameter
+
+<Steps>
+  <Step title="Create a Mapping File">
+    Create `mapping.json` in your project root:
+    
+    ```json
+    {
+      "components": {
+        "Button": {
+          "meta": {},
+          "appearances": {}
+        }
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Find the Parameter Location">
+    First, identify where the parameter is declared. Look at the default mapping in `node_modules/@eva-design/eva/mapping.json`.
+    
+    Check the `meta` section for default appearance and variants:
+    
+    ```json
+    {
+      "components": {
+        "Button": {
+          "meta": {
+            "appearances": {
+              "filled": {
+                "default": true
+              }
+            },
+            "variantGroups": {
+              "status": {
+                "primary": {
+                  "default": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Locate the Style Definition">
+    Navigate to the default appearance configuration:
+    
+    ```json
+    {
+      "appearances": {
+        "filled": {
+          "mapping": {},
+          "variantGroups": {
+            "status": {
+              "primary": {
+                "backgroundColor": "color-primary-default"
+              }
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Override in Your Mapping">
+    Update your `mapping.json` to override the parameter:
+    
+    ```json
+    {
+      "components": {
+        "Button": {
+          "meta": {},
+          "appearances": {
+            "filled": {
+              "mapping": {},
+              "variantGroups": {
+                "status": {
+                  "primary": {
+                    "backgroundColor": "#FF6B35"
+                  }
+                }
+              } 
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Apply the Mapping">
+    Pass your custom mapping to `ApplicationProvider`:
+    
+    ```tsx
+    import React from 'react';
+    import * as eva from '@eva-design/eva';
+    import { ApplicationProvider } from '@ui-kitten/components';
+    import customMapping from './mapping.json';
+    
+    export default () => (
+      <ApplicationProvider 
+        {...eva}
+        customMapping={customMapping}
+        theme={eva.light}>
+        {/* Your app */}
+      </ApplicationProvider>
+    );
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  If you're using `@ui-kitten/metro-config`, custom mappings are applied automatically. Check your `metro.config.js` file.
+</Note>
+
+## Complete Example: Custom Button Color
+
+Let's change the default Button background color to pink:
+
+<CodeGroup>
+```json mapping.json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {},
+          "variantGroups": {
+            "status": {
+              "primary": {
+                "backgroundColor": "pink",
+                "borderColor": "pink"
+              }
+            }
+          } 
+        }
+      }
+    }
+  }
+}
+```
+
+```tsx App.tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Button } from '@ui-kitten/components';
+import customMapping from './mapping.json';
+
+export default () => (
+  <ApplicationProvider 
+    {...eva}
+    customMapping={customMapping}
+    theme={eva.light}>
+    <Layout style={{ flex: 1, padding: 24 }}>
+      <Button>Pink Button</Button>
+    </Layout>
+  </ApplicationProvider>
+);
+```
+</CodeGroup>
+
+## Changing Multiple Parameters
+
+You can override multiple properties at once:
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {},
+          "variantGroups": {
+            "status": {
+              "primary": {
+                "backgroundColor": "#FF6B35",
+                "borderColor": "#FF6B35",
+                "textColor": "#FFFFFF",
+                "paddingVertical": 16,
+                "paddingHorizontal": 24,
+                "borderRadius": 8
+              }
+            }
+          } 
+        }
+      }
+    }
+  }
+}
+```
+
+## Customizing Multiple Components
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {},
+          "variantGroups": {
+            "status": {
+              "primary": {
+                "backgroundColor": "#FF6B35"
+              }
+            }
+          } 
+        }
+      }
+    },
+    "Input": {
+      "meta": {},
+      "appearances": {
+        "default": {
+          "mapping": {
+            "borderColor": "#FF6B35",
+            "borderRadius": 8
+          }
+        }
+      }
+    },
+    "Card": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "borderRadius": 16,
+            "paddingVertical": 24,
+            "paddingHorizontal": 24
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Changing Semantic Properties
+
+### Change Default Appearance
+
+Make the `outline` appearance default for buttons:
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {
+        "appearances": {
+          "outline": {
+            "default": true
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Now buttons render as outline by default:
+
+```tsx
+<Button>Outline by default</Button>
+<Button appearance='filled'>Explicitly filled</Button>
+```
+
+### Change Default Variant
+
+Make the `large` size default:
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {
+        "variantGroups": {
+          "size": {
+            "large": {
+              "default": true
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Add Custom State Styles
+
+Customize how components look in different states:
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "backgroundColor": "color-primary-default",
+            "state": {
+              "focused": {
+                "backgroundColor": "color-primary-focus",
+                "borderColor": "color-primary-focus",
+                "borderWidth": 2
+              },
+              "active": {
+                "backgroundColor": "color-primary-active"
+              },
+              "disabled": {
+                "backgroundColor": "color-primary-disabled",
+                "opacity": 0.5
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Component-Specific Examples
+
+<Tabs>
+  <Tab title="Input">
+    ```json
+    {
+      "components": {
+        "Input": {
+          "meta": {},
+          "appearances": {
+            "default": {
+              "mapping": {
+                "borderRadius": 8,
+                "paddingHorizontal": 16,
+                "paddingVertical": 12,
+                "fontSize": 16,
+                "backgroundColor": "background-basic-color-2",
+                "borderColor": "border-basic-color-4",
+                "textColor": "text-basic-color",
+                "placeholderColor": "text-hint-color"
+              }
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Card">
+    ```json
+    {
+      "components": {
+        "Card": {
+          "meta": {},
+          "appearances": {
+            "filled": {
+              "mapping": {
+                "borderRadius": 16,
+                "paddingVertical": 24,
+                "paddingHorizontal": 24,
+                "backgroundColor": "background-basic-color-1",
+                "shadowColor": "#000000",
+                "shadowOpacity": 0.1,
+                "shadowRadius": 10,
+                "shadowOffset": {
+                  "width": 0,
+                  "height": 4
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Text">
+    ```json
+    {
+      "components": {
+        "Text": {
+          "meta": {},
+          "appearances": {
+            "default": {
+              "mapping": {
+                "color": "text-basic-color",
+                "fontSize": 16,
+                "lineHeight": 24,
+                "fontWeight": "400"
+              },
+              "variantGroups": {
+                "category": {
+                  "h1": {
+                    "fontSize": 36,
+                    "lineHeight": 48,
+                    "fontWeight": "800"
+                  },
+                  "h2": {
+                    "fontSize": 32,
+                    "lineHeight": 40,
+                    "fontWeight": "700"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Understanding the Mapping Hierarchy
+
+The Eva Design System processes mappings in this order:
+
+<Steps>
+  <Step title="Base Appearance">
+    Default styles from `appearances.[name].mapping`
+  </Step>
+  <Step title="Variant Groups">
+    Styles from active variants in `variantGroups`
+  </Step>
+  <Step title="States">
+    Styles from active states in `state`
+  </Step>
+  <Step title="Component Props">
+    Inline styles passed via `style` prop
+  </Step>
+</Steps>
+
+<Note>
+  Later styles override earlier ones, so component props have the highest priority.
+</Note>
+
+## Using Theme Variables
+
+Instead of hardcoding values, reference theme variables:
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {},
+          "variantGroups": {
+            "status": {
+              "primary": {
+                "backgroundColor": "color-primary-500",
+                "borderColor": "color-primary-500",
+                "textColor": "text-control-color"
+              }
+            }
+          } 
+        }
+      }
+    }
+  }
+}
+```
+
+<Note>
+  Using theme variables ensures your components automatically adapt when users switch between light and dark themes.
+</Note>
+
+## Common Customization Patterns
+
+### Rounded Corners Everywhere
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": { "mapping": { "borderRadius": 12 } },
+        "outline": { "mapping": { "borderRadius": 12 } }
+      }
+    },
+    "Input": {
+      "meta": {},
+      "appearances": {
+        "default": { "mapping": { "borderRadius": 12 } }
+      }
+    },
+    "Card": {
+      "meta": {},
+      "appearances": {
+        "filled": { "mapping": { "borderRadius": 12 } }
+      }
+    }
+  }
+}
+```
+
+### Increase Padding
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "paddingVertical": 16,
+            "paddingHorizontal": 24
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Custom Border Width
+
+```json
+{
+  "components": {
+    "Input": {
+      "meta": {},
+      "appearances": {
+        "default": {
+          "mapping": {
+            "borderWidth": 2
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Best Practices
+
+<Steps>
+  <Step title="Start Small">
+    Begin by customizing one component at a time to understand the structure.
+  </Step>
+  
+  <Step title="Use Theme Variables">
+    Reference theme variables instead of hardcoded values for consistency.
+  </Step>
+  
+  <Step title="Test All Variants">
+    After customizing, test all appearance and status combinations.
+  </Step>
+  
+  <Step title="Document Changes">
+    Keep track of which components and properties you've customized.
+  </Step>
+  
+  <Step title="Version Control">
+    Store your mapping.json in version control to track changes over time.
+  </Step>
+</Steps>
+
+## Debugging Tips
+
+<Warning>
+  If your customizations aren't applying:
+  
+  1. Verify the mapping is passed to `ApplicationProvider`
+  2. Check the JSON syntax is valid
+  3. Ensure you're modifying the correct appearance/variant
+  4. Look for typos in parameter names
+  5. Check console for Eva Design System warnings
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Mapping" icon="plus" href="/design-system/custom-mapping">
+    Create completely custom components
+  </Card>
+  <Card title="Glossary" icon="book" href="/design-system/glossary">
+    Learn Eva Design System terminology
+  </Card>
+</CardGroup>

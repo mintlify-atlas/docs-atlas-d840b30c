@@ -1,0 +1,411 @@
+---
+title: List
+description: Performant interface for rendering flat lists of data with support for items, dividers, and custom layouts.
+---
+
+List is a wrapper around React Native's FlatList with styling from Eva Design System.
+
+## Import
+
+```tsx
+import { List, ListItem } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { List, ListItem } from '@ui-kitten/components';
+
+const data = [
+  { id: '1', title: 'Item 1' },
+  { id: '2', title: 'Item 2' },
+  { id: '3', title: 'Item 3' },
+];
+
+export const BasicList = () => {
+  const renderItem = ({ item }) => (
+    <ListItem title={item.title} />
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+    />
+  );
+};
+```
+
+## With ListItem
+
+Lists work best with ListItem components:
+
+```tsx
+import React from 'react';
+import { List, ListItem } from '@ui-kitten/components';
+
+const data = [
+  { title: 'Home', description: 'Go to home screen' },
+  { title: 'Settings', description: 'Configure your app' },
+  { title: 'Profile', description: 'View your profile' },
+];
+
+export const ListWithItems = () => {
+  const renderItem = ({ item }) => (
+    <ListItem
+      title={item.title}
+      description={item.description}
+      onPress={() => console.log(item.title)}
+    />
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+    />
+  );
+};
+```
+
+## List with Dividers
+
+Separate items with dividers for better visual hierarchy:
+
+```tsx
+import React from 'react';
+import { List, ListItem, Divider } from '@ui-kitten/components';
+
+const data = new Array(5).fill({
+  title: 'Item',
+});
+
+export const ListWithDividers = () => {
+  const renderItem = ({ item, index }) => (
+    <ListItem title={`${item.title} ${index + 1}`} />
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+      ItemSeparatorComponent={Divider}
+    />
+  );
+};
+```
+
+## List with Accessories
+
+Add icons or other elements to list items:
+
+<CodeGroup>
+```tsx Left Accessory
+import React from 'react';
+import { Icon, List, ListItem } from '@ui-kitten/components';
+
+const StarIcon = (props) => <Icon {...props} name='star' />;
+
+const data = [
+  { title: 'Favorites' },
+  { title: 'Bookmarks' },
+];
+
+export const ListWithAccessories = () => {
+  const renderItem = ({ item }) => (
+    <ListItem
+      title={item.title}
+      accessoryLeft={StarIcon}
+    />
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+    />
+  );
+};
+```
+
+```tsx Both Accessories
+import React from 'react';
+import { Icon, List, ListItem } from '@ui-kitten/components';
+
+const StarIcon = (props) => <Icon {...props} name='star' />;
+const ArrowIcon = (props) => <Icon {...props} name='arrow-forward' />;
+
+const data = [
+  { title: 'Home' },
+  { title: 'Settings' },
+];
+
+export const ListWithBothAccessories = () => {
+  const renderItem = ({ item }) => (
+    <ListItem
+      title={item.title}
+      accessoryLeft={StarIcon}
+      accessoryRight={ArrowIcon}
+    />
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+    />
+  );
+};
+```
+</CodeGroup>
+
+## Custom List Items
+
+Use any component as list items:
+
+```tsx
+import React from 'react';
+import { List, Card, Text } from '@ui-kitten/components';
+
+const data = [
+  { title: 'Card 1', description: 'Description 1' },
+  { title: 'Card 2', description: 'Description 2' },
+];
+
+export const CustomListItems = () => {
+  const renderItem = ({ item }) => (
+    <Card style={{ margin: 8 }}>
+      <Text category='h6'>{item.title}</Text>
+      <Text appearance='hint'>{item.description}</Text>
+    </Card>
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+    />
+  );
+};
+```
+
+## Scrolling Methods
+
+Control list scrolling programmatically:
+
+```tsx
+import React, { useRef } from 'react';
+import { Button } from 'react-native';
+import { List, ListItem } from '@ui-kitten/components';
+
+export const ScrollableList = () => {
+  const listRef = useRef();
+  const data = new Array(20).fill({ title: 'Item' });
+
+  const scrollToTop = () => {
+    listRef.current?.scrollToOffset({ offset: 0 });
+  };
+
+  const scrollToEnd = () => {
+    listRef.current?.scrollToEnd();
+  };
+
+  const scrollToIndex = (index) => {
+    listRef.current?.scrollToIndex({ index });
+  };
+
+  const renderItem = ({ item, index }) => (
+    <ListItem title={`${item.title} ${index + 1}`} />
+  );
+
+  return (
+    <>
+      <List
+        ref={listRef}
+        data={data}
+        renderItem={renderItem}
+      />
+      <Button title='Scroll to Top' onPress={scrollToTop} />
+      <Button title='Scroll to End' onPress={scrollToEnd} />
+      <Button title='Scroll to Index 10' onPress={() => scrollToIndex(10)} />
+    </>
+  );
+};
+```
+
+## Props
+
+<ParamField path="data" type="any[]" required>
+  An array of data to be rendered within the list.
+</ParamField>
+
+<ParamField path="renderItem" type="(info: ListRenderItemInfo<ItemT>) => ReactElement" required>
+  Function that takes an item from `data` and renders it into the list.
+</ParamField>
+
+<ParamField path="keyExtractor" type="(item: ItemT, index: number) => string">
+  Function to extract unique keys for list items. Defaults to using the index.
+</ParamField>
+
+<ParamField path="ItemSeparatorComponent" type="React.ComponentType">
+  Component to render between list items. Commonly used with `Divider`.
+</ParamField>
+
+<ParamField path="ListHeaderComponent" type="React.ComponentType | ReactElement">
+  Component to render at the top of the list.
+</ParamField>
+
+<ParamField path="ListFooterComponent" type="React.ComponentType | ReactElement">
+  Component to render at the bottom of the list.
+</ParamField>
+
+<ParamField path="ListEmptyComponent" type="React.ComponentType | ReactElement">
+  Component to render when the list is empty.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ViewStyle>">
+  Custom style to apply to the list container.
+</ParamField>
+
+<ParamField path="...FlatListProps" type="FlatListProps<ItemT>">
+  Accepts all React Native FlatList props including performance optimizations like `initialNumToRender`, `maxToRenderPerBatch`, `windowSize`, etc.
+</ParamField>
+
+## Methods
+
+<ParamField path="scrollToEnd" type="(params?: { animated?: boolean }) => void">
+  Scrolls to the end of the list.
+</ParamField>
+
+<ParamField path="scrollToIndex" type="(params: ScrollToIndexParams) => void">
+  Scrolls to the item at the specified index.
+  ```typescript
+  interface ScrollToIndexParams {
+    index: number;
+    animated?: boolean;
+    viewOffset?: number;
+    viewPosition?: number;
+  }
+  ```
+</ParamField>
+
+<ParamField path="scrollToOffset" type="(params: ScrollToOffsetParams) => void">
+  Scrolls to the specified offset.
+  ```typescript
+  interface ScrollToOffsetParams {
+    offset: number;
+    animated?: boolean;
+  }
+  ```
+</ParamField>
+
+## Examples
+
+### List with Header and Footer
+
+```tsx
+import React from 'react';
+import { View } from 'react-native';
+import { List, ListItem, Text, Divider } from '@ui-kitten/components';
+
+const Header = () => (
+  <View style={{ padding: 16 }}>
+    <Text category='h5'>My List</Text>
+  </View>
+);
+
+const Footer = () => (
+  <View style={{ padding: 16 }}>
+    <Text appearance='hint'>End of list</Text>
+  </View>
+);
+
+export const ListWithHeaderFooter = () => {
+  const data = new Array(5).fill({ title: 'Item' });
+
+  const renderItem = ({ item, index }) => (
+    <ListItem title={`${item.title} ${index + 1}`} />
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+      ListHeaderComponent={Header}
+      ListFooterComponent={Footer}
+      ItemSeparatorComponent={Divider}
+    />
+  );
+};
+```
+
+### Empty List State
+
+```tsx
+import React from 'react';
+import { View } from 'react-native';
+import { List, Text } from '@ui-kitten/components';
+
+const EmptyComponent = () => (
+  <View style={{ padding: 32, alignItems: 'center' }}>
+    <Text category='h6'>No items found</Text>
+    <Text appearance='hint'>Add some items to get started</Text>
+  </View>
+);
+
+export const EmptyList = () => (
+  <List
+    data={[]}
+    renderItem={() => null}
+    ListEmptyComponent={EmptyComponent}
+  />
+);
+```
+
+### Performance Optimized List
+
+```tsx
+import React from 'react';
+import { List, ListItem } from '@ui-kitten/components';
+
+export const OptimizedList = () => {
+  const data = new Array(1000).fill({ title: 'Item' });
+
+  const renderItem = ({ item, index }) => (
+    <ListItem title={`${item.title} ${index + 1}`} />
+  );
+
+  return (
+    <List
+      data={data}
+      renderItem={renderItem}
+      initialNumToRender={10}
+      maxToRenderPerBatch={10}
+      windowSize={5}
+      removeClippedSubviews={true}
+      getItemLayout={(data, index) => ({
+        length: 50,
+        offset: 50 * index,
+        index,
+      })}
+    />
+  );
+};
+```
+
+## Accessibility
+
+```tsx
+<List
+  data={data}
+  renderItem={renderItem}
+  accessible={true}
+  accessibilityLabel="Items list"
+  accessibilityRole="list"
+/>
+```
+
+## See Also
+
+- [Divider](/components/divider) - List item separator

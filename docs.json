@@ -1,122 +1,135 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "UI Kitten",
+  "theme": "willow",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#0f45ec",
+    "light": "#84a4f4",
+    "dark": "#0f45ec"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://media.brand.dev/39100079-eb6f-4b1e-85be-4503172fe28a.png",
+  "logo": {
+    "light": "https://media.brand.dev/39100079-eb6f-4b1e-85be-4503172fe28a.png",
+    "dark": "https://media.brand.dev/39100079-eb6f-4b1e-85be-4503172fe28a.png"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/akveo/react-native-ui-kitten"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/akveo/react-native-ui-kitten",
+      "twitter": "https://twitter.com/akveo"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "introduction",
+              "installation",
+              "quickstart"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Guides",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "guides/theming",
+              "guides/runtime-theming",
+              "guides/branding",
+              "guides/eva-icons",
+              "guides/custom-icons",
+              "guides/configure-navigation",
+              "guides/web-support",
+              "guides/improving-performance"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Design System",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "design-system/eva-design-system",
+              "design-system/theme-customization",
+              "design-system/custom-mapping",
+              "design-system/customize-mapping",
+              "design-system/theme-variables",
+              "design-system/glossary"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Migration",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "migration/4x-to-5x"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Components",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Layout",
             "pages": [
-              "api-reference/introduction"
+              "components/layout",
+              "components/divider",
+              "components/card"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Navigation",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "components/bottom-navigation",
+              "components/top-navigation",
+              "components/tab",
+              "components/drawer",
+              "components/menu",
+              "components/view-pager"
+            ]
+          },
+          {
+            "group": "Forms",
+            "pages": [
+              "components/button",
+              "components/button-group",
+              "components/input",
+              "components/checkbox",
+              "components/radio",
+              "components/radio-group",
+              "components/toggle",
+              "components/select",
+              "components/autocomplete",
+              "components/datepicker",
+              "components/calendar"
+            ]
+          },
+          {
+            "group": "Display",
+            "pages": [
+              "components/text",
+              "components/avatar",
+              "components/icon",
+              "components/list",
+              "components/tooltip",
+              "components/popover",
+              "components/overflow-menu"
+            ]
+          },
+          {
+            "group": "Feedback",
+            "pages": [
+              "components/spinner",
+              "components/progress-bar",
+              "components/circular-progress-bar",
+              "components/modal"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

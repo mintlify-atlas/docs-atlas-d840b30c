@@ -1,0 +1,198 @@
+---
+title: Layout
+description: Overall page container component that provides themed background colors and hierarchical levels
+---
+
+## Overview
+
+Layout is the fundamental container component that should be used as the root component of screens. It provides background colors that respect the current theme and supports different hierarchical levels to create visual depth.
+
+<Note>
+Using Layout is redundant when background color is configured with the `style` property. It's primarily useful for maintaining consistent theming across your application.
+</Note>
+
+## Basic Usage
+
+```jsx
+import React from 'react';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const SimpleLayout = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Welcome to UI Kitten</Text>
+  </Layout>
+);
+```
+
+## Layout Levels
+
+Layouts support 4 different levels to create visual hierarchy. Higher levels provide different background colors to distinguish nested containers.
+
+<CodeGroup>
+```jsx Level 1 (Default)
+import React from 'react';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const Level1Layout = () => (
+  <Layout level='1' style={{ flex: 1, padding: 16 }}>
+    <Text>This is Level 1 - Default background</Text>
+  </Layout>
+);
+```
+
+```jsx Level 2
+import React from 'react';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const Level2Layout = () => (
+  <Layout level='2' style={{ flex: 1, padding: 16 }}>
+    <Text>This is Level 2 - Slightly elevated</Text>
+  </Layout>
+);
+```
+
+```jsx Level 3
+import React from 'react';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const Level3Layout = () => (
+  <Layout level='3' style={{ flex: 1, padding: 16 }}>
+    <Text>This is Level 3 - More elevated</Text>
+  </Layout>
+);
+```
+
+```jsx Level 4
+import React from 'react';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const Level4Layout = () => (
+  <Layout level='4' style={{ flex: 1, padding: 16 }}>
+    <Text>This is Level 4 - Highest elevation</Text>
+  </Layout>
+);
+```
+</CodeGroup>
+
+## Nested Layouts
+
+You can nest layouts with different levels to create visual depth and separate sections:
+
+```jsx
+import React from 'react';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const NestedLayouts = () => (
+  <Layout level='1' style={{ flex: 1, padding: 16 }}>
+    <Text category='h1'>Main Container</Text>
+    
+    <Layout level='2' style={{ padding: 16, marginTop: 16 }}>
+      <Text category='h6'>Section 1</Text>
+      <Text>Content in Level 2</Text>
+      
+      <Layout level='3' style={{ padding: 16, marginTop: 8 }}>
+        <Text category='s1'>Subsection</Text>
+        <Text>Content in Level 3</Text>
+      </Layout>
+    </Layout>
+  </Layout>
+);
+```
+
+## Props
+
+<ParamField path="children" type="ReactNode">
+  The content to render within the layout container.
+</ParamField>
+
+<ParamField path="level" type="'1' | '2' | '3' | '4'" default="'1'">
+  Background color level of the component. Each level provides a different background shade to create visual hierarchy.
+  
+  - `'1'` - Base background level (default)
+  - `'2'` - Slightly elevated background
+  - `'3'` - More elevated background
+  - `'4'` - Highest elevation background
+</ParamField>
+
+<ParamField path="appearance" type="'default'" default="'default'">
+  Visual appearance of the layout. Currently only supports `'default'`.
+</ParamField>
+
+<ParamField path="...ViewProps" type="ViewProps">
+  Layout extends React Native's `View` component and accepts all standard [View props](https://reactnative.dev/docs/view#props).
+</ParamField>
+
+## Common Patterns
+
+### Full Screen Layout
+
+```jsx
+import React from 'react';
+import { Layout, Text } from '@ui-kitten/components';
+import { SafeAreaView } from 'react-native';
+
+export const FullScreenLayout = () => (
+  <SafeAreaView style={{ flex: 1 }}>
+    <Layout style={{ flex: 1 }}>
+      <Text>Full screen content</Text>
+    </Layout>
+  </SafeAreaView>
+);
+```
+
+### Scrollable Layout
+
+```jsx
+import React from 'react';
+import { ScrollView } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
+
+export const ScrollableLayout = () => (
+  <Layout style={{ flex: 1 }}>
+    <ScrollView>
+      <Layout style={{ padding: 16 }}>
+        <Text>Scrollable content goes here...</Text>
+        {/* More content */}
+      </Layout>
+    </ScrollView>
+  </Layout>
+);
+```
+
+### Layout with Header and Content
+
+```jsx
+import React from 'react';
+import { Layout, Text, TopNavigation, Divider } from '@ui-kitten/components';
+
+export const LayoutWithHeader = () => (
+  <Layout style={{ flex: 1 }}>
+    <TopNavigation title='My App' />
+    <Divider />
+    <Layout level='2' style={{ flex: 1, padding: 16 }}>
+      <Text>Main content area</Text>
+    </Layout>
+  </Layout>
+);
+```
+
+## Theme Customization
+
+Layout colors are defined in your theme configuration and automatically adapt to light/dark modes:
+
+```json
+{
+  "color-basic-100": "#FFFFFF",
+  "color-basic-200": "#F7F9FC",
+  "color-basic-300": "#EDF1F7",
+  "color-basic-400": "#E4E9F2"
+}
+```
+
+## Accessibility
+
+Layout is a container component and doesn't require specific accessibility props. Ensure child components have appropriate accessibility labels.
+
+## Source Code
+
+View the source code on GitHub: [layout.component.tsx](https://github.com/akveo/react-native-ui-kitten/blob/master/src/components/ui/layout/layout.component.tsx)

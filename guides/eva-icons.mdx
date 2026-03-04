@@ -1,0 +1,407 @@
+---
+title: Eva Icons
+description: Install and use Eva Icons, a pack of 480+ beautifully crafted open source icons for UI Kitten applications
+---
+
+[Eva Icons](https://akveo.github.io/eva-icons) is a pack of 480+ beautifully crafted Open Source icons for common actions and items. UI Kitten has a dedicated module to integrate Eva Icons seamlessly with React Native.
+
+## Installation
+
+Install the Eva Icons package and its peer dependency:
+
+<CodeGroup>
+
+```bash npm
+npm install @ui-kitten/eva-icons react-native-svg
+```
+
+```bash yarn
+yarn add @ui-kitten/eva-icons react-native-svg
+```
+
+```bash expo
+expo install @ui-kitten/eva-icons react-native-svg
+```
+
+</CodeGroup>
+
+<Note>
+If you initialized your app using a UI Kitten template, Eva Icons are already included.
+</Note>
+
+### iOS Setup (Non-Expo)
+
+For bare React Native projects, complete the iOS installation:
+
+```bash
+cd ios && pod install && cd ..
+```
+
+### Restart Bundler
+
+Restart your bundler with cache cleared:
+
+<CodeGroup>
+
+```bash React Native
+npm start -- --reset-cache
+```
+
+```bash Expo
+expo start -c
+```
+
+</CodeGroup>
+
+## Register Icon Pack
+
+Register Eva Icons at the root of your application:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+
+const HomeScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>HOME</Text>
+  </Layout>
+);
+
+export default () => (
+  <>
+    <IconRegistry icons={EvaIconsPack} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <HomeScreen />
+    </ApplicationProvider>
+  </>
+);
+```
+
+<Steps>
+  <Step title="Import IconRegistry">
+    Import `IconRegistry` from `@ui-kitten/components`
+  </Step>
+  <Step title="Import Eva Icons Pack">
+    Import `EvaIconsPack` from `@ui-kitten/eva-icons`
+  </Step>
+  <Step title="Register Icons">
+    Place `<IconRegistry icons={EvaIconsPack} />` before `ApplicationProvider`
+  </Step>
+</Steps>
+
+## Basic Usage
+
+Use the `Icon` component to display Eva Icons:
+
+```tsx
+import React from 'react';
+import { Icon } from '@ui-kitten/components';
+
+export const StarIcon = (props) => (
+  <Icon
+    {...props}
+    name='star'
+  />
+);
+```
+
+### Icon Properties
+
+- `name` - The icon name from Eva Icons (e.g., 'star', 'heart', 'menu')
+- `fill` - The color of the icon
+- `style` - Style object with `width` and `height`
+
+### Styled Icon
+
+```tsx
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Icon } from '@ui-kitten/components';
+
+export const StyledIcon = () => (
+  <Icon
+    style={styles.icon}
+    fill='#8F9BB3'
+    name='star'
+  />
+);
+
+const styles = StyleSheet.create({
+  icon: {
+    width: 32,
+    height: 32,
+  },
+});
+```
+
+## Icons in Components
+
+Many UI Kitten components accept icons as accessories:
+
+### Button Icons
+
+```tsx
+import React from 'react';
+import { Button, Icon } from '@ui-kitten/components';
+
+const FacebookIcon = (props) => (
+  <Icon {...props} name='facebook' />
+);
+
+export const LoginButton = () => (
+  <Button accessoryLeft={FacebookIcon}>
+    Login with Facebook
+  </Button>
+);
+```
+
+### Input Icons
+
+```tsx
+import React from 'react';
+import { Input, Icon } from '@ui-kitten/components';
+
+const EmailIcon = (props) => (
+  <Icon {...props} name='email-outline' />
+);
+
+export const EmailInput = () => (
+  <Input
+    placeholder='Email'
+    accessoryLeft={EmailIcon}
+  />
+);
+```
+
+### Menu Items
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem, Icon } from '@ui-kitten/components';
+
+const HomeIcon = (props) => <Icon {...props} name='home-outline' />;
+const SettingsIcon = (props) => <Icon {...props} name='settings-outline' />;
+const LogoutIcon = (props) => <Icon {...props} name='log-out-outline' />;
+
+export const AppMenu = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(null);
+
+  return (
+    <Menu
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+    >
+      <MenuItem title='Home' accessoryLeft={HomeIcon} />
+      <MenuItem title='Settings' accessoryLeft={SettingsIcon} />
+      <MenuItem title='Logout' accessoryLeft={LogoutIcon} />
+    </Menu>
+  );
+};
+```
+
+### Tab Bar Icons
+
+```tsx
+import React from 'react';
+import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/components';
+
+const HomeIcon = (props) => <Icon {...props} name='home-outline' />;
+const PersonIcon = (props) => <Icon {...props} name='person-outline' />;
+const BellIcon = (props) => <Icon {...props} name='bell-outline' />;
+
+export const BottomNav = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <BottomNavigation
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+    >
+      <BottomNavigationTab title='Home' icon={HomeIcon} />
+      <BottomNavigationTab title='Profile' icon={PersonIcon} />
+      <BottomNavigationTab title='Notifications' icon={BellIcon} />
+    </BottomNavigation>
+  );
+};
+```
+
+## Icon Animation
+
+Eva Icons support animation when switching between icons:
+
+```tsx
+import React from 'react';
+import { Button, Icon } from '@ui-kitten/components';
+
+export const AnimatedIcon = () => {
+  const [liked, setLiked] = React.useState(false);
+
+  const HeartIcon = (props) => (
+    <Icon
+      {...props}
+      name={liked ? 'heart' : 'heart-outline'}
+      animation='zoom'
+    />
+  );
+
+  return (
+    <Button
+      accessoryLeft={HeartIcon}
+      onPress={() => setLiked(!liked)}
+    >
+      {liked ? 'Unlike' : 'Like'}
+    </Button>
+  );
+};
+```
+
+Available animations:
+- `zoom` - Icon zooms in when it changes
+- `pulse` - Icon pulses
+- `shake` - Icon shakes
+
+## Theming Icons
+
+Icons automatically adapt to the theme when used within components:
+
+```tsx
+import React from 'react';
+import { Layout, Button, Icon, useTheme } from '@ui-kitten/components';
+
+const StarIcon = (props) => <Icon {...props} name='star' />;
+
+export const ThemedIcons = () => {
+  const theme = useTheme();
+
+  return (
+    <Layout>
+      {/* Icon inherits theme from Button status */}
+      <Button status='primary' accessoryLeft={StarIcon}>
+        Primary Button
+      </Button>
+
+      <Button status='success' accessoryLeft={StarIcon}>
+        Success Button
+      </Button>
+
+      {/* Manually themed icon */}
+      <Icon
+        name='heart'
+        style={{ width: 32, height: 32 }}
+        fill={theme['color-primary-500']}
+      />
+    </Layout>
+  );
+};
+```
+
+## Icon Browser
+
+Explore all 480+ available icons at [Eva Icons](https://akveo.github.io/eva-icons).
+
+Each icon has two variants:
+- **Outline** - Outlined version (e.g., `home-outline`)
+- **Fill** - Filled version (e.g., `home`)
+
+<Note>
+When using an icon, check if an outline variant exists by appending `-outline` to the icon name.
+</Note>
+
+## Common Icons
+
+Here are some frequently used icons:
+
+### Navigation
+- `menu-outline` - Hamburger menu
+- `arrow-back-outline` - Back arrow
+- `arrow-forward-outline` - Forward arrow
+- `close-outline` - Close/dismiss
+- `home-outline` - Home
+
+### Actions
+- `edit-outline` - Edit
+- `trash-outline` - Delete
+- `plus-outline` - Add
+- `checkmark-outline` - Confirm
+- `search-outline` - Search
+
+### Social
+- `facebook` - Facebook
+- `twitter` - Twitter
+- `google` - Google
+- `github` - GitHub
+- `linkedin` - LinkedIn
+
+### Status
+- `checkmark-circle-outline` - Success
+- `alert-triangle-outline` - Warning
+- `close-circle-outline` - Error
+- `info-outline` - Information
+
+### UI Elements
+- `heart-outline` - Favorite
+- `star-outline` - Rating
+- `bell-outline` - Notifications
+- `settings-outline` - Settings
+- `person-outline` - Profile
+
+## Performance Tips
+
+<AccordionGroup>
+  <Accordion title="Memoize Icon Components">
+    Wrap icon components with `React.memo()` to prevent unnecessary re-renders:
+    ```tsx
+    const StarIcon = React.memo((props) => (
+      <Icon {...props} name='star' />
+    ));
+    ```
+  </Accordion>
+
+  <Accordion title="Reuse Icon Components">
+    Define icon components once and reuse them throughout your app instead of creating new ones inline.
+  </Accordion>
+
+  <Accordion title="Use Appropriate Sizes">
+    Match icon sizes to your design system (e.g., 16, 24, 32, 48) to avoid scaling artifacts.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Icons Not Displaying">
+    Ensure:
+    - `react-native-svg` is properly installed
+    - iOS pods are installed (`cd ios && pod install`)
+    - Bundler cache is cleared (`npm start -- --reset-cache`)
+    - `IconRegistry` is placed before `ApplicationProvider`
+  </Accordion>
+
+  <Accordion title="Icon Color Not Changing">
+    Use the `fill` prop, not `color`:
+    ```tsx
+    <Icon name='star' fill='#FF0000' /> {/* Correct */}
+    <Icon name='star' color='#FF0000' /> {/* Won't work */}
+    ```
+  </Accordion>
+
+  <Accordion title="Icon Size Not Changing">
+    Set width and height in the `style` prop:
+    ```tsx
+    <Icon name='star' style={{ width: 32, height: 32 }} />
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Icons" icon="image" href="/guides/custom-icons">
+    Learn how to integrate other icon packages
+  </Card>
+  <Card title="Configure Navigation" icon="compass" href="/guides/configure-navigation">
+    Set up navigation with icon-based tab bars
+  </Card>
+</CardGroup>

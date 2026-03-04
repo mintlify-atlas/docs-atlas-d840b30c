@@ -1,0 +1,243 @@
+---
+title: Avatar
+description: Display user profile images with customizable size and shape variations.
+---
+
+Avatar is an image component styled by Eva Design System with support for different sizes and shapes.
+
+## Import
+
+```tsx
+import { Avatar } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { Avatar } from '@ui-kitten/components';
+
+export const AvatarSimple = () => (
+  <Avatar
+    source={{ uri: 'https://example.com/avatar.jpg' }}
+  />
+);
+```
+
+## Sizes
+
+Avatar supports five predefined sizes:
+
+```tsx
+<Avatar size='tiny' source={avatarSource} />
+<Avatar size='small' source={avatarSource} />
+<Avatar size='medium' source={avatarSource} />
+<Avatar size='large' source={avatarSource} />
+<Avatar size='giant' source={avatarSource} />
+```
+
+<Note>
+The default size is `medium`.
+</Note>
+
+## Shapes
+
+Configure the avatar shape to match your design:
+
+<CodeGroup>
+```tsx Round (Default)
+<Avatar
+  shape='round'
+  source={{ uri: 'https://example.com/avatar.jpg' }}
+/>
+```
+
+```tsx Rounded
+<Avatar
+  shape='rounded'
+  source={{ uri: 'https://example.com/avatar.jpg' }}
+/>
+```
+
+```tsx Square
+<Avatar
+  shape='square'
+  source={{ uri: 'https://example.com/avatar.jpg' }}
+/>
+```
+</CodeGroup>
+
+## Custom Image Component
+
+Avatar can use custom image libraries for improved loading performance:
+
+```tsx
+import FastImage from 'react-native-fast-image';
+import { Avatar } from '@ui-kitten/components';
+
+export const CustomAvatar = () => (
+  <Avatar
+    ImageComponent={FastImage}
+    source={{
+      uri: 'https://example.com/avatar.jpg',
+      priority: FastImage.priority.high,
+    }}
+  />
+);
+```
+
+<Note>
+The `ImageComponent` prop accepts any component type that accepts image props.
+</Note>
+
+## Props
+
+<ParamField path="source" type="ImageSourcePropType" required>
+  Image source to be displayed. Accepts the same format as React Native Image `source` prop.
+</ParamField>
+
+<ParamField path="size" type="string" default="medium">
+  Size of the avatar. Can be `tiny`, `small`, `medium`, `large`, or `giant`.
+</ParamField>
+
+<ParamField path="shape" type="string" default="round">
+  Shape of the avatar:
+  - `round` - Fully circular avatar
+  - `rounded` - Avatar with rounded corners
+  - `square` - Avatar with square corners
+</ParamField>
+
+<ParamField path="ImageComponent" type="React.ComponentType" default="Image">
+  Custom component to render the image. Useful for third-party image libraries like `react-native-fast-image` or `expo-image`.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ImageStyle>">
+  Custom style to apply to the avatar.
+</ParamField>
+
+<ParamField path="...ImageProps" type="ImageProps">
+  Accepts all React Native Image component props based on the `ImageComponent` used.
+</ParamField>
+
+## Examples
+
+### Avatar Grid
+
+```tsx
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Avatar } from '@ui-kitten/components';
+
+const users = [
+  { id: 1, avatar: 'https://example.com/user1.jpg' },
+  { id: 2, avatar: 'https://example.com/user2.jpg' },
+  { id: 3, avatar: 'https://example.com/user3.jpg' },
+];
+
+export const AvatarGrid = () => (
+  <View style={styles.container}>
+    {users.map(user => (
+      <Avatar
+        key={user.id}
+        size='large'
+        source={{ uri: user.avatar }}
+        style={styles.avatar}
+      />
+    ))}
+  </View>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  avatar: {
+    margin: 8,
+  },
+});
+```
+
+### Avatar with Fallback
+
+```tsx
+import React from 'react';
+import { Avatar } from '@ui-kitten/components';
+
+export const AvatarWithFallback = () => (
+  <Avatar
+    source={{ uri: 'https://example.com/avatar.jpg' }}
+    defaultSource={require('./assets/default-avatar.png')}
+  />
+);
+```
+
+### Size Comparison
+
+```tsx
+import React from 'react';
+import { View } from 'react-native';
+import { Avatar } from '@ui-kitten/components';
+
+const avatarSource = { uri: 'https://example.com/avatar.jpg' };
+
+export const AvatarSizes = () => (
+  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+    <Avatar size='tiny' source={avatarSource} />
+    <Avatar size='small' source={avatarSource} />
+    <Avatar size='medium' source={avatarSource} />
+    <Avatar size='large' source={avatarSource} />
+    <Avatar size='giant' source={avatarSource} />
+  </View>
+);
+```
+
+### Custom Styling
+
+```tsx
+<Avatar
+  source={{ uri: 'https://example.com/avatar.jpg' }}
+  style={{
+    borderWidth: 2,
+    borderColor: '#3366FF',
+  }}
+/>
+```
+
+## Accessibility
+
+```tsx
+<Avatar
+  source={{ uri: 'https://example.com/avatar.jpg' }}
+  accessible={true}
+  accessibilityLabel="User profile picture"
+  accessibilityRole="image"
+/>
+```
+
+## Theming
+
+Avatar appearance can be customized through Eva Design System theme configuration. The component respects theme-defined size and shape parameters.
+
+```json
+{
+  "Avatar": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {},
+        "variantGroups": {
+          "size": {
+            "tiny": { "height": 24, "width": 24 },
+            "small": { "height": 32, "width": 32 },
+            "medium": { "height": 40, "width": 40 },
+            "large": { "height": 48, "width": 48 },
+            "giant": { "height": 56, "width": 56 }
+          }
+        }
+      }
+    }
+  }
+}
+```

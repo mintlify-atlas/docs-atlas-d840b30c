@@ -1,0 +1,704 @@
+---
+title: "Migration from 4.x to 5.x"
+description: "Guide to migrating your UI Kitten project from version 4.x to version 5.x"
+---
+
+UI Kitten v5.0 is a significant improvement and rework of the previous version. We believe these changes bring UI Kitten to the new level of quality and feature richness. To achieve this and allow UI Kitten to grow faster and better, we had to refactor a lot of internal implementations, as well as public APIs.
+
+<Note>
+We hope that next UI Kitten versions won't receive such significant upgrades and the amount of breaking changes will be kept as low as possible.
+</Note>
+
+## Migration Goals
+
+The v5.0 release focuses on:
+
+- **Flexible styling** with new convenient and unified component interfaces
+- **Declarative rendering** of nested components
+- **Better TypeScript support** with improved type definitions
+- **Better documentation** with detailed descriptions for component examples and properties
+- **Performance improvements** for styled components and style hooks
+- **React Native 0.62 support** and compatibility with latest dependencies
+
+## Prerequisites
+
+Before starting the migration, ensure you have:
+
+- UI Kitten v4.x installed in your project
+- React Native 0.59 or higher
+- Basic understanding of React and React Native
+
+<Warning>
+This is a major version upgrade with breaking changes. We recommend testing thoroughly in a development environment before deploying to production.
+</Warning>
+
+## Migration Steps
+
+<Steps>
+
+<Step title="Update Package Dependencies">
+
+Update your `@ui-kitten/*` packages to version 5 and `@eva-design/*` packages to version 2:
+
+```bash npm
+npm install @ui-kitten/components@5.0.0 @eva-design/eva@2.0.0
+```
+
+```bash yarn
+yarn add @ui-kitten/components@5.0.0 @eva-design/eva@2.0.0
+```
+
+If you use Eva Icons:
+
+```bash npm
+npm install @ui-kitten/eva-icons@5.0.0
+```
+
+```bash yarn
+yarn add @ui-kitten/eva-icons@5.0.0
+```
+
+<Note>
+The `react-native-svg` package is now required and included in peer dependencies.
+</Note>
+
+```bash npm
+npm install react-native-svg
+```
+
+```bash yarn
+yarn add react-native-svg
+```
+
+</Step>
+
+<Step title="Understand the New API Patterns">
+
+Version 5.0 introduces several unified API patterns across components:
+
+### Pattern 1: Text Properties Accept Components
+
+Components that previously accepted only strings for text properties now accept strings, numbers, or function components:
+
+```jsx Before
+<Button text="Click Me" textStyle={myStyle} />
+```
+
+```jsx After
+<Button>
+  {evaProps => <Text {...evaProps} style={[evaProps.style, myStyle]}>Click Me</Text>}
+</Button>
+```
+
+This change makes `*Style` properties (like `textStyle`, `labelStyle`) redundant.
+
+### Pattern 2: Icon Properties Renamed
+
+Icon properties are renamed to `accessoryLeft` and `accessoryRight`:
+
+```jsx Before
+<Button icon={StarIcon} />
+<Input icon={StarIcon} />
+```
+
+```jsx After
+<Button accessoryRight={StarIcon} />
+<Input accessoryLeft={StarIcon} />
+```
+
+### Pattern 3: Popover-Based Components
+
+Popover and related components (Tooltip, OverflowMenu) now accept content as children and the anchor as a prop:
+
+```jsx Before
+<Popover content={renderContent} />
+```
+
+```jsx After
+<Popover anchor={renderToggleButton}>
+  {renderContent}
+</Popover>
+```
+
+### Pattern 4: Eva Props Combined
+
+HOCs like `withStyles` and `styled` now inject a single `eva` property combining `theme`, `style`, and `dispatch`:
+
+```jsx Before
+const MyComponent = ({ theme, style }) => (
+  <View style={style.container} />
+);
+```
+
+```jsx After
+const MyComponent = ({ eva }) => (
+  <View style={eva.style.container} />
+);
+```
+
+</Step>
+
+<Step title="Update Component Usage">
+
+### Button
+
+**Remove `textStyle` property:**
+
+```jsx Before
+<Button text="Click Me" textStyle={customStyle} />
+```
+
+```jsx After
+import { Button, Text } from '@ui-kitten/components';
+
+<Button>
+  {evaProps => <Text {...evaProps} style={[evaProps.style, customStyle]}>Click Me</Text>}
+</Button>
+```
+
+**Update icon property:**
+
+```jsx Before
+<Button icon={StarIcon} />
+```
+
+```jsx After
+<Button accessoryRight={StarIcon} />
+// or
+<Button accessoryLeft={StarIcon} />
+```
+
+### Radio, CheckBox, and Toggle
+
+**Move text to children:**
+
+```jsx Before
+<Radio text="Option 1" textStyle={customStyle} />
+<CheckBox text="Accept terms" textStyle={customStyle} />
+<Toggle text="Enable feature" textStyle={customStyle} />
+```
+
+```jsx After
+import { Radio, CheckBox, Toggle, Text } from '@ui-kitten/components';
+
+<Radio>Option 1</Radio>
+<CheckBox>Accept terms</CheckBox>
+<Toggle>Enable feature</Toggle>
+
+// With custom styles:
+<Radio>
+  {evaProps => <Text {...evaProps} style={[evaProps.style, customStyle]}>Option 1</Text>}
+</Radio>
+```
+
+### Input
+
+**Update icon and style properties:**
+
+```jsx Before
+<Input 
+  icon={StarIcon}
+  label="Email"
+  labelStyle={labelStyle}
+  caption="Enter your email"
+  captionStyle={captionStyle}
+/>
+```
+
+```jsx After
+import { Input, Text } from '@ui-kitten/components';
+
+<Input 
+  accessoryRight={StarIcon}
+  label={evaProps => <Text {...evaProps} style={[evaProps.style, labelStyle]}>Email</Text>}
+  caption={evaProps => <Text {...evaProps} style={[evaProps.style, captionStyle]}>Enter your email</Text>}
+/>
+```
+
+### Select
+
+**Replace data prop with children:**
+
+```jsx Before
+<Select 
+  data={options}
+  icon={StarIcon}
+  labelStyle={customStyle}
+  placeholderStyle={placeholderStyle}
+/>
+```
+
+```jsx After
+import { Select, SelectItem, SelectGroup } from '@ui-kitten/components';
+
+<Select 
+  accessoryRight={StarIcon}
+  label={evaProps => <Text {...evaProps} style={[evaProps.style, customStyle]}>Label</Text>}
+  placeholder={evaProps => <Text {...evaProps} style={[evaProps.style, placeholderStyle]}>Placeholder</Text>}
+>
+  <SelectItem title='Option 1' />
+  <SelectItem title='Option 2' />
+  <SelectGroup title='Group'>
+    <SelectItem title='Option 2.1' />
+    <SelectItem title='Option 2.2' />
+  </SelectGroup>
+</Select>
+```
+
+### Autocomplete
+
+**Replace data and renderItem with children:**
+
+```jsx Before
+<Autocomplete 
+  data={options}
+  renderItem={renderItem}
+  icon={StarIcon}
+/>
+```
+
+```jsx After
+import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+
+<Autocomplete accessoryRight={StarIcon}>
+  <AutocompleteItem title='Option 1' />
+  <AutocompleteItem title='Option 2' />
+  <AutocompleteItem title='Option 3' />
+</Autocomplete>
+```
+
+### Datepicker and RangeDatepicker
+
+**Update icon and style properties:**
+
+```jsx Before
+<Datepicker 
+  icon={CalendarIcon}
+  labelStyle={labelStyle}
+  captionStyle={captionStyle}
+/>
+```
+
+```jsx After
+<Datepicker 
+  accessoryRight={CalendarIcon}
+  label={evaProps => <Text {...evaProps} style={[evaProps.style, labelStyle]}>Date</Text>}
+  caption={evaProps => <Text {...evaProps} style={[evaProps.style, captionStyle]}>Select date</Text>}
+/>
+```
+
+### Menu and Drawer
+
+**Replace data prop with children:**
+
+```jsx Before
+<Menu data={menuItems} />
+<Drawer data={drawerItems} />
+```
+
+```jsx After
+import { Menu, MenuItem, MenuGroup } from '@ui-kitten/components';
+import { Drawer, DrawerItem, DrawerGroup } from '@ui-kitten/components';
+
+<Menu>
+  <MenuItem title='Option 1' />
+  <MenuGroup title='Group'>
+    <MenuItem title='Option 1.1' />
+    <MenuItem title='Option 1.2' />
+  </MenuGroup>
+</Menu>
+
+<Drawer>
+  <DrawerItem title='Screen 1' />
+  <DrawerGroup title='Section'>
+    <DrawerItem title='Screen 2' />
+    <DrawerItem title='Screen 3' />
+  </DrawerGroup>
+</Drawer>
+```
+
+### TopNavigation
+
+**Update accessory and style properties:**
+
+```jsx Before
+<TopNavigation
+  title="Home"
+  titleStyle={titleStyle}
+  subtitle="Welcome"
+  subtitleStyle={subtitleStyle}
+  leftControl={BackAction}
+  rightControls={[SettingsAction]}
+/>
+```
+
+```jsx After
+import { TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+
+<TopNavigation
+  title={evaProps => <Text {...evaProps} style={[evaProps.style, titleStyle]}>Home</Text>}
+  subtitle={evaProps => <Text {...evaProps} style={[evaProps.style, subtitleStyle]}>Welcome</Text>}
+  accessoryLeft={BackAction}
+  accessoryRight={SettingsAction}
+/>
+
+// For multiple actions, use React.Fragment:
+const RightActions = () => (
+  <React.Fragment>
+    <TopNavigationAction icon={SearchIcon} />
+    <TopNavigationAction icon={SettingsIcon} />
+  </React.Fragment>
+);
+```
+
+### BottomNavigation and TabBar
+
+**Update title properties:**
+
+```jsx Before
+<BottomNavigation>
+  <BottomNavigationTab title="Home" titleStyle={customStyle} />
+  <BottomNavigationTab title="Profile" titleStyle={customStyle} />
+</BottomNavigation>
+
+<TabBar>
+  <Tab title="Tab 1" titleStyle={customStyle} />
+  <Tab title="Tab 2" titleStyle={customStyle} />
+</TabBar>
+```
+
+```jsx After
+<BottomNavigation>
+  <BottomNavigationTab 
+    title={evaProps => <Text {...evaProps} style={[evaProps.style, customStyle]}>Home</Text>}
+  />
+  <BottomNavigationTab 
+    title={evaProps => <Text {...evaProps} style={[evaProps.style, customStyle]}>Profile</Text>}
+  />
+</BottomNavigation>
+
+<TabBar>
+  <Tab title={evaProps => <Text {...evaProps} style={[evaProps.style, customStyle]}>Tab 1</Text>} />
+  <Tab title={evaProps => <Text {...evaProps} style={[evaProps.style, customStyle]}>Tab 2</Text>} />
+</TabBar>
+```
+
+### List and ListItem
+
+**Update accessory and style properties:**
+
+```jsx Before
+<ListItem
+  title="Item Title"
+  titleStyle={titleStyle}
+  description="Item description"
+  descriptionStyle={descriptionStyle}
+  icon={StarIcon}
+  accessory={CheckIcon}
+  onPress={(index) => console.log(index)}
+/>
+```
+
+```jsx After
+import { ListItem } from '@ui-kitten/components';
+
+<ListItem
+  title={evaProps => <Text {...evaProps} style={[evaProps.style, titleStyle]}>Item Title</Text>}
+  description={evaProps => <Text {...evaProps} style={[evaProps.style, descriptionStyle]}>Item description</Text>}
+  accessoryLeft={StarIcon}
+  accessoryRight={CheckIcon}
+  onPress={() => console.log('pressed')} // Note: index is no longer passed
+/>
+```
+
+<Warning>
+`ListItem.onPress` no longer receives the item index as a parameter. Store necessary data in closures or use state management.
+</Warning>
+
+### Card
+
+**Update header and footer:**
+
+```jsx Before
+<Card>
+  <CardHeader title="Title" description="Description" />
+  <Text>Content</Text>
+</Card>
+```
+
+```jsx After
+import { Card, Layout, Text } from '@ui-kitten/components';
+
+const Header = (evaProps) => (
+  <Layout {...evaProps}>
+    <Text category='h6'>Title</Text>
+    <Text category='s1'>Description</Text>
+  </Layout>
+);
+
+const Footer = (evaProps) => (
+  <Layout {...evaProps}>
+    <Text category='c2'>Footer</Text>
+  </Layout>
+);
+
+<Card header={Header} footer={Footer}>
+  <Text>Content</Text>
+</Card>
+```
+
+### Popover, Tooltip, and OverflowMenu
+
+**Move content to children and anchor to prop:**
+
+```jsx Before
+<Popover content={renderContent} />
+
+<Tooltip text="Tooltip text" />
+
+<OverflowMenu data={menuData} />
+```
+
+```jsx After
+import { Popover, Tooltip, OverflowMenu, MenuItem, Button } from '@ui-kitten/components';
+
+const renderToggleButton = () => (
+  <Button>Toggle</Button>
+);
+
+<Popover anchor={renderToggleButton}>
+  <Layout>
+    <Text>Popover content</Text>
+  </Layout>
+</Popover>
+
+<Tooltip anchor={renderToggleButton}>
+  Tooltip text
+</Tooltip>
+
+<OverflowMenu anchor={renderToggleButton}>
+  <MenuItem title='Option 1' />
+  <MenuItem title='Option 2' />
+</OverflowMenu>
+```
+
+</Step>
+
+<Step title="Update High-Order Components">
+
+### withStyles
+
+**Update to use combined `eva` prop:**
+
+```jsx Before
+import { withStyles } from '@ui-kitten/components';
+
+const MyComponent = ({ theme, style }) => (
+  <View style={style.container} />
+);
+
+export default withStyles(MyComponent, theme => ({
+  container: {
+    backgroundColor: theme['color-primary-default'],
+  },
+}));
+```
+
+```jsx After
+import { withStyles } from '@ui-kitten/components';
+
+const MyComponent = ({ eva }) => (
+  <View style={eva.style.container} />
+);
+
+export default withStyles(MyComponent, theme => ({
+  container: {
+    backgroundColor: theme['color-primary-default'],
+  },
+}));
+```
+
+### styled (Decorator)
+
+**Update to use decorator syntax and combined `eva` prop:**
+
+```jsx Before
+import { styled } from '@ui-kitten/components';
+
+class MyComponent extends React.Component {
+  render() {
+    const { theme, dispatch } = this.props;
+    return <View />;
+  }
+}
+
+MyComponent.styledComponentName = 'MyComponent';
+export default styled(MyComponent);
+```
+
+```jsx After
+import { styled } from '@ui-kitten/components';
+
+@styled('MyComponent')
+export class MyComponent extends React.Component {
+  render() {
+    const { eva, ...restProps } = this.props;
+    // eva contains: theme, style, dispatch
+    return <View style={eva.style.container} />;
+  }
+}
+```
+
+<Note>
+The `styledComponentName` static is no longer needed. The decorator now handles this automatically, leading to better TypeScript support when using refs.
+</Note>
+
+</Step>
+
+<Step title="Test Your Application">
+
+After completing the migration:
+
+1. **Run your application** and verify all UI components render correctly
+2. **Test user interactions** to ensure event handlers work as expected
+3. **Check styling** to confirm custom styles are applied properly
+4. **Review TypeScript errors** if using TypeScript - the improved type definitions may reveal previously hidden issues
+5. **Test on both iOS and Android** to ensure cross-platform compatibility
+
+<Note>
+Pay special attention to components using `onPress` handlers, especially `ListItem`, as the callback signature has changed.
+</Note>
+
+</Step>
+
+</Steps>
+
+## New Features in 5.0
+
+After completing the migration, you can take advantage of new features:
+
+### Avatar ImageComponent Property
+
+Customize the image rendering component:
+
+```jsx
+import { Avatar } from '@ui-kitten/components';
+import FastImage from 'react-native-fast-image';
+
+<Avatar 
+  source={{ uri: 'https://example.com/avatar.jpg' }}
+  ImageComponent={FastImage}
+/>
+```
+
+### Datepicker autoDismiss Property
+
+Control whether the datepicker dismisses automatically:
+
+```jsx
+<Datepicker 
+  date={date}
+  onSelect={setDate}
+  autoDismiss={false}
+/>
+```
+
+### Metro Config CLI
+
+Compile mappings manually for CI environments:
+
+```bash
+npx @ui-kitten/metro-config
+```
+
+### Improved Performance
+
+Version 5.0 includes significant performance improvements for:
+
+- Style hooks with reduced re-renders
+- Styled components with optimized dispatch handling
+- Large lists with better rendering performance
+
+## Breaking Changes Summary
+
+<Warning>
+Review this section carefully to ensure you've addressed all breaking changes.
+</Warning>
+
+| Component | Change | Migration |
+|-----------|--------|-----------|
+| **All styled components** | `*Style` properties removed | Use function components as children |
+| **Button** | `icon` prop renamed | Use `accessoryLeft` or `accessoryRight` |
+| **Input** | `icon` prop renamed | Use `accessoryLeft` or `accessoryRight` |
+| **Select** | `data` prop removed | Use `SelectItem` and `SelectGroup` children |
+| **Autocomplete** | `data` and `renderItem` removed | Use `AutocompleteItem` children |
+| **Menu** | `data` prop removed | Use `MenuItem` and `MenuGroup` children |
+| **Drawer** | `data` prop removed | Use `DrawerItem` and `DrawerGroup` children |
+| **Radio, CheckBox, Toggle** | `text` prop removed | Use children instead |
+| **TopNavigation** | `leftControl` and `rightControls` renamed | Use `accessoryLeft` and `accessoryRight` |
+| **ListItem** | `onPress` signature changed | No longer receives index parameter |
+| **ListItem** | `icon` and `accessory` renamed | Use `accessoryLeft` and `accessoryRight` |
+| **Card** | `CardHeader` component removed | Use `header` and `footer` render props |
+| **Popover, Tooltip, OverflowMenu** | `content` prop removed | Use children and `anchor` prop |
+| **withStyles HOC** | Props combined | Access via `eva.theme` and `eva.style` |
+| **styled decorator** | Props combined | Access via `eva.theme`, `eva.style`, `eva.dispatch` |
+
+## Common Migration Issues
+
+### Issue: ListItem onPress Not Working
+
+**Problem:** `onPress` expects the item index but it's no longer provided.
+
+**Solution:** Store necessary data in state or use closures:
+
+```jsx
+// Instead of:
+<ListItem onPress={(index) => handlePress(items[index])} />
+
+// Use:
+<ListItem onPress={() => handlePress(item)} />
+```
+
+### Issue: TypeScript Errors with Eva Props
+
+**Problem:** TypeScript doesn't recognize the `eva` prop.
+
+**Solution:** The component is correctly typed when using HOCs:
+
+```tsx
+interface MyComponentProps {
+  eva?: EvaProps; // Import from @ui-kitten/components
+  customProp: string;
+}
+
+const MyComponent: React.FC<MyComponentProps> = ({ eva, customProp }) => {
+  // ...
+};
+```
+
+### Issue: Icons Not Rendering
+
+**Problem:** `react-native-svg` is not installed.
+
+**Solution:** Install the required peer dependency:
+
+```bash
+npm install react-native-svg
+```
+
+## Need Help?
+
+If you encounter issues during migration:
+
+- Check the [UI Kitten documentation](https://akveo.github.io/react-native-ui-kitten/)
+- Review [component examples](https://akveo.github.io/react-native-ui-kitten/docs/components/overview)
+- Visit the [GitHub repository](https://github.com/akveo/react-native-ui-kitten) for issues and discussions
+- Join the [community chat](https://discord.gg/akveo) for support
+
+## Conclusion
+
+While UI Kitten 5.0 introduces significant API changes, the new patterns provide better flexibility, type safety, and performance. The migration effort is worthwhile for the improved developer experience and future-proofing your application.
+
+<Note>
+Take your time with the migration and test thoroughly. Consider migrating component by component rather than all at once to minimize risk.
+</Note>

@@ -1,0 +1,312 @@
+---
+title: "Installation"
+description: "Complete guide to installing UI Kitten in your React Native application, including peer dependencies and platform-specific setup."
+---
+
+# Installation
+
+This guide covers installing UI Kitten into an existing React Native application. If you want to start a new project, check out the [Quick Start](/quickstart) guide.
+
+## Prerequisites
+
+Before installing UI Kitten, ensure you have:
+
+- **Node.js** (version 12 or higher)
+- **React Native** development environment set up
+- An existing React Native project (version 0.60 or higher recommended)
+
+<Note>
+  UI Kitten requires React Native 0.60 or higher. The library is tested with React Native 0.70.6.
+</Note>
+
+## Install Packages
+
+UI Kitten requires three packages to be installed:
+
+1. **@ui-kitten/components** - The core UI components library
+2. **@eva-design/eva** - Eva Design System themes and design tokens
+3. **react-native-svg** - Required peer dependency for rendering icons and graphics
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install @ui-kitten/components @eva-design/eva react-native-svg
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add @ui-kitten/components @eva-design/eva react-native-svg
+    ```
+  </Tab>
+  <Tab title="Expo">
+    ```bash
+    npm install @ui-kitten/components @eva-design/eva
+    expo install react-native-svg@9.13.6
+    ```
+  </Tab>
+</Tabs>
+
+### Package Details
+
+- **@ui-kitten/components** (v5.3.1): Contains all UI components, theming system, and styling utilities
+- **@eva-design/eva** (v2.2.0): Provides light and dark themes based on Eva Design System
+- **react-native-svg**: Enables SVG support for icons and graphics (peer dependency)
+
+<Warning>
+  If you're using Expo, make sure to use `expo install react-native-svg@9.13.6` to ensure compatibility with your Expo SDK version.
+</Warning>
+
+## Platform-Specific Setup
+
+### iOS Setup (Non-Expo)
+
+For non-Expo React Native projects on iOS, you need to install native dependencies using CocoaPods:
+
+```bash
+cd ios
+pod install
+cd ..
+```
+
+This links the `react-native-svg` native module to your iOS project.
+
+### Android Setup
+
+For Android, auto-linking (available in React Native 0.60+) handles the native module linking automatically. No additional steps are required.
+
+### Expo Web Configuration
+
+If you're using Expo for Web, you need to configure Babel to properly transpile UI Kitten components:
+
+1. Open your `app.json` file
+2. Add the following configuration under the `"web"` key:
+
+```json
+{
+  "expo": {
+    "web": {
+      "build": {
+        "babel": {
+          "include": [
+            "@ui-kitten/components"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+This ensures that UI Kitten components are properly processed for web builds.
+
+## Restart the Bundler
+
+After installing the packages, restart your React Native bundler with cache reset:
+
+```bash
+npm start -- --reset-cache
+```
+
+Or if using Yarn:
+
+```bash
+yarn start --reset-cache
+```
+
+This ensures the bundler picks up the new dependencies.
+
+## Configure Application Root
+
+To use UI Kitten components, wrap your application root with `ApplicationProvider`:
+
+<Steps>
+  <Step title="Import required modules">
+    Open your `App.js` or `App.tsx` file and import UI Kitten and Eva Design System:
+
+    ```jsx
+    import React from 'react';
+    import * as eva from '@eva-design/eva';
+    import { ApplicationProvider } from '@ui-kitten/components';
+    ```
+  </Step>
+
+  <Step title="Wrap your app with ApplicationProvider">
+    Wrap your root component with `ApplicationProvider` and pass the Eva theme:
+
+    ```jsx
+    export default () => (
+      <ApplicationProvider {...eva} theme={eva.light}>
+        {/* Your app components */}
+      </ApplicationProvider>
+    );
+    ```
+
+    The `ApplicationProvider` component:
+    - Provides theme context to all child components
+    - Processes Eva Design System styles
+    - Enables runtime theme switching
+    - Must be rendered only once at the root level
+  </Step>
+
+  <Step title="Choose a theme">
+    Eva Design System includes two built-in themes:
+
+    - `eva.light` - Clean light theme with white backgrounds
+    - `eva.dark` - Modern dark theme
+
+    ```jsx
+    // Light theme
+    <ApplicationProvider {...eva} theme={eva.light}>
+
+    // Dark theme
+    <ApplicationProvider {...eva} theme={eva.dark}>
+    ```
+  </Step>
+</Steps>
+
+### Complete Setup Example
+
+Here's a complete example of `App.js` with UI Kitten configured:
+
+```jsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+
+const HomeScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>Welcome to UI Kitten</Text>
+  </Layout>
+);
+
+export default () => (
+  <ApplicationProvider {...eva} theme={eva.light}>
+    <HomeScreen />
+  </ApplicationProvider>
+);
+```
+
+## Optional: Install Icon Package
+
+To use Eva Icons with UI Kitten components, install the icons package:
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install @ui-kitten/eva-icons
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add @ui-kitten/eva-icons
+    ```
+  </Tab>
+</Tabs>
+
+Then register the icon pack in your app:
+
+```jsx
+import React from 'react';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import * as eva from '@eva-design/eva';
+
+export default () => (
+  <>
+    <IconRegistry icons={EvaIconsPack} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      {/* Your app */}
+    </ApplicationProvider>
+  </>
+);
+```
+
+Now you can use any of the 480+ Eva Icons in your components.
+
+## Optional: Install Date Utilities
+
+If you plan to use Calendar or Datepicker components, install one of the date utility packages:
+
+<Tabs>
+  <Tab title="Moment.js">
+    ```bash
+    npm install @ui-kitten/moment moment
+    ```
+  </Tab>
+  <Tab title="date-fns">
+    ```bash
+    npm install @ui-kitten/date-fns date-fns
+    ```
+  </Tab>
+</Tabs>
+
+## Verify Installation
+
+To verify that UI Kitten is installed correctly:
+
+1. Start your development server:
+   ```bash
+   npm run ios
+   # or
+   npm run android
+   ```
+
+2. You should see your app render without errors
+
+3. Try adding a UI Kitten component like `Button` to confirm everything works:
+
+```jsx
+import { Button } from '@ui-kitten/components';
+
+<Button>Click Me</Button>
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Module not found: @ui-kitten/components">
+    - Ensure packages are installed: `npm install` or `yarn install`
+    - Clear the Metro bundler cache: `npm start -- --reset-cache`
+    - Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
+  </Accordion>
+
+  <Accordion title="react-native-svg errors on iOS">
+    - Run `cd ios && pod install && cd ..`
+    - Clean the build: `cd ios && xcodebuild clean && cd ..`
+    - Rebuild the app from Xcode
+  </Accordion>
+
+  <Accordion title="Expo Web build fails">
+    - Add `@ui-kitten/components` to Babel include in `app.json`
+    - Clear Expo cache: `expo start -c`
+  </Accordion>
+
+  <Accordion title="Types not found (TypeScript)">
+    - UI Kitten has built-in TypeScript definitions
+    - Ensure TypeScript version is 4.8.3 or compatible
+    - Restart your TypeScript server / IDE
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start Guide" icon="rocket" href="/quickstart">
+    Build your first UI Kitten app with step-by-step instructions
+  </Card>
+  <Card title="Theming" icon="palette" href="/guides/branding">
+    Learn how to customize themes and brand your application
+  </Card>
+  <Card title="Components" icon="cube" href="/components">
+    Explore all 30+ available UI components
+  </Card>
+  <Card title="Eva Icons" icon="icons" href="/guides/eva-icons">
+    Learn more about using icons in your app
+  </Card>
+</CardGroup>
+
+## Additional Resources
+
+- [Eva Design System Documentation](https://eva.design)
+- [React Native Getting Started](https://reactnative.dev/docs/getting-started)
+- [React Native SVG Documentation](https://github.com/react-native-svg/react-native-svg)

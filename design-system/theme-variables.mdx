@@ -1,0 +1,588 @@
+---
+title: Using Theme Variables
+description: Learn how to use Eva Design System theme variables in your custom components
+---
+
+UI Kitten allows you to use theme variables in your custom components, enabling them to automatically adapt to theme changes and maintain consistency with the Eva Design System.
+
+## Why Use Theme Variables?
+
+Using theme variables provides several benefits:
+
+<CardGroup cols={2}>
+  <Card title="Automatic Theme Switching" icon="palette">
+    Components automatically adapt when switching between light and dark themes
+  </Card>
+  <Card title="Consistency" icon="check">
+    Ensures visual consistency across your entire application
+  </Card>
+  <Card title="Maintainability" icon="wrench">
+    Change colors globally by updating theme values
+  </Card>
+  <Card title="Brand Alignment" icon="star">
+    Easily align with brand guidelines through centralized theme
+  </Card>
+</CardGroup>
+
+## Using withStyles HOC
+
+The `withStyles` Higher-Order Component injects theme variables and styles into your component:
+
+### Basic Example
+
+```tsx
+import React from 'react';
+import { View } from 'react-native';
+import { withStyles } from '@ui-kitten/components';
+
+const ThemedView = (props) => {
+  const { eva, style, ...restProps } = props;
+
+  return (
+    <View {...restProps} style={[eva.style.container, style]} />
+  );
+};
+
+export default withStyles(ThemedView, (theme) => ({
+  container: {
+    backgroundColor: theme['color-primary-500'],
+    padding: 16,
+    borderRadius: 8,
+  },
+}));
+```
+
+### The Eva Prop
+
+The `withStyles` function injects an `eva` prop with the following structure:
+
+```typescript
+interface EvaProp {
+  theme: ThemeType;    // Current theme object
+  style: StyleType;    // Computed styles from createStyles function
+}
+```
+
+### Complete Example with Multiple Styles
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import { withStyles } from '@ui-kitten/components';
+
+const Card = (props) => {
+  const { eva, style, title, description } = props;
+
+  return (
+    <View style={[eva.style.card, style]}>
+      <Text style={eva.style.title}>{title}</Text>
+      <Text style={eva.style.description}>{description}</Text>
+    </View>
+  );
+};
+
+export default withStyles(Card, (theme) => ({
+  card: {
+    backgroundColor: theme['background-basic-color-1'],
+    borderRadius: 8,
+    padding: 16,
+    shadowColor: theme['color-basic-800'],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: theme['text-basic-color'],
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 14,
+    color: theme['text-hint-color'],
+    lineHeight: 20,
+  },
+}));
+```
+
+## Using Hooks API
+
+UI Kitten provides React hooks for accessing theme variables in functional components:
+
+### useTheme Hook
+
+Get direct access to theme variables:
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import { useTheme } from '@ui-kitten/components';
+
+export const ThemedComponent = () => {
+  const theme = useTheme();
+
+  return (
+    <View style={{ backgroundColor: theme['background-basic-color-1'] }}>
+      <Text style={{ color: theme['text-basic-color'] }}>
+        Themed Text
+      </Text>
+    </View>
+  );
+};
+```
+
+### useStyleSheet Hook
+
+Create themed stylesheets with automatic variable resolution:
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import { useStyleSheet, StyleService } from '@ui-kitten/components';
+
+export const ThemedCard = ({ title, description }) => {
+  const styles = useStyleSheet(themedStyles);
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.description}>{description}</Text>
+    </View>
+  );
+};
+
+const themedStyles = StyleService.create({
+  card: {
+    backgroundColor: 'background-basic-color-1',
+    borderRadius: 8,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'border-basic-color-4',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: 'text-basic-color',
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 14,
+    color: 'text-hint-color',
+    lineHeight: 20,
+  },
+});
+```
+
+<Note>
+  When using `useStyleSheet`, you can reference theme variables directly as strings without the bracket notation. The hook automatically resolves them to their actual values.
+</Note>
+
+### Combining Hooks
+
+You can combine `useTheme` and `useStyleSheet` for maximum flexibility:
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import { useTheme, useStyleSheet, StyleService } from '@ui-kitten/components';
+
+export const FlexibleCard = ({ title, highlighted }) => {
+  const theme = useTheme();
+  const styles = useStyleSheet(themedStyles);
+
+  // Use theme directly for conditional styling
+  const cardStyle = highlighted
+    ? [styles.card, { borderColor: theme['color-primary-500'] }]
+    : styles.card;
+
+  return (
+    <View style={cardStyle}>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
+};
+
+const themedStyles = StyleService.create({
+  card: {
+    backgroundColor: 'background-basic-color-1',
+    borderRadius: 8,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: 'border-basic-color-4',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: 'text-basic-color',
+  },
+});
+```
+
+## Available Theme Variables
+
+<Tabs>
+  <Tab title="Colors">
+    ### Status Colors
+    
+    Each status color has 9 shades (100-900):
+    
+    ```tsx
+    theme['color-primary-100']
+    theme['color-primary-500']
+    theme['color-primary-900']
+    
+    theme['color-success-500']
+    theme['color-info-500']
+    theme['color-warning-500']
+    theme['color-danger-500']
+    ```
+    
+    ### State Colors
+    
+    ```tsx
+    theme['color-primary-focus']
+    theme['color-primary-hover']
+    theme['color-primary-default']
+    theme['color-primary-active']
+    theme['color-primary-disabled']
+    ```
+    
+    ### Basic Colors
+    
+    11 shades (100-1100):
+    
+    ```tsx
+    theme['color-basic-100']  // Lightest
+    theme['color-basic-500']  // Middle
+    theme['color-basic-1100'] // Darkest
+    ```
+  </Tab>
+  
+  <Tab title="Backgrounds">
+    ### Basic Backgrounds
+    
+    ```tsx
+    theme['background-basic-color-1']  // Lightest/Top
+    theme['background-basic-color-2']  // Layout/Input
+    theme['background-basic-color-3']  // Nested
+    theme['background-basic-color-4']  // Deepest
+    ```
+    
+    ### Alternative & Primary
+    
+    ```tsx
+    theme['background-alternative-color-1']
+    theme['background-primary-color-1']
+    ```
+  </Tab>
+  
+  <Tab title="Borders">
+    ```tsx
+    theme['border-basic-color-1']
+    theme['border-basic-color-2']
+    theme['border-basic-color-3']
+    theme['border-basic-color-4']
+    theme['border-basic-color-5']
+    
+    theme['border-alternative-color-1']
+    theme['border-primary-color-1']
+    ```
+  </Tab>
+  
+  <Tab title="Text">
+    ```tsx
+    theme['text-basic-color']      // Main text
+    theme['text-alternate-color']  // On alternate backgrounds
+    theme['text-control-color']    // On status colors
+    theme['text-disabled-color']   // Disabled state
+    theme['text-hint-color']       // Placeholders/secondary
+    ```
+  </Tab>
+  
+  <Tab title="Typography">
+    ### Headings
+    
+    ```tsx
+    theme['text-heading-1-font-size']
+    theme['text-heading-1-font-weight']
+    theme['text-heading-1-line-height']
+    ```
+    
+    ### Subtitles
+    
+    ```tsx
+    theme['text-subtitle-1-font-size']
+    theme['text-subtitle-2-font-size']
+    ```
+    
+    ### Paragraphs & Captions
+    
+    ```tsx
+    theme['text-paragraph-1-font-size']
+    theme['text-caption-1-font-size']
+    theme['text-label-font-size']
+    ```
+  </Tab>
+</Tabs>
+
+## Practical Examples
+
+### Status Badge Component
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import { useStyleSheet, StyleService } from '@ui-kitten/components';
+
+interface BadgeProps {
+  status?: 'success' | 'warning' | 'danger' | 'info';
+  children: React.ReactNode;
+}
+
+export const Badge = ({ status = 'info', children }: BadgeProps) => {
+  const styles = useStyleSheet(themedStyles);
+
+  return (
+    <View style={[styles.badge, styles[status]]}>
+      <Text style={styles.text}>{children}</Text>
+    </View>
+  );
+};
+
+const themedStyles = StyleService.create({
+  badge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  text: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'text-control-color',
+  },
+  success: {
+    backgroundColor: 'color-success-500',
+  },
+  warning: {
+    backgroundColor: 'color-warning-500',
+  },
+  danger: {
+    backgroundColor: 'color-danger-500',
+  },
+  info: {
+    backgroundColor: 'color-info-500',
+  },
+});
+```
+
+### Themed Container
+
+```tsx
+import React from 'react';
+import { View } from 'react-native';
+import { useStyleSheet, StyleService } from '@ui-kitten/components';
+
+interface ContainerProps {
+  level?: 1 | 2 | 3 | 4;
+  children: React.ReactNode;
+}
+
+export const Container = ({ level = 1, children }: ContainerProps) => {
+  const styles = useStyleSheet(themedStyles);
+  const levelStyle = styles[`level${level}`];
+
+  return <View style={[styles.container, levelStyle]}>{children}</View>;
+};
+
+const themedStyles = StyleService.create({
+  container: {
+    padding: 16,
+    borderRadius: 8,
+  },
+  level1: {
+    backgroundColor: 'background-basic-color-1',
+  },
+  level2: {
+    backgroundColor: 'background-basic-color-2',
+  },
+  level3: {
+    backgroundColor: 'background-basic-color-3',
+  },
+  level4: {
+    backgroundColor: 'background-basic-color-4',
+  },
+});
+```
+
+### Dynamic Theme-Aware Component
+
+```tsx
+import React from 'react';
+import { TouchableOpacity, Text } from 'react-native';
+import { useTheme, useStyleSheet, StyleService } from '@ui-kitten/components';
+
+interface CustomButtonProps {
+  onPress: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+}
+
+export const CustomButton = ({ 
+  onPress, 
+  disabled = false, 
+  children 
+}: CustomButtonProps) => {
+  const theme = useTheme();
+  const styles = useStyleSheet(themedStyles);
+
+  const buttonStyle = disabled
+    ? [styles.button, { backgroundColor: theme['color-primary-disabled'] }]
+    : styles.button;
+
+  return (
+    <TouchableOpacity
+      style={buttonStyle}
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.7}
+    >
+      <Text style={styles.text}>{children}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const themedStyles = StyleService.create({
+  button: {
+    backgroundColor: 'color-primary-default',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    color: 'text-control-color',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
+```
+
+## Best Practices
+
+<Steps>
+  <Step title="Prefer Hooks for Functional Components">
+    Use `useTheme` and `useStyleSheet` in functional components for cleaner code and better performance.
+  </Step>
+  
+  <Step title="Use StyleService.create">
+    Always wrap your styles with `StyleService.create` when using theme variables as strings.
+  </Step>
+  
+  <Step title="Reference Variables Correctly">
+    With `useTheme`: `theme['color-primary-500']`
+    With `StyleService.create`: `'color-primary-500'`
+  </Step>
+  
+  <Step title="Avoid Hardcoded Colors">
+    Always use theme variables instead of hardcoded colors to ensure consistency and theme compatibility.
+  </Step>
+  
+  <Step title="Test Both Themes">
+    Test your components in both light and dark themes to ensure they look good in all scenarios.
+  </Step>
+</Steps>
+
+## withStyles vs Hooks
+
+<Tabs>
+  <Tab title="withStyles (HOC)">
+    **Pros:**
+    - Works with class components
+    - Clear separation of styles
+    - Familiar pattern from Redux/React context
+    
+    **Cons:**
+    - More boilerplate
+    - Wrapper hell with multiple HOCs
+    - Less flexible for conditional styles
+    
+    **Best for:** Class components, complex styling logic
+  </Tab>
+  
+  <Tab title="Hooks">
+    **Pros:**
+    - Cleaner, more concise code
+    - Better composition
+    - More flexible for dynamic styles
+    - Modern React patterns
+    
+    **Cons:**
+    - Only works with functional components
+    - Requires React 16.8+
+    
+    **Best for:** New projects, functional components
+  </Tab>
+</Tabs>
+
+## Common Pitfalls
+
+<Warning>
+  **Don't do this:**
+  
+  ```tsx
+  // Wrong: StyleSheet.create doesn't process theme variables
+  import { StyleSheet } from 'react-native';
+  
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: 'color-primary-500', // Won't work!
+    },
+  });
+  ```
+  
+  **Do this instead:**
+  
+  ```tsx
+  // Correct: Use StyleService.create
+  import { StyleService } from '@ui-kitten/components';
+  
+  const styles = StyleService.create({
+    container: {
+      backgroundColor: 'color-primary-500', // Works!
+    },
+  });
+  ```
+</Warning>
+
+## TypeScript Support
+
+```tsx
+import { ThemeType, StyleType } from '@ui-kitten/components';
+
+// Type-safe theme access
+const getColor = (theme: ThemeType, key: string): string => {
+  return theme[key];
+};
+
+// Type-safe styled component
+interface ThemedComponentProps {
+  eva?: {
+    theme: ThemeType;
+    style: StyleType;
+  };
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Theme Customization" icon="palette" href="/design-system/theme-customization">
+    Learn how to customize theme variables
+  </Card>
+  <Card title="Custom Mapping" icon="map" href="/design-system/custom-mapping">
+    Create custom component mappings
+  </Card>
+</CardGroup>

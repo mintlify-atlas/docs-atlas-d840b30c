@@ -1,0 +1,441 @@
+---
+title: ViewPager
+description: A view component with swipeable pages for creating carousel-like interfaces and multi-screen flows.
+---
+
+# ViewPager
+
+ViewPager is a container component with a set of swipeable pages. It provides gesture-based navigation between views, commonly used for onboarding flows, image galleries, and multi-step forms.
+
+## Import
+
+```tsx
+import { ViewPager } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { ViewPager, Layout, Text } from '@ui-kitten/components';
+
+export const ViewPagerSimple = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <ViewPager
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>Page 1</Text>
+      </Layout>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>Page 2</Text>
+      </Layout>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>Page 3</Text>
+      </Layout>
+    </ViewPager>
+  );
+};
+```
+
+## Props
+
+<ParamField path="children" type="ReactNode">
+  Page components to render within the ViewPager. Each child represents a single page.
+</ParamField>
+
+<ParamField path="selectedIndex" type="number" default="0">
+  Index of the currently visible page.
+</ParamField>
+
+<ParamField path="onSelect" type="(index: number) => void">
+  Callback called when a page becomes visible. Receives the index of the visible page.
+</ParamField>
+
+<ParamField path="swipeEnabled" type="boolean" default="true">
+  Enable or disable swipe gestures. When false, pages can only be changed programmatically.
+</ParamField>
+
+<ParamField path="shouldLoadComponent" type="(index: number) => boolean">
+  A function to determine whether a particular page should be rendered. Useful for implementing lazy loading. Returns true by default for all pages.
+</ParamField>
+
+<ParamField path="onOffsetChange" type="(offset: number) => void">
+  Callback called when the scroll offset changes during swiping.
+</ParamField>
+
+<ParamField path="animationDuration" type="number" default="300">
+  Duration of the page transition animation in milliseconds.
+</ParamField>
+
+<ParamField path="...ViewProps" type="ViewProps">
+  Accepts all React Native [View](https://reactnative.dev/docs/view) component props.
+</ParamField>
+
+## Methods
+
+ViewPager provides imperative methods for programmatic control:
+
+```tsx
+const viewPagerRef = React.useRef<ViewPager>(null);
+
+// Scroll to a specific page
+viewPagerRef.current?.scrollToIndex({ index: 2, animated: true });
+
+// Scroll to a specific offset
+viewPagerRef.current?.scrollToOffset({ offset: 500, animated: true });
+```
+
+## Examples
+
+### Lazy Loading
+
+Load pages lazily to improve performance, especially with many pages or heavy content.
+
+```tsx
+import React from 'react';
+import { ViewPager, Layout, Text } from '@ui-kitten/components';
+
+export const ViewPagerLazyLoading = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [loadedPages, setLoadedPages] = React.useState([0]);
+
+  const shouldLoadComponent = (index) => {
+    if (!loadedPages.includes(index)) {
+      setLoadedPages([...loadedPages, index]);
+    }
+    return loadedPages.includes(index);
+  };
+
+  return (
+    <ViewPager
+      selectedIndex={selectedIndex}
+      shouldLoadComponent={shouldLoadComponent}
+      onSelect={index => setSelectedIndex(index)}>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>Page 1</Text>
+      </Layout>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>Page 2</Text>
+      </Layout>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>Page 3</Text>
+      </Layout>
+    </ViewPager>
+  );
+};
+```
+
+### With Page Indicators
+
+Add page indicators to show progress and allow direct navigation.
+
+```tsx
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { ViewPager, Layout, Text, Button } from '@ui-kitten/components';
+
+export const ViewPagerWithIndicators = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const totalPages = 3;
+
+  return (
+    <View style={styles.container}>
+      <ViewPager
+        style={styles.viewPager}
+        selectedIndex={selectedIndex}
+        onSelect={index => setSelectedIndex(index)}>
+        <Layout style={styles.page}>
+          <Text category='h1'>Welcome</Text>
+          <Text>First onboarding screen</Text>
+        </Layout>
+        <Layout style={styles.page}>
+          <Text category='h1'>Features</Text>
+          <Text>Second onboarding screen</Text>
+        </Layout>
+        <Layout style={styles.page}>
+          <Text category='h1'>Get Started</Text>
+          <Text>Third onboarding screen</Text>
+        </Layout>
+      </ViewPager>
+      <View style={styles.indicators}>
+        {[...Array(totalPages)].map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.indicator,
+              index === selectedIndex && styles.indicatorActive,
+            ]}
+          />
+        ))}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  viewPager: {
+    flex: 1,
+  },
+  page: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  indicators: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#E4E9F2',
+    marginHorizontal: 4,
+  },
+  indicatorActive: {
+    backgroundColor: '#3366FF',
+  },
+});
+```
+
+### Onboarding Flow
+
+Create a complete onboarding experience with navigation buttons.
+
+```tsx
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { ViewPager, Layout, Text, Button } from '@ui-kitten/components';
+
+export const OnboardingFlow = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const viewPagerRef = React.useRef(null);
+  const totalPages = 3;
+
+  const handleNext = () => {
+    if (selectedIndex < totalPages - 1) {
+      viewPagerRef.current?.scrollToIndex({ index: selectedIndex + 1, animated: true });
+    }
+  };
+
+  const handlePrevious = () => {
+    if (selectedIndex > 0) {
+      viewPagerRef.current?.scrollToIndex({ index: selectedIndex - 1, animated: true });
+    }
+  };
+
+  const handleSkip = () => {
+    // Navigate to main app
+    console.log('Skip onboarding');
+  };
+
+  return (
+    <View style={styles.container}>
+      <ViewPager
+        ref={viewPagerRef}
+        style={styles.viewPager}
+        selectedIndex={selectedIndex}
+        onSelect={index => setSelectedIndex(index)}>
+        <Layout style={styles.page}>
+          <Text category='h1'>Welcome</Text>
+          <Text appearance='hint'>Get started with our app</Text>
+        </Layout>
+        <Layout style={styles.page}>
+          <Text category='h1'>Discover</Text>
+          <Text appearance='hint'>Explore amazing features</Text>
+        </Layout>
+        <Layout style={styles.page}>
+          <Text category='h1'>Connect</Text>
+          <Text appearance='hint'>Join our community</Text>
+        </Layout>
+      </ViewPager>
+      <View style={styles.controls}>
+        {selectedIndex > 0 && (
+          <Button appearance='ghost' onPress={handlePrevious}>
+            Previous
+          </Button>
+        )}
+        <View style={styles.spacer} />
+        {selectedIndex < totalPages - 1 ? (
+          <>
+            <Button appearance='ghost' onPress={handleSkip}>
+              Skip
+            </Button>
+            <Button onPress={handleNext}>
+              Next
+            </Button>
+          </>
+        ) : (
+          <Button onPress={handleSkip}>
+            Get Started
+          </Button>
+        )}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  viewPager: {
+    flex: 1,
+  },
+  page: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  spacer: {
+    flex: 1,
+  },
+});
+```
+
+### Swipe Disabled
+
+Disable swipe gestures and control navigation programmatically.
+
+```tsx
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { ViewPager, Layout, Text, Button } from '@ui-kitten/components';
+
+export const ViewPagerNoSwipe = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const viewPagerRef = React.useRef(null);
+
+  const goToPage = (index) => {
+    viewPagerRef.current?.scrollToIndex({ index, animated: true });
+  };
+
+  return (
+    <View style={styles.container}>
+      <ViewPager
+        ref={viewPagerRef}
+        style={styles.viewPager}
+        swipeEnabled={false}
+        selectedIndex={selectedIndex}
+        onSelect={index => setSelectedIndex(index)}>
+        <Layout style={styles.page}>
+          <Text category='h1'>Step 1</Text>
+        </Layout>
+        <Layout style={styles.page}>
+          <Text category='h1'>Step 2</Text>
+        </Layout>
+        <Layout style={styles.page}>
+          <Text category='h1'>Step 3</Text>
+        </Layout>
+      </ViewPager>
+      <View style={styles.controls}>
+        <Button onPress={() => goToPage(0)}>Step 1</Button>
+        <Button onPress={() => goToPage(1)}>Step 2</Button>
+        <Button onPress={() => goToPage(2)}>Step 3</Button>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  viewPager: {
+    flex: 1,
+  },
+  page: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 20,
+  },
+});
+```
+
+### With TabView
+
+Combine ViewPager with TabBar for a complete tabbed interface (Note: TabView already does this internally).
+
+```tsx
+import React from 'react';
+import { ViewPager, TabBar, Tab, Layout, Text } from '@ui-kitten/components';
+
+export const ViewPagerWithTabs = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <>
+      <TabBar
+        selectedIndex={selectedIndex}
+        onSelect={index => setSelectedIndex(index)}>
+        <Tab title='Home'/>
+        <Tab title='Profile'/>
+        <Tab title='Settings'/>
+      </TabBar>
+      <ViewPager
+        selectedIndex={selectedIndex}
+        onSelect={index => setSelectedIndex(index)}>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text category='h1'>HOME</Text>
+        </Layout>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text category='h1'>PROFILE</Text>
+        </Layout>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text category='h1'>SETTINGS</Text>
+        </Layout>
+      </ViewPager>
+    </>
+  );
+};
+```
+
+<Note>
+For a complete tab solution with integrated TabBar and ViewPager, use the [TabView](/components/tab) component instead.
+</Note>
+
+## Performance Tips
+
+1. **Use Lazy Loading**: Implement `shouldLoadComponent` for better performance with many pages
+2. **Optimize Page Content**: Keep page components lightweight and avoid heavy computations
+3. **Control Animation**: Adjust `animationDuration` based on your needs
+4. **Limit Pages**: Consider pagination for very large datasets
+
+## Platform Considerations
+
+- **Web**: ViewPager uses CSS transforms for animations
+- **iOS/Android**: Uses native driver for smooth 60fps animations
+- **RTL Support**: Automatically adjusts swipe direction for right-to-left languages
+
+## Theming
+
+ViewPager itself doesn't have theme-specific styling, but you can style the container:
+
+```tsx
+<ViewPager
+  style={{ backgroundColor: '#F7F9FC' }}
+  selectedIndex={selectedIndex}
+  onSelect={setSelectedIndex}>
+  {/* Pages */}
+</ViewPager>
+```
+
+For detailed theming instructions, refer to the [Branding Guide](/guides/branding).

@@ -1,0 +1,479 @@
+---
+title: Card
+description: Container component that displays content and actions about a single subject
+---
+
+## Overview
+
+Card is a versatile container component that groups related information and actions. It supports headers, footers, accent bars, and multiple visual appearances. Cards can be interactive or static.
+
+## Basic Usage
+
+```jsx
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const SimpleCard = () => (
+  <Card>
+    <Text>This is a basic card with some content.</Text>
+  </Card>
+);
+```
+
+## Card with Header and Footer
+
+Cards commonly include headers and footers for titles and actions:
+
+```jsx
+import React from 'react';
+import { Card, Text, Button } from '@ui-kitten/components';
+
+const Header = (props) => (
+  <View {...props}>
+    <Text category='h6'>Card Title</Text>
+    <Text category='s1'>Subtitle or description</Text>
+  </View>
+);
+
+const Footer = (props) => (
+  <View {...props} style={[props.style, { flexDirection: 'row', justifyContent: 'flex-end' }]}>
+    <Button size='small' appearance='ghost'>CANCEL</Button>
+    <Button size='small' style={{ marginLeft: 8 }}>OK</Button>
+  </View>
+);
+
+export const CardWithHeaderFooter = () => (
+  <Card header={Header} footer={Footer}>
+    <Text>Card content goes here. You can add any components as children.</Text>
+  </Card>
+);
+```
+
+## Card Appearances
+
+<CodeGroup>
+```jsx Outline (Default)
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const OutlineCard = () => (
+  <Card appearance='outline'>
+    <Text>Outline appearance with border</Text>
+  </Card>
+);
+```
+
+```jsx Filled
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const FilledCard = () => (
+  <Card appearance='filled'>
+    <Text>Filled appearance with background</Text>
+  </Card>
+);
+```
+</CodeGroup>
+
+## Card Statuses
+
+Status prop changes the accent color to indicate different states:
+
+<CodeGroup>
+```jsx Primary
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const PrimaryCard = () => (
+  <Card status='primary'>
+    <Text>Primary status card</Text>
+  </Card>
+);
+```
+
+```jsx Success
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const SuccessCard = () => (
+  <Card status='success'>
+    <Text>Success status card</Text>
+  </Card>
+);
+```
+
+```jsx Info
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const InfoCard = () => (
+  <Card status='info'>
+    <Text>Info status card</Text>
+  </Card>
+);
+```
+
+```jsx Warning
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const WarningCard = () => (
+  <Card status='warning'>
+    <Text>Warning status card</Text>
+  </Card>
+);
+```
+
+```jsx Danger
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const DangerCard = () => (
+  <Card status='danger'>
+    <Text>Danger status card</Text>
+  </Card>
+);
+```
+</CodeGroup>
+
+## Interactive Cards
+
+Cards can respond to touch events:
+
+```jsx
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const InteractiveCard = () => {
+  const [pressed, setPressed] = React.useState(false);
+  
+  return (
+    <Card
+      onPress={() => setPressed(!pressed)}
+      status={pressed ? 'primary' : 'basic'}
+    >
+      <Text>Tap me! {pressed ? '✓' : ''}</Text>
+    </Card>
+  );
+};
+```
+
+## Custom Accent
+
+The accent prop allows you to add a custom component above the card:
+
+```jsx
+import React from 'react';
+import { View, Image } from 'react-native';
+import { Card, Text } from '@ui-kitten/components';
+
+const ImageAccent = (props) => (
+  <Image
+    {...props}
+    source={{ uri: 'https://images.unsplash.com/photo-1587974928442-77dc3e0dba72' }}
+    style={[props.style, { height: 200 }]}
+  />
+);
+
+export const CardWithImage = () => (
+  <Card accent={ImageAccent}>
+    <Text category='h6'>Beautiful Landscape</Text>
+    <Text appearance='hint'>Photo by John Doe</Text>
+  </Card>
+);
+```
+
+## Props
+
+<ParamField path="children" type="ReactNode">
+  The main content to render within the card body.
+</ParamField>
+
+<ParamField path="header" type="ReactElement | (ViewProps) => ReactElement">
+  Function component or element to render above the card content. The header is separated from the body by a Divider.
+  
+  ```jsx
+  const Header = (props) => (
+    <View {...props}>
+      <Text category='h6'>Title</Text>
+    </View>
+  );
+  ```
+</ParamField>
+
+<ParamField path="footer" type="ReactElement | (ViewProps) => ReactElement">
+  Function component or element to render below the card content. The footer is separated from the body by a Divider.
+  
+  ```jsx
+  const Footer = (props) => (
+    <View {...props}>
+      <Button>Action</Button>
+    </View>
+  );
+  ```
+</ParamField>
+
+<ParamField path="accent" type="ReactElement | (ViewProps) => ReactElement">
+  Function component or element to render above the entire card. Commonly used for images or decorative elements. The accent color changes based on the `status` prop.
+</ParamField>
+
+<ParamField path="appearance" type="'filled' | 'outline'" default="'outline'">
+  Visual appearance of the card:
+  - `'outline'` - Card with border and transparent background
+  - `'filled'` - Card with filled background and no border
+</ParamField>
+
+<ParamField path="status" type="'basic' | 'primary' | 'success' | 'info' | 'warning' | 'danger' | 'control'" default="'basic'">
+  Status determines the accent color of the card:
+  - `'basic'` - Default gray accent
+  - `'primary'` - Blue accent
+  - `'success'` - Green accent
+  - `'info'` - Light blue accent
+  - `'warning'` - Orange accent
+  - `'danger'` - Red accent
+  - `'control'` - Adaptive color based on theme
+</ParamField>
+
+<ParamField path="onPress" type="(event: GestureResponderEvent) => void">
+  Called when the card is pressed. Makes the card interactive.
+</ParamField>
+
+<ParamField path="onPressIn" type="(event: GestureResponderEvent) => void">
+  Called when a touch is engaged before `onPress`.
+</ParamField>
+
+<ParamField path="onPressOut" type="(event: GestureResponderEvent) => void">
+  Called when a touch is released after `onPress`.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the card should be disabled. When disabled, touch events are ignored.
+</ParamField>
+
+<ParamField path="...TouchableOpacityProps" type="TouchableOpacityProps">
+  Card extends React Native's `TouchableOpacity` component and accepts all standard [TouchableOpacity props](https://reactnative.dev/docs/touchableopacity#props).
+</ParamField>
+
+## Common Patterns
+
+### Profile Card
+
+```jsx
+import React from 'react';
+import { View, Image } from 'react-native';
+import { Card, Text, Button, Avatar } from '@ui-kitten/components';
+
+const Header = (props) => (
+  <View {...props} style={[props.style, { flexDirection: 'row', alignItems: 'center' }]}>
+    <Avatar
+      source={{ uri: 'https://i.pravatar.cc/300' }}
+      size='giant'
+    />
+    <View style={{ marginLeft: 16 }}>
+      <Text category='h6'>John Doe</Text>
+      <Text category='s1' appearance='hint'>Software Engineer</Text>
+    </View>
+  </View>
+);
+
+const Footer = (props) => (
+  <View {...props} style={[props.style, { flexDirection: 'row' }]}>
+    <Button size='small' appearance='ghost'>MESSAGE</Button>
+    <Button size='small' appearance='ghost' style={{ marginLeft: 8 }}>FOLLOW</Button>
+  </View>
+);
+
+export const ProfileCard = () => (
+  <Card header={Header} footer={Footer}>
+    <Text>Passionate about React Native and mobile development.</Text>
+  </Card>
+);
+```
+
+### Article Card
+
+```jsx
+import React from 'react';
+import { View, Image } from 'react-native';
+import { Card, Text } from '@ui-kitten/components';
+
+const ImageHeader = (props) => (
+  <Image
+    {...props}
+    source={{ uri: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809' }}
+    style={{ height: 200 }}
+  />
+);
+
+export const ArticleCard = () => (
+  <Card accent={ImageHeader}>
+    <Text category='h6'>Understanding React Native</Text>
+    <Text appearance='hint' style={{ marginBottom: 8 }}>March 4, 2026</Text>
+    <Text>
+      Learn the fundamentals of React Native and how to build
+      cross-platform mobile applications...
+    </Text>
+  </Card>
+);
+```
+
+### Notification Card
+
+```jsx
+import React from 'react';
+import { View } from 'react-native';
+import { Card, Text, Icon } from '@ui-kitten/components';
+
+export const NotificationCard = ({ status, title, message, onDismiss }) => (
+  <Card
+    status={status}
+    appearance='filled'
+    onPress={onDismiss}
+  >
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <View style={{ flex: 1 }}>
+        <Text category='s1'>{title}</Text>
+        <Text appearance='hint'>{message}</Text>
+      </View>
+      <Icon name='close-outline' width={24} height={24} />
+    </View>
+  </Card>
+);
+
+// Usage
+<NotificationCard
+  status='success'
+  title='Success'
+  message='Your changes have been saved.'
+  onDismiss={() => console.log('Dismissed')}
+/>
+```
+
+### Product Card
+
+```jsx
+import React from 'react';
+import { View, Image } from 'react-native';
+import { Card, Text, Button } from '@ui-kitten/components';
+
+const ProductImage = (props) => (
+  <Image
+    {...props}
+    source={{ uri: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30' }}
+    style={{ height: 240 }}
+    resizeMode='cover'
+  />
+);
+
+const Footer = (props) => (
+  <View {...props} style={[props.style, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+    <Text category='h6'>$299.99</Text>
+    <Button size='small'>ADD TO CART</Button>
+  </View>
+);
+
+export const ProductCard = () => (
+  <Card accent={ProductImage} footer={Footer}>
+    <Text category='h6'>Premium Headphones</Text>
+    <Text appearance='hint' category='s1'>In Stock</Text>
+    <Text numberOfLines={2} style={{ marginTop: 8 }}>
+      High-quality wireless headphones with active noise cancellation
+      and 30-hour battery life.
+    </Text>
+  </Card>
+);
+```
+
+## Styling
+
+### Card Spacing
+
+```jsx
+import React from 'react';
+import { Card, Text, Layout } from '@ui-kitten/components';
+
+export const CardGrid = () => (
+  <Layout style={{ padding: 16 }}>
+    <Card style={{ marginBottom: 16 }}>
+      <Text>Card 1</Text>
+    </Card>
+    <Card style={{ marginBottom: 16 }}>
+      <Text>Card 2</Text>
+    </Card>
+    <Card>
+      <Text>Card 3</Text>
+    </Card>
+  </Layout>
+);
+```
+
+### Custom Padding
+
+```jsx
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const CustomPaddingCard = () => (
+  <Card>
+    <View style={{ padding: 24 }}>
+      <Text>Card with custom padding</Text>
+    </View>
+  </Card>
+);
+```
+
+## Accessibility
+
+<Note>
+When making cards interactive with `onPress`, ensure they have appropriate accessibility labels:
+</Note>
+
+```jsx
+import React from 'react';
+import { Card, Text } from '@ui-kitten/components';
+
+export const AccessibleCard = () => (
+  <Card
+    onPress={() => console.log('Pressed')}
+    accessible={true}
+    accessibilityLabel='Product card: Premium Headphones, $299.99'
+    accessibilityHint='Double tap to view product details'
+    accessibilityRole='button'
+  >
+    <Text category='h6'>Premium Headphones</Text>
+    <Text>$299.99</Text>
+  </Card>
+);
+```
+
+## Theme Customization
+
+Card appearance can be customized through your theme configuration:
+
+```json
+{
+  "Card": {
+    "meta": {},
+    "appearances": {
+      "outline": {
+        "mapping": {
+          "borderColor": "color-basic-400",
+          "borderWidth": 1,
+          "borderRadius": 4,
+          "backgroundColor": "transparent"
+        }
+      },
+      "filled": {
+        "mapping": {
+          "backgroundColor": "color-basic-200",
+          "borderRadius": 4
+        }
+      }
+    }
+  }
+}
+```
+
+## Source Code
+
+View the source code on GitHub: [card.component.tsx](https://github.com/akveo/react-native-ui-kitten/blob/master/src/components/ui/card/card.component.tsx)

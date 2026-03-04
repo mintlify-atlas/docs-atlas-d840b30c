@@ -1,0 +1,393 @@
+---
+title: Calendar
+description: Calendar provides a simple way to select dates with a full calendar view.
+---
+
+Calendar displays a monthly view for date selection. Unlike Datepicker, it's not attached to an input field and can be used standalone.
+
+## Import
+
+```tsx
+import { Calendar, RangeCalendar } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { Calendar } from '@ui-kitten/components';
+
+export const CalendarExample = () => {
+  const [date, setDate] = React.useState(new Date());
+
+  return (
+    <Calendar
+      date={date}
+      onSelect={nextDate => setDate(nextDate)}
+    />
+  );
+};
+```
+
+## Range Calendar
+
+For selecting date ranges, use RangeCalendar.
+
+```tsx
+import React from 'react';
+import { RangeCalendar } from '@ui-kitten/components';
+
+const RangeCalendarExample = () => {
+  const [range, setRange] = React.useState({});
+
+  return (
+    <RangeCalendar
+      range={range}
+      onSelect={nextRange => setRange(nextRange)}
+    />
+  );
+};
+```
+
+<Note>
+CalendarRange has `startDate` and `endDate` properties. For empty ranges, both are undefined. For incomplete ranges, only `startDate` is set.
+</Note>
+
+## Date Constraints
+
+Restrict selectable dates with `min` and `max`.
+
+```tsx
+import React from 'react';
+import { Calendar } from '@ui-kitten/components';
+
+const ConstrainedCalendar = () => {
+  const [date, setDate] = React.useState(new Date());
+  
+  const minDate = new Date(2020, 0, 1);
+  const maxDate = new Date(2025, 11, 31);
+
+  return (
+    <Calendar
+      date={date}
+      onSelect={setDate}
+      min={minDate}
+      max={maxDate}
+    />
+  );
+};
+```
+
+## Filter Dates
+
+Disable specific dates with a filter function.
+
+```tsx
+import React from 'react';
+import { Calendar } from '@ui-kitten/components';
+
+const FilteredCalendar = () => {
+  const [date, setDate] = React.useState(new Date());
+
+  // Disable weekends
+  const filter = (date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 6;
+  };
+
+  return (
+    <Calendar
+      date={date}
+      onSelect={setDate}
+      filter={filter}
+    />
+  );
+};
+```
+
+## Initial Visible Date
+
+Control which month is displayed initially.
+
+```tsx
+<Calendar
+  date={date}
+  onSelect={setDate}
+  initialVisibleDate={new Date(2024, 0, 1)}
+/>
+```
+
+## Bounding Month
+
+Hide dates from adjacent months.
+
+```tsx
+<Calendar
+  date={date}
+  onSelect={setDate}
+  boundingMonth={false}
+/>
+```
+
+## Props
+
+<ParamField path="date" type="Date">
+  Currently selected date.
+</ParamField>
+
+<ParamField path="onSelect" type="(date: Date) => void">
+  Called when a date is selected.
+</ParamField>
+
+<ParamField path="min" type="Date">
+  Minimum selectable date.
+</ParamField>
+
+<ParamField path="max" type="Date">
+  Maximum selectable date.
+</ParamField>
+
+<ParamField path="filter" type="(date: Date) => boolean">
+  Function to determine whether a date should be disabled. Return true to enable, false to disable.
+</ParamField>
+
+<ParamField path="boundingMonth" type="boolean" default="true">
+  Whether to show dates from previous and next months in the current month view.
+</ParamField>
+
+<ParamField path="initialVisibleDate" type="Date">
+  Specific date to show on first render. If not set, shows the selected date or today.
+</ParamField>
+
+<ParamField path="startView" type="CalendarViewMode">
+  Starting view mode. Can be `DATE`, `MONTH`, or `YEAR`.
+</ParamField>
+
+<ParamField path="onVisibleDateChange" type="(date: Date, viewMode: CalendarViewMode) => void">
+  Called when navigating to a different month or year.
+</ParamField>
+
+## RangeCalendar Props
+
+<ParamField path="range" type="CalendarRange<Date>">
+  Currently selected date range with `startDate` and `endDate` properties.
+</ParamField>
+
+<ParamField path="onSelect" type="(range: CalendarRange<Date>) => void">
+  Called when the range changes.
+</ParamField>
+
+## Methods
+
+<ParamField path="scrollToToday()" type="() => void">
+  Shows the current date in the calendar.
+</ParamField>
+
+<ParamField path="scrollToDate(date)" type="(date: Date) => void">
+  Shows a specific date in the calendar.
+</ParamField>
+
+## Form Examples
+
+### Booking Calendar
+
+```tsx
+import React from 'react';
+import { RangeCalendar, Layout, Text, Button } from '@ui-kitten/components';
+
+const BookingCalendar = () => {
+  const [range, setRange] = React.useState({});
+
+  const minDate = new Date();
+  const maxDate = new Date();
+  maxDate.setMonth(maxDate.getMonth() + 6);
+
+  const calculateNights = () => {
+    if (!range.startDate || !range.endDate) return 0;
+    const diffTime = Math.abs(range.endDate - range.startDate);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const nights = calculateNights();
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>Select Dates</Text>
+      
+      <RangeCalendar
+        range={range}
+        onSelect={setRange}
+        min={minDate}
+        max={maxDate}
+      />
+      
+      {range.startDate && range.endDate && (
+        <Layout style={{ padding: 16, backgroundColor: '#f5f5f5' }}>
+          <Text category='s1'>
+            {nights} {nights === 1 ? 'night' : 'nights'} selected
+          </Text>
+          <Text appearance='hint' category='c1'>
+            Check-in: {range.startDate.toLocaleDateString()}
+          </Text>
+          <Text appearance='hint' category='c1'>
+            Check-out: {range.endDate.toLocaleDateString()}
+          </Text>
+        </Layout>
+      )}
+      
+      <Button disabled={!range.startDate || !range.endDate}>
+        CONTINUE TO BOOKING
+      </Button>
+    </Layout>
+  );
+};
+```
+
+### Availability Calendar
+
+```tsx
+import React from 'react';
+import { Calendar, Layout, Text } from '@ui-kitten/components';
+
+const AvailabilityCalendar = () => {
+  const [date, setDate] = React.useState(null);
+  
+  // Example: unavailable dates
+  const unavailableDates = [
+    new Date(2024, 0, 15),
+    new Date(2024, 0, 16),
+    new Date(2024, 0, 20),
+  ];
+
+  const filter = (date) => {
+    // Disable past dates
+    if (date < new Date()) return false;
+    
+    // Disable specific unavailable dates
+    return !unavailableDates.some(unavailable => 
+      date.toDateString() === unavailable.toDateString()
+    );
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>Check Availability</Text>
+      
+      <Calendar
+        date={date}
+        onSelect={setDate}
+        filter={filter}
+        min={new Date()}
+      />
+      
+      {date && (
+        <Text status='success'>
+          ✓ {date.toLocaleDateString()} is available
+        </Text>
+      )}
+    </Layout>
+  );
+};
+```
+
+### Event Calendar
+
+```tsx
+import React from 'react';
+import { Calendar, Layout, Text, List, ListItem } from '@ui-kitten/components';
+
+const EventCalendar = () => {
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  
+  const events = {
+    '2024-01-15': ['Team Meeting', 'Project Review'],
+    '2024-01-20': ['Client Call'],
+    '2024-01-25': ['Product Launch', 'Team Dinner'],
+  };
+
+  const getEventsForDate = (date) => {
+    const dateKey = date.toISOString().split('T')[0];
+    return events[dateKey] || [];
+  };
+
+  const selectedEvents = getEventsForDate(selectedDate);
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>Event Calendar</Text>
+      
+      <Calendar
+        date={selectedDate}
+        onSelect={setSelectedDate}
+      />
+      
+      <Layout style={{ gap: 8 }}>
+        <Text category='s1'>
+          {selectedDate.toLocaleDateString()}
+        </Text>
+        {selectedEvents.length > 0 ? (
+          selectedEvents.map((event, index) => (
+            <Text key={index} category='p2'>
+              • {event}
+            </Text>
+          ))
+        ) : (
+          <Text appearance='hint'>No events scheduled</Text>
+        )}
+      </Layout>
+    </Layout>
+  );
+};
+```
+
+### Multi-Select Calendar
+
+```tsx
+import React from 'react';
+import { Calendar, Layout, Text, Button } from '@ui-kitten/components';
+
+const MultiSelectCalendar = () => {
+  const [selectedDates, setSelectedDates] = React.useState([]);
+  const [displayDate, setDisplayDate] = React.useState(new Date());
+
+  const handleSelect = (date) => {
+    const dateString = date.toDateString();
+    const exists = selectedDates.some(d => d.toDateString() === dateString);
+    
+    if (exists) {
+      setSelectedDates(selectedDates.filter(d => d.toDateString() !== dateString));
+    } else {
+      setSelectedDates([...selectedDates, date]);
+    }
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>Select Multiple Dates</Text>
+      
+      <Calendar
+        date={displayDate}
+        onSelect={(date) => {
+          handleSelect(date);
+          setDisplayDate(date);
+        }}
+      />
+      
+      <Layout style={{ gap: 8 }}>
+        <Text category='s1'>
+          {selectedDates.length} {selectedDates.length === 1 ? 'date' : 'dates'} selected
+        </Text>
+        {selectedDates.length > 0 && (
+          <Button 
+            size='small' 
+            appearance='outline'
+            onPress={() => setSelectedDates([])}
+          >
+            CLEAR ALL
+          </Button>
+        )}
+      </Layout>
+    </Layout>
+  );
+};
+```

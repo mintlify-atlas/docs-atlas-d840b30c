@@ -1,0 +1,413 @@
+---
+title: Branding
+description: Create custom branded themes for your UI Kitten application with your brand colors, typography, and design system
+---
+
+UI Kitten supports complete theme customization, allowing you to create branded experiences that match your design system. This guide walks you through creating a custom theme from scratch.
+
+## Overview
+
+Eva Design System provides Light and Dark themes as starting points. You can customize these themes by:
+
+- Changing primary and semantic colors
+- Adjusting backgrounds and borders
+- Modifying text and icon colors
+- Customizing typography and fonts
+- Fine-tuning component styles
+
+<Warning>
+Pay careful attention to this guide for the best developer experience when creating custom themes. Understanding Eva's color system is crucial for maintaining consistency.
+</Warning>
+
+## Primary Color
+
+The primary color defines your brand and appears throughout your application as the main accent color.
+
+### Generate Theme with Eva Colors
+
+The easiest way to create a custom theme is using [Eva Colors](https://colors.eva.design), a deep learning color generator:
+
+<Steps>
+  <Step title="Choose Primary Color">
+    Visit Eva Colors and select your brand's primary color (e.g., orange)
+  </Step>
+  <Step title="Select Semantic Colors">
+    Choose colors for success, info, warning, and danger states, or use the generated suggestions
+  </Step>
+  <Step title="Export Theme">
+    Click the Export button and select JSON format
+  </Step>
+  <Step title="Add to Project">
+    Copy the downloaded `theme.json` file to your project directory
+  </Step>
+</Steps>
+
+### Apply Custom Theme
+
+Import and merge your custom theme with a base Eva theme:
+
+```jsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Button } from '@ui-kitten/components';
+import { default as theme } from './theme.json'; // Your custom theme
+
+export default () => (
+  <ApplicationProvider {...eva} theme={{ ...eva.dark, ...theme }}>
+    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Button>HOME</Button>
+    </Layout>
+  </ApplicationProvider>
+);
+```
+
+<Note>
+Merge with `eva.dark` for dark themes or `eva.light` for light themes. Your custom values will override the defaults.
+</Note>
+
+## Semantic Colors
+
+Eva uses 6 semantic colors: `basic`, `primary`, `success`, `info`, `warning`, and `danger`.
+
+### Color Shades
+
+Each semantic color has 9 shades (100-900) from lightest to darkest:
+
+```json
+{
+  "color-primary-100": "#FFECD2",
+  "color-primary-200": "#FFD3A6",
+  "color-primary-300": "#FFB979",
+  "color-primary-400": "#FF9B52",
+  "color-primary-500": "#FF6721",
+  "color-primary-600": "#DB4A18",
+  "color-primary-700": "#B73210",
+  "color-primary-800": "#931F0A",
+  "color-primary-900": "#7A0C06"
+}
+```
+
+### State Colors
+
+Define how colors appear in different component states:
+
+```json
+{
+  "color-primary-default": "$color-primary-500",
+  "color-primary-hover": "$color-primary-400",
+  "color-primary-focus": "$color-primary-600",
+  "color-primary-active": "$color-primary-600",
+  "color-primary-disabled": "$color-basic-transparent-300"
+}
+```
+
+The `$` prefix creates a reference to another theme variable, which UI Kitten resolves automatically.
+
+### Border Colors
+
+Each state color has a corresponding border color:
+
+```json
+{
+  "color-primary-default-border": "$color-primary-default",
+  "color-primary-hover-border": "$color-primary-hover",
+  "color-primary-focus-border": "$color-primary-700",
+  "color-primary-active-border": "$color-primary-active",
+  "color-primary-disabled-border": "$color-primary-disabled"
+}
+```
+
+### Transparent Colors
+
+Create transparent variations for overlays and subtle effects:
+
+```json
+{
+  "color-primary-transparent-100": "rgba(255, 103, 33, 0.08)",
+  "color-primary-transparent-200": "rgba(255, 103, 33, 0.16)",
+  "color-primary-transparent-300": "rgba(255, 103, 33, 0.24)",
+  "color-primary-transparent-400": "rgba(255, 103, 33, 0.32)",
+  "color-primary-transparent-500": "rgba(255, 103, 33, 0.4)",
+  "color-primary-transparent-600": "rgba(255, 103, 33, 0.48)"
+}
+```
+
+<Note>
+Transparent colors use the `-500` shade with increasing alpha values starting at 0.08 and incrementing by 0.08.
+</Note>
+
+## Backgrounds and Borders
+
+The `basic` color controls backgrounds and borders throughout your app.
+
+### Basic Color Palette
+
+Configure all 11 shades of the basic color:
+
+```json
+{
+  "color-basic-100": "#FFFFFF",
+  "color-basic-200": "#F5F5F5",
+  "color-basic-300": "#F5F5F5",
+  "color-basic-400": "#D4D4D4",
+  "color-basic-500": "#B3B3B3",
+  "color-basic-600": "#808080",
+  "color-basic-700": "#4A4A4A",
+  "color-basic-800": "#383838",
+  "color-basic-900": "#292929",
+  "color-basic-1000": "#1F1F1F",
+  "color-basic-1100": "#141414"
+}
+```
+
+<Note>
+In dark themes, backgrounds use the lower shades (darker colors) and text uses the upper shades (lighter colors).
+</Note>
+
+### Basic Transparent Colors
+
+Create transparent variations using the `-600` shade:
+
+```json
+{
+  "color-basic-transparent-100": "rgba(128, 128, 128, 0.08)",
+  "color-basic-transparent-200": "rgba(128, 128, 128, 0.16)",
+  "color-basic-transparent-300": "rgba(128, 128, 128, 0.24)",
+  "color-basic-transparent-400": "rgba(128, 128, 128, 0.32)",
+  "color-basic-transparent-500": "rgba(128, 128, 128, 0.4)",
+  "color-basic-transparent-600": "rgba(128, 128, 128, 0.48)"
+}
+```
+
+### Background Levels
+
+Define 4 background levels for visual hierarchy:
+
+```json
+{
+  "background-basic-color-1": "$color-basic-800",
+  "background-basic-color-2": "$color-basic-900",
+  "background-basic-color-3": "$color-basic-1000",
+  "background-basic-color-4": "$color-basic-1100"
+}
+```
+
+Components like `Input` automatically use darker background levels to stand out on lighter containers.
+
+## Text and Icons
+
+Text and icon colors are controlled by basic color shades and special text variables.
+
+### Text Color Variables
+
+Fine-tune text appearance with these key variables:
+
+- `text-basic-color` - Default text color used throughout the app
+- `text-hint-color` - Placeholders, labels, captions, and subtitle text
+- `text-disabled-color` - Text in disabled components
+- `text-control-color` - Text on colored backgrounds
+
+### Customize Text Colors
+
+Override text colors without affecting backgrounds:
+
+```json
+{
+  "text-basic-color": "$color-basic-400",
+  "text-hint-color": "$color-basic-600",
+  "text-disabled-color": "$color-basic-transparent-400"
+}
+```
+
+## Typography
+
+Customize fonts to match your brand's typography.
+
+### Install Custom Fonts
+
+<Steps>
+  <Step title="Add Font Files">
+    Copy your `.ttf` or `.otf` font files to the `assets/fonts` directory
+  </Step>
+  <Step title="Configure React Native">
+    Create or update `react-native.config.js`:
+    ```js
+    module.exports = {
+      project: {
+        ios: {},
+        android: {},
+      },
+      assets: ['./assets/fonts'],
+    };
+    ```
+  </Step>
+  <Step title="Link Fonts">
+    Run the link command:
+    ```bash
+    npx react-native link
+    ```
+  </Step>
+</Steps>
+
+### Apply Fonts Globally
+
+Create a `mapping.json` file to apply fonts to all UI Kitten components:
+
+```json
+{
+  "strict": {
+    "text-font-family": "OpenSans-Regular"
+  }
+}
+```
+
+Then configure `ApplicationProvider` with custom mapping:
+
+```jsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Button } from '@ui-kitten/components';
+import { default as theme } from './theme.json';
+import { default as mapping } from './mapping.json';
+
+export default () => (
+  <ApplicationProvider
+    {...eva}
+    theme={{ ...eva.dark, ...theme }}
+    customMapping={mapping}
+  >
+    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Button>HOME</Button>
+    </Layout>
+  </ApplicationProvider>
+);
+```
+
+### Configure Text Categories
+
+For granular control, customize each text category in `mapping.json`:
+
+```json
+{
+  "strict": {
+    "text-font-family": "OpenSans-Regular",
+
+    "text-heading-1-font-size": 36,
+    "text-heading-1-font-weight": "800",
+    "text-heading-1-font-family": "OpenSans-Bold",
+
+    "text-heading-2-font-size": 32,
+    "text-heading-2-font-weight": "800",
+    "text-heading-2-font-family": "OpenSans-Bold",
+
+    "text-subtitle-1-font-size": 15,
+    "text-subtitle-1-font-weight": "600",
+    "text-subtitle-1-font-family": "OpenSans-SemiBold",
+
+    "text-paragraph-1-font-size": 15,
+    "text-paragraph-1-font-weight": "400",
+    "text-paragraph-1-font-family": "OpenSans-Regular",
+
+    "text-caption-1-font-size": 12,
+    "text-caption-1-font-weight": "400",
+    "text-caption-1-font-family": "OpenSans-Regular",
+
+    "text-label-font-size": 12,
+    "text-label-font-weight": "800",
+    "text-label-font-family": "OpenSans-Bold"
+  }
+}
+```
+
+### Text Categories
+
+UI Kitten includes 13 text categories:
+
+- **Headings**: `h1`, `h2`, `h3`, `h4`, `h5`, `h6`
+- **Subtitles**: `s1`, `s2`
+- **Paragraphs**: `p1`, `p2`
+- **Captions**: `c1`, `c2`
+- **Label**: `label`
+
+Each category can have custom `font-size`, `font-weight`, and `font-family` properties.
+
+## Complete Theme Example
+
+Here's a complete example of a custom orange dark theme:
+
+```json
+{
+  "color-primary-100": "#FFECD2",
+  "color-primary-200": "#FFD3A6",
+  "color-primary-300": "#FFB979",
+  "color-primary-400": "#FF9B52",
+  "color-primary-500": "#FF6721",
+  "color-primary-600": "#DB4A18",
+  "color-primary-700": "#B73210",
+  "color-primary-800": "#931F0A",
+  "color-primary-900": "#7A0C06",
+
+  "color-primary-transparent-100": "rgba(255, 103, 33, 0.08)",
+  "color-primary-transparent-200": "rgba(255, 103, 33, 0.16)",
+  "color-primary-transparent-300": "rgba(255, 103, 33, 0.24)",
+  "color-primary-transparent-400": "rgba(255, 103, 33, 0.32)",
+  "color-primary-transparent-500": "rgba(255, 103, 33, 0.4)",
+  "color-primary-transparent-600": "rgba(255, 103, 33, 0.48)",
+
+  "color-basic-100": "#FFFFFF",
+  "color-basic-200": "#F5F5F5",
+  "color-basic-300": "#F5F5F5",
+  "color-basic-400": "#D4D4D4",
+  "color-basic-500": "#B3B3B3",
+  "color-basic-600": "#808080",
+  "color-basic-700": "#4A4A4A",
+  "color-basic-800": "#383838",
+  "color-basic-900": "#292929",
+  "color-basic-1000": "#1F1F1F",
+  "color-basic-1100": "#141414",
+
+  "text-basic-color": "$color-basic-400"
+}
+```
+
+## Theme Variables Reference
+
+For complete lists of all available theme variables:
+
+- [Eva Light Theme Variables](https://akveo.github.io/react-native-ui-kitten/docs/design-system/eva-light-theme)
+- [Eva Dark Theme Variables](https://akveo.github.io/react-native-ui-kitten/docs/design-system/eva-dark-theme)
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Eva Colors Generator">
+    Start with Eva Colors to generate harmonious color palettes that work well together. The AI ensures proper contrast and accessibility.
+  </Accordion>
+
+  <Accordion title="Test Both Themes">
+    If your app supports light and dark modes, create and test both theme variations to ensure consistency.
+  </Accordion>
+
+  <Accordion title="Maintain Contrast Ratios">
+    Ensure text has sufficient contrast against backgrounds for accessibility. Aim for WCAG AA compliance (4.5:1 for normal text).
+  </Accordion>
+
+  <Accordion title="Use Theme References">
+    Use the `$` syntax to reference other theme variables. This makes your theme easier to maintain and modify.
+  </Accordion>
+
+  <Accordion title="Document Custom Variables">
+    Keep a record of your custom theme variables and their purposes for team collaboration.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Runtime Theming" icon="toggle-on" href="/guides/runtime-theming">
+    Enable dynamic theme switching in your branded app
+  </Card>
+  <Card title="Eva Icons" icon="star" href="/guides/eva-icons">
+    Add beautiful icons that match your theme
+  </Card>
+</CardGroup>

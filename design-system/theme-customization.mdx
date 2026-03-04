@@ -1,0 +1,361 @@
+---
+title: Theme Customization
+description: Customize Eva Design System themes to match your brand identity and design requirements
+---
+
+UI Kitten themes are JSON or JavaScript objects that define the visual appearance of your application. You can customize these themes to match your brand identity while maintaining the consistency of the Eva Design System.
+
+## Theme Structure
+
+A theme in UI Kitten is a structured object containing semantic variables:
+
+```json
+{
+  "color-primary-100": "#f2f6ff",
+  "color-primary-200": "#d9e4ff",
+  "color-primary-300": "#a6c1ff",
+  "color-primary-400": "#598bff",
+  "color-primary-500": "#3366ff",
+  "color-primary-600": "#284de0",
+  "color-primary-700": "#2541cc",
+  "color-primary-800": "#192f9e",
+  "color-primary-900": "#14236e",
+  
+  "color-primary-focus": "$color-primary-700",
+  "color-primary-hover": "$color-primary-400",
+  "color-primary-default": "$color-primary-500",
+  "color-primary-active": "$color-primary-600",
+  "color-primary-disabled": "$color-primary-300"
+}
+```
+
+## Creating a Custom Theme
+
+<Steps>
+  <Step title="Start with a Base Theme">
+    Import the Eva theme as your foundation:
+    
+    ```tsx
+    import * as eva from '@eva-design/eva';
+    import { ApplicationProvider } from '@ui-kitten/components';
+    ```
+  </Step>
+  
+  <Step title="Define Your Custom Variables">
+    Create a custom theme object with your brand colors:
+    
+    ```tsx
+    const customTheme = {
+      ...eva.light,
+      
+      // Brand colors
+      'color-primary-500': '#FF6B35',
+      'color-primary-600': '#E55A2B',
+      'color-success-500': '#2ECC71',
+      'color-danger-500': '#E74C3C',
+      
+      // Custom backgrounds
+      'background-basic-color-1': '#FFFFFF',
+      'background-basic-color-2': '#F8F9FA',
+    };
+    ```
+  </Step>
+  
+  <Step title="Apply Your Theme">
+    Pass the custom theme to ApplicationProvider:
+    
+    ```tsx
+    export default () => (
+      <ApplicationProvider {...eva} theme={customTheme}>
+        {/* Your app components */}
+      </ApplicationProvider>
+    );
+    ```
+  </Step>
+</Steps>
+
+## Complete Customization Example
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Button } from '@ui-kitten/components';
+
+// Define your brand colors
+const brandTheme = {
+  ...eva.light,
+  
+  // Primary color palette
+  'color-primary-100': '#FFF5F0',
+  'color-primary-200': '#FFE4D6',
+  'color-primary-300': '#FFC4A3',
+  'color-primary-400': '#FF9B70',
+  'color-primary-500': '#FF6B35',
+  'color-primary-600': '#E55A2B',
+  'color-primary-700': '#CC4B22',
+  'color-primary-800': '#B33C19',
+  'color-primary-900': '#992E10',
+  
+  // State colors
+  'color-primary-focus': '#CC4B22',
+  'color-primary-hover': '#FF9B70',
+  'color-primary-default': '#FF6B35',
+  'color-primary-active': '#E55A2B',
+  'color-primary-disabled': '#FFC4A3',
+};
+
+export default () => (
+  <ApplicationProvider {...eva} theme={brandTheme}>
+    <Layout style={{ flex: 1, padding: 24 }}>
+      <Button>Branded Button</Button>
+    </Layout>
+  </ApplicationProvider>
+);
+```
+
+## Semantic Color Groups
+
+<Tabs>
+  <Tab title="Status Colors">
+    Customize the 5 semantic status colors:
+    
+    ```json
+    {
+      "color-primary-500": "#3366FF",
+      "color-success-500": "#00E096",
+      "color-info-500": "#0095FF",
+      "color-warning-500": "#FFAA00",
+      "color-danger-500": "#FF3D71"
+    }
+    ```
+    
+    Each color has 9 shades (100-900) for different use cases.
+  </Tab>
+  
+  <Tab title="Basic Colors">
+    The basic color palette has 11 shades for backgrounds and text:
+    
+    ```json
+    {
+      "color-basic-100": "#FFFFFF",
+      "color-basic-200": "#F7F9FC",
+      "color-basic-300": "#EDF1F7",
+      "color-basic-400": "#E4E9F2",
+      "color-basic-500": "#C5CEE0",
+      "color-basic-600": "#8F9BB3",
+      "color-basic-700": "#2E3A59",
+      "color-basic-800": "#222B45",
+      "color-basic-900": "#192038",
+      "color-basic-1000": "#151A30",
+      "color-basic-1100": "#101426"
+    }
+    ```
+  </Tab>
+  
+  <Tab title="State Variations">
+    Define how colors appear in different interaction states:
+    
+    ```json
+    {
+      "color-primary-focus": "$color-primary-700",
+      "color-primary-hover": "$color-primary-400",
+      "color-primary-default": "$color-primary-500",
+      "color-primary-active": "$color-primary-600",
+      "color-primary-disabled": "$color-primary-300"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Backgrounds and Borders
+
+Customize the layered background system:
+
+```json
+{
+  // Light theme backgrounds
+  "background-basic-color-1": "$color-basic-100",
+  "background-basic-color-2": "$color-basic-200",
+  "background-basic-color-3": "$color-basic-300",
+  "background-basic-color-4": "$color-basic-400",
+  
+  // Borders
+  "border-basic-color-1": "$color-basic-100",
+  "border-basic-color-2": "$color-basic-200",
+  "border-basic-color-3": "$color-basic-300",
+  "border-basic-color-4": "$color-basic-400",
+  "border-basic-color-5": "$color-basic-500"
+}
+```
+
+<Note>
+  **Background hierarchy:**
+  - `background-basic-color-1` - Lightest, used for cards and headers
+  - `background-basic-color-2` - Layout backgrounds and input controls
+  - `background-basic-color-3` - Deeper nested elements
+  - `background-basic-color-4` - Deepest level backgrounds
+</Note>
+
+## Text Colors
+
+Customize text colors for different contexts:
+
+```json
+{
+  "text-basic-color": "$color-basic-800",
+  "text-alternate-color": "$color-basic-100",
+  "text-control-color": "$color-basic-100",
+  "text-disabled-color": "$color-basic-500",
+  "text-hint-color": "$color-basic-600"
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="text-basic-color">
+    Main text color used on basic backgrounds
+  </Card>
+  <Card title="text-alternate-color">
+    Text color for alternate backgrounds
+  </Card>
+  <Card title="text-control-color">
+    Text on status-colored backgrounds
+  </Card>
+  <Card title="text-hint-color">
+    Placeholders and secondary text
+  </Card>
+</CardGroup>
+
+## Typography Customization
+
+Customize font sizes, weights, and line heights:
+
+```json
+{
+  // Heading styles
+  "text-heading-1-font-size": 36,
+  "text-heading-1-font-weight": "800",
+  "text-heading-1-line-height": 48,
+  
+  // Subtitle styles
+  "text-subtitle-1-font-size": 15,
+  "text-subtitle-1-font-weight": "600",
+  "text-subtitle-1-line-height": 24,
+  
+  // Paragraph styles
+  "text-paragraph-1-font-size": 15,
+  "text-paragraph-1-font-weight": "400",
+  "text-paragraph-1-line-height": 24,
+  
+  // Caption styles
+  "text-caption-1-font-size": 12,
+  "text-caption-1-font-weight": "400",
+  "text-caption-1-line-height": 16
+}
+```
+
+## Dark Theme Customization
+
+Create a custom dark theme by inverting background colors:
+
+```tsx
+const customDarkTheme = {
+  ...eva.dark,
+  
+  // Dark backgrounds (start from darker shades)
+  'background-basic-color-1': '#222B45',
+  'background-basic-color-2': '#192038',
+  'background-basic-color-3': '#151A30',
+  'background-basic-color-4': '#101426',
+  
+  // Light text on dark backgrounds
+  'text-basic-color': '#FFFFFF',
+  'text-hint-color': '#8F9BB3',
+  
+  // Keep brand colors consistent
+  'color-primary-500': '#FF6B35',
+};
+```
+
+<Warning>
+  When customizing dark themes, ensure sufficient contrast between text and backgrounds for accessibility (WCAG AA standard requires 4.5:1 contrast ratio for normal text).
+</Warning>
+
+## Theme Extension
+
+Extend themes by merging multiple theme objects:
+
+```tsx
+const baseCustomization = {
+  'color-primary-500': '#FF6B35',
+  'color-success-500': '#2ECC71',
+};
+
+const lightTheme = {
+  ...eva.light,
+  ...baseCustomization,
+};
+
+const darkTheme = {
+  ...eva.dark,
+  ...baseCustomization,
+};
+```
+
+## Testing Your Theme
+
+Test your custom theme across different components:
+
+```tsx
+import { Button, Card, Input, Text } from '@ui-kitten/components';
+
+const ThemePreview = () => (
+  <Layout style={{ padding: 24 }}>
+    <Text category='h1'>Theme Preview</Text>
+    
+    <Button status='primary'>Primary Button</Button>
+    <Button status='success'>Success Button</Button>
+    <Button status='danger'>Danger Button</Button>
+    
+    <Card>
+      <Text>Card with custom theme</Text>
+    </Card>
+    
+    <Input placeholder='Input field' />
+  </Layout>
+);
+```
+
+## Best Practices
+
+<Steps>
+  <Step title="Start with Base Variables">
+    Customize the base color shades (500 level) first, then adjust state variations if needed.
+  </Step>
+  
+  <Step title="Maintain Consistency">
+    Use variable references (`$color-primary-500`) to maintain consistency across your theme.
+  </Step>
+  
+  <Step title="Test Both Themes">
+    If supporting dark mode, test customizations in both light and dark themes.
+  </Step>
+  
+  <Step title="Consider Accessibility">
+    Ensure sufficient contrast ratios between text and backgrounds.
+  </Step>
+  
+  <Step title="Document Your Colors">
+    Keep a reference of your custom color values for your design team.
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Mapping" icon="map" href="/design-system/custom-mapping">
+    Learn how to create custom component mappings
+  </Card>
+  <Card title="Theme Variables" icon="code" href="/design-system/theme-variables">
+    Use theme variables in your components
+  </Card>
+</CardGroup>

@@ -1,0 +1,520 @@
+---
+title: OverflowMenu
+description: Display a menu with selectable items relative to an anchor element.
+---
+
+OverflowMenu displays a contextual menu of MenuItem components positioned relative to an anchor.
+
+## Import
+
+```tsx
+import { OverflowMenu, MenuItem } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React, { useState } from 'react';
+import { Button, MenuItem, OverflowMenu } from '@ui-kitten/components';
+
+export const OverflowMenuSimple = () => {
+  const [visible, setVisible] = useState(false);
+
+  const onItemSelect = (index) => {
+    console.log('Selected index:', index);
+    setVisible(false);
+  };
+
+  return (
+    <OverflowMenu
+      anchor={() => (
+        <Button onPress={() => setVisible(true)}>
+          Open Menu
+        </Button>
+      )}
+      visible={visible}
+      onSelect={onItemSelect}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <MenuItem title='Edit' />
+      <MenuItem title='Delete' />
+      <MenuItem title='Share' />
+    </OverflowMenu>
+  );
+};
+```
+
+## Index Type
+
+OverflowMenu uses IndexPath for item selection:
+
+```tsx
+import React, { useState } from 'react';
+import { Button, MenuItem, OverflowMenu } from '@ui-kitten/components';
+
+export const OverflowMenuIndexType = () => {
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [visible, setVisible] = useState(false);
+
+  const onSelect = (index) => {
+    setSelectedIndex(index);
+    setVisible(false);
+    console.log('Selected row:', index.row);
+  };
+
+  return (
+    <OverflowMenu
+      anchor={() => <Button onPress={() => setVisible(true)}>Menu</Button>}
+      visible={visible}
+      selectedIndex={selectedIndex}
+      onSelect={onSelect}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <MenuItem title='Option 1' />
+      <MenuItem title='Option 2' />
+      <MenuItem title='Option 3' />
+    </OverflowMenu>
+  );
+};
+```
+
+<Note>
+IndexPath structure:
+```typescript
+interface IndexPath {
+  row: number;      // Index of item within group
+  section?: number; // Index of group (for grouped menus)
+}
+```
+</Note>
+
+## Without Markers
+
+Handle item selection without visual selection markers:
+
+```tsx
+import React, { useState } from 'react';
+import { Button, MenuItem, OverflowMenu } from '@ui-kitten/components';
+
+export const OverflowMenuNoMarkers = () => {
+  const [visible, setVisible] = useState(false);
+
+  const onItemSelect = (index) => {
+    console.log('Action:', index.row);
+    setVisible(false);
+  };
+
+  return (
+    <OverflowMenu
+      anchor={() => <Button onPress={() => setVisible(true)}>Actions</Button>}
+      visible={visible}
+      onSelect={onItemSelect}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <MenuItem title='Export' />
+      <MenuItem title='Print' />
+      <MenuItem title='Settings' />
+    </OverflowMenu>
+  );
+};
+```
+
+## Placement
+
+Control menu position relative to the anchor:
+
+<CodeGroup>
+```tsx Bottom (Default)
+<OverflowMenu
+  anchor={renderAnchor}
+  visible={visible}
+  placement='bottom'
+>
+  <MenuItem title='Item 1' />
+  <MenuItem title='Item 2' />
+</OverflowMenu>
+```
+
+```tsx Top
+<OverflowMenu
+  anchor={renderAnchor}
+  visible={visible}
+  placement='top'
+>
+  <MenuItem title='Item 1' />
+  <MenuItem title='Item 2' />
+</OverflowMenu>
+```
+
+```tsx Left
+<OverflowMenu
+  anchor={renderAnchor}
+  visible={visible}
+  placement='left'
+>
+  <MenuItem title='Item 1' />
+  <MenuItem title='Item 2' />
+</OverflowMenu>
+```
+
+```tsx Right
+<OverflowMenu
+  anchor={renderAnchor}
+  visible={visible}
+  placement='right'
+>
+  <MenuItem title='Item 1' />
+  <MenuItem title='Item 2' />
+</OverflowMenu>
+```
+</CodeGroup>
+
+## Full Width
+
+Make menu take the full width of the anchor:
+
+```tsx
+<OverflowMenu
+  anchor={() => <Button>Full Width Menu</Button>}
+  visible={visible}
+  fullWidth={true}
+  onBackdropPress={() => setVisible(false)}
+>
+  <MenuItem title='Item 1' />
+  <MenuItem title='Item 2' />
+  <MenuItem title='Item 3' />
+</OverflowMenu>
+```
+
+## With Accessories
+
+Add icons to menu items:
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Icon, MenuItem, OverflowMenu } from '@ui-kitten/components';
+
+const EditIcon = (props) => <Icon {...props} name='edit' />;
+const DeleteIcon = (props) => <Icon {...props} name='trash' />;
+const ShareIcon = (props) => <Icon {...props} name='share' />;
+
+export const OverflowMenuAccessories = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <OverflowMenu
+      anchor={() => <Button onPress={() => setVisible(true)}>Menu</Button>}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <MenuItem title='Edit' accessoryLeft={EditIcon} />
+      <MenuItem title='Delete' accessoryLeft={DeleteIcon} />
+      <MenuItem title='Share' accessoryLeft={ShareIcon} />
+    </OverflowMenu>
+  );
+};
+```
+
+## With Disabled Items
+
+Disable specific menu items:
+
+```tsx
+import React, { useState } from 'react';
+import { Button, MenuItem, OverflowMenu } from '@ui-kitten/components';
+
+export const OverflowMenuDisabled = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <OverflowMenu
+      anchor={() => <Button onPress={() => setVisible(true)}>Menu</Button>}
+      visible={visible}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <MenuItem title='Available' />
+      <MenuItem title='Disabled' disabled={true} />
+      <MenuItem title='Available' />
+    </OverflowMenu>
+  );
+};
+```
+
+## Styled Backdrop
+
+Customize the backdrop appearance:
+
+```tsx
+<OverflowMenu
+  anchor={renderAnchor}
+  visible={visible}
+  backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
+  onBackdropPress={() => setVisible(false)}
+>
+  <MenuItem title='Item 1' />
+  <MenuItem title='Item 2' />
+</OverflowMenu>
+```
+
+## Without Divider
+
+Remove dividers between menu items:
+
+```tsx
+<OverflowMenu
+  anchor={renderAnchor}
+  visible={visible}
+  appearance='noDivider'
+  onBackdropPress={() => setVisible(false)}
+>
+  <MenuItem title='Item 1' />
+  <MenuItem title='Item 2' />
+  <MenuItem title='Item 3' />
+</OverflowMenu>
+```
+
+## Props
+
+<ParamField path="anchor" type="() => ReactElement" required>
+  A function that returns the component relative to which the menu will be shown.
+</ParamField>
+
+<ParamField path="children" type="ReactElement<MenuItemProps> | ReactElement<MenuItemProps>[]" required>
+  MenuItem components to be rendered within the menu.
+</ParamField>
+
+<ParamField path="visible" type="boolean" default="false">
+  Whether the menu is visible.
+</ParamField>
+
+<ParamField path="selectedIndex" type="IndexPath">
+  Index of the currently selected item.
+  ```typescript
+  interface IndexPath {
+    row: number;
+    section?: number;
+  }
+  ```
+</ParamField>
+
+<ParamField path="onSelect" type="(index: IndexPath) => void">
+  Called when a menu item is pressed. Receives the IndexPath of the selected item.
+</ParamField>
+
+<ParamField path="onBackdropPress" type="() => void">
+  Called when the menu is visible and the backdrop is pressed.
+</ParamField>
+
+<ParamField path="placement" type="string" default="bottom">
+  Position of the menu relative to the anchor. Can be:
+  - Basic: `top`, `bottom`, `left`, `right`
+  - With alignment: `top start`, `top end`, `bottom start`, `bottom end`, `left start`, `left end`, `right start`, `right end`
+</ParamField>
+
+<ParamField path="fullWidth" type="boolean" default="false">
+  Whether the menu should take the full width of the anchor.
+</ParamField>
+
+<ParamField path="backdropStyle" type="StyleProp<ViewStyle>">
+  Style of the backdrop overlay.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ViewStyle>">
+  Style of the menu container.
+</ParamField>
+
+<ParamField path="appearance" type="string">
+  Appearance variant. Use `'noDivider'` to hide dividers between items.
+</ParamField>
+
+## Examples
+
+### Icon Button Menu
+
+```tsx
+import React, { useState } from 'react';
+import { Icon, IconButton, MenuItem, OverflowMenu } from '@ui-kitten/components';
+
+const MoreIcon = (props) => <Icon {...props} name='more-vertical' />;
+const EditIcon = (props) => <Icon {...props} name='edit' />;
+const DeleteIcon = (props) => <Icon {...props} name='trash' />;
+
+export const IconButtonMenu = () => {
+  const [visible, setVisible] = useState(false);
+
+  const onItemSelect = (index) => {
+    console.log('Selected:', index.row);
+    setVisible(false);
+  };
+
+  return (
+    <OverflowMenu
+      anchor={() => (
+        <IconButton
+          icon={MoreIcon}
+          onPress={() => setVisible(true)}
+        />
+      )}
+      visible={visible}
+      onSelect={onItemSelect}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <MenuItem title='Edit' accessoryLeft={EditIcon} />
+      <MenuItem title='Delete' accessoryLeft={DeleteIcon} />
+    </OverflowMenu>
+  );
+};
+```
+
+### Menu with Groups
+
+```tsx
+import React, { useState } from 'react';
+import { Button, MenuItem, MenuGroup, OverflowMenu } from '@ui-kitten/components';
+
+export const GroupedMenu = () => {
+  const [visible, setVisible] = useState(false);
+
+  const onItemSelect = (index) => {
+    console.log('Group:', index.section, 'Item:', index.row);
+    setVisible(false);
+  };
+
+  return (
+    <OverflowMenu
+      anchor={() => <Button onPress={() => setVisible(true)}>Menu</Button>}
+      visible={visible}
+      onSelect={onItemSelect}
+      onBackdropPress={() => setVisible(false)}
+    >
+      <MenuGroup title='File'>
+        <MenuItem title='New' />
+        <MenuItem title='Open' />
+      </MenuGroup>
+      <MenuGroup title='Edit'>
+        <MenuItem title='Copy' />
+        <MenuItem title='Paste' />
+      </MenuGroup>
+    </OverflowMenu>
+  );
+};
+```
+
+### Controlled Selection
+
+```tsx
+import React, { useState } from 'react';
+import { Button, MenuItem, OverflowMenu, Text } from '@ui-kitten/components';
+
+export const ControlledMenu = () => {
+  const [visible, setVisible] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState({ row: 0 });
+
+  const options = ['Option 1', 'Option 2', 'Option 3'];
+
+  const onSelect = (index) => {
+    setSelectedIndex(index);
+    setVisible(false);
+  };
+
+  return (
+    <>
+      <Text>Selected: {options[selectedIndex.row]}</Text>
+      <OverflowMenu
+        anchor={() => <Button onPress={() => setVisible(true)}>Select</Button>}
+        visible={visible}
+        selectedIndex={selectedIndex}
+        onSelect={onSelect}
+        onBackdropPress={() => setVisible(false)}
+      >
+        {options.map((option, index) => (
+          <MenuItem key={index} title={option} />
+        ))}
+      </OverflowMenu>
+    </>
+  );
+};
+```
+
+### Context Menu
+
+```tsx
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Card, Icon, MenuItem, OverflowMenu, Text } from '@ui-kitten/components';
+
+const MoreIcon = (props) => <Icon {...props} name='more-vertical' />;
+
+export const ContextMenu = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Card
+      header={() => (
+        <View style={styles.header}>
+          <Text category='h6'>Card Title</Text>
+          <OverflowMenu
+            anchor={() => (
+              <Icon
+                name='more-vertical'
+                style={styles.icon}
+                onPress={() => setVisible(true)}
+              />
+            )}
+            visible={visible}
+            onBackdropPress={() => setVisible(false)}
+          >
+            <MenuItem title='Edit' />
+            <MenuItem title='Delete' />
+            <MenuItem title='Share' />
+          </OverflowMenu>
+        </View>
+      )}
+    >
+      <Text>Card content goes here</Text>
+    </Card>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+});
+```
+
+## Accessibility
+
+```tsx
+<OverflowMenu
+  anchor={renderAnchor}
+  visible={visible}
+  accessible={true}
+  accessibilityLabel="Options menu"
+  accessibilityRole="menu"
+>
+  <MenuItem title='Option 1' />
+  <MenuItem title='Option 2' />
+</OverflowMenu>
+```
+
+## Best Practices
+
+- Use descriptive titles for menu items
+- Add icons to menu items for better recognition
+- Disable unavailable actions instead of hiding them
+- Close menu after item selection
+- Use appropriate placement to avoid content cutoff
+- Group related items using MenuGroup
+
+## See Also
+
+- [Menu](/components/menu) - Standalone menu component with MenuItem support
+- [Popover](/components/popover) - For custom content

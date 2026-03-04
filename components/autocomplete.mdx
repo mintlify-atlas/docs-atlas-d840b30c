@@ -1,0 +1,433 @@
+---
+title: Autocomplete
+description: Autocomplete is a text input enhanced by a panel of suggested options.
+---
+
+Autocomplete enhances a text input with a dropdown list of suggestions that updates as the user types. It's ideal for search fields and form inputs with predictable values.
+
+## Import
+
+```tsx
+import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+
+export const AutocompleteExample = () => {
+  const [value, setValue] = React.useState('');
+
+  const data = ['Option 1', 'Option 2', 'Option 3'];
+
+  const onSelect = (index) => {
+    setValue(data[index]);
+  };
+
+  return (
+    <Autocomplete
+      placeholder='Type to search'
+      value={value}
+      onChangeText={setValue}
+      onSelect={onSelect}
+    >
+      {data.map((title, index) => (
+        <AutocompleteItem key={index} title={title} />
+      ))}
+    </Autocomplete>
+  );
+};
+```
+
+## Filtering Options
+
+Filter suggestions based on user input.
+
+```tsx
+import React from 'react';
+import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+
+const FilteredAutocomplete = () => {
+  const [value, setValue] = React.useState('');
+  const [data, setData] = React.useState([]);
+
+  const allOptions = [
+    'Apple',
+    'Banana',
+    'Orange',
+    'Mango',
+    'Pineapple',
+    'Strawberry',
+  ];
+
+  const onChangeText = (query) => {
+    setValue(query);
+    const filtered = allOptions.filter(item =>
+      item.toLowerCase().includes(query.toLowerCase())
+    );
+    setData(filtered);
+  };
+
+  const onSelect = (index) => {
+    setValue(data[index]);
+  };
+
+  return (
+    <Autocomplete
+      placeholder='Search fruits'
+      value={value}
+      onChangeText={onChangeText}
+      onSelect={onSelect}
+    >
+      {data.map((title, index) => (
+        <AutocompleteItem key={index} title={title} />
+      ))}
+    </Autocomplete>
+  );
+};
+```
+
+## Async Data Loading
+
+Fetch suggestions from an API with debouncing.
+
+```tsx
+import React from 'react';
+import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+
+const AsyncAutocomplete = () => {
+  const [value, setValue] = React.useState('');
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  const fetchSuggestions = async (query) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/search?q=${query}`);
+      const results = await response.json();
+      setData(results);
+    } catch (error) {
+      console.error('Failed to fetch suggestions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onChangeText = (query) => {
+    setValue(query);
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setData([]);
+    }
+  };
+
+  const onSelect = (index) => {
+    setValue(data[index].title);
+  };
+
+  return (
+    <Autocomplete
+      placeholder='Search...'
+      value={value}
+      onChangeText={onChangeText}
+      onSelect={onSelect}
+    >
+      {data.map((item, index) => (
+        <AutocompleteItem key={index} title={item.title} />
+      ))}
+    </Autocomplete>
+  );
+};
+```
+
+## With Accessories
+
+```tsx
+import { Autocomplete, AutocompleteItem, Icon } from '@ui-kitten/components';
+
+const SearchIcon = (props) => <Icon {...props} name='search' />;
+
+<Autocomplete
+  placeholder='Search'
+  accessoryLeft={SearchIcon}
+  value={value}
+  onChangeText={setValue}
+>
+  {data.map((title, index) => (
+    <AutocompleteItem key={index} title={title} />
+  ))}
+</Autocomplete>
+```
+
+## Status
+
+```tsx
+<Autocomplete
+  status='success'
+  placeholder='Valid input'
+  value={value}
+  onChangeText={setValue}
+/>
+
+<Autocomplete
+  status='danger'
+  placeholder='Invalid input'
+  caption='No results found'
+  value={value}
+  onChangeText={setValue}
+/>
+```
+
+## Placement
+
+Control where the options list appears.
+
+```tsx
+<Autocomplete
+  placement='top'
+  placeholder='Opens upward'
+  value={value}
+  onChangeText={setValue}
+>
+  {data.map((title, index) => (
+    <AutocompleteItem key={index} title={title} />
+  ))}
+</Autocomplete>
+```
+
+## Props
+
+<ParamField path="value" type="string">
+  The current value of the input field.
+</ParamField>
+
+<ParamField path="onChangeText" type="(text: string) => void">
+  Called when the input text changes.
+</ParamField>
+
+<ParamField path="onSelect" type="(index: number) => void">
+  Called when an option is selected. Receives the index of the selected option.
+</ParamField>
+
+<ParamField path="placeholder" type="string">
+  Placeholder text when the input is empty.
+</ParamField>
+
+<ParamField path="label" type="RenderProp<TextProps> | React.ReactText">
+  String, number or function component to render above the input.
+</ParamField>
+
+<ParamField path="caption" type="RenderProp<TextProps> | React.ReactText">
+  String, number or function component to render below the input.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="basic">
+  Status of the component. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="medium">
+  Size of the input field.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start of the input.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end of the input.
+</ParamField>
+
+<ParamField path="placement" type="string" default="'inner top'">
+  Position of the options list. Can be `top`, `bottom`, `left`, `right`, etc.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the autocomplete is disabled.
+</ParamField>
+
+## Methods
+
+<ParamField path="focus()" type="() => void">
+  Focuses the input field and shows the options list.
+</ParamField>
+
+<ParamField path="blur()" type="() => void">
+  Removes focus and hides the options list.
+</ParamField>
+
+<ParamField path="isFocused()" type="() => boolean">
+  Returns whether the input is currently focused.
+</ParamField>
+
+<ParamField path="clear()" type="() => void">
+  Clears all text from the input.
+</ParamField>
+
+## Form Examples
+
+### City Search
+
+```tsx
+import React from 'react';
+import { Autocomplete, AutocompleteItem, Icon } from '@ui-kitten/components';
+
+const CitySearch = () => {
+  const [value, setValue] = React.useState('');
+  const [cities, setCities] = React.useState([]);
+
+  const allCities = [
+    'New York', 'Los Angeles', 'Chicago', 'Houston',
+    'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego',
+  ];
+
+  const onChangeText = (query) => {
+    setValue(query);
+    const filtered = allCities.filter(city =>
+      city.toLowerCase().includes(query.toLowerCase())
+    );
+    setCities(filtered.slice(0, 5));
+  };
+
+  const onSelect = (index) => {
+    setValue(cities[index]);
+  };
+
+  const LocationIcon = (props) => <Icon {...props} name='pin' />;
+
+  return (
+    <Autocomplete
+      label='City'
+      placeholder='Enter city name'
+      value={value}
+      onChangeText={onChangeText}
+      onSelect={onSelect}
+      accessoryLeft={LocationIcon}
+    >
+      {cities.map((city, index) => (
+        <AutocompleteItem key={index} title={city} />
+      ))}
+    </Autocomplete>
+  );
+};
+```
+
+### Email Suggestions
+
+```tsx
+import React from 'react';
+import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+
+const EmailAutocomplete = () => {
+  const [value, setValue] = React.useState('');
+  const [suggestions, setSuggestions] = React.useState([]);
+
+  const domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com'];
+
+  const onChangeText = (text) => {
+    setValue(text);
+    
+    if (text.includes('@')) {
+      const [username, domain] = text.split('@');
+      const matchedDomains = domains
+        .filter(d => d.startsWith(domain))
+        .map(d => `${username}@${d}`);
+      setSuggestions(matchedDomains);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const onSelect = (index) => {
+    setValue(suggestions[index]);
+  };
+
+  return (
+    <Autocomplete
+      label='Email'
+      placeholder='Enter your email'
+      value={value}
+      onChangeText={onChangeText}
+      onSelect={onSelect}
+      keyboardType='email-address'
+      autoCapitalize='none'
+    >
+      {suggestions.map((email, index) => (
+        <AutocompleteItem key={index} title={email} />
+      ))}
+    </Autocomplete>
+  );
+};
+```
+
+### Debounced Search
+
+```tsx
+import React from 'react';
+import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+
+const DebouncedAutocomplete = () => {
+  const [value, setValue] = React.useState('');
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const timeoutRef = React.useRef(null);
+
+  const searchData = async (query) => {
+    setLoading(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const results = [
+      `${query} result 1`,
+      `${query} result 2`,
+      `${query} result 3`,
+    ];
+    setData(results);
+    setLoading(false);
+  };
+
+  const onChangeText = (query) => {
+    setValue(query);
+    
+    // Clear previous timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Set new timeout
+    if (query.length > 2) {
+      timeoutRef.current = setTimeout(() => {
+        searchData(query);
+      }, 300);
+    } else {
+      setData([]);
+    }
+  };
+
+  const onSelect = (index) => {
+    setValue(data[index]);
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <Autocomplete
+      placeholder='Type to search (min 3 chars)'
+      value={value}
+      onChangeText={onChangeText}
+      onSelect={onSelect}
+    >
+      {data.map((title, index) => (
+        <AutocompleteItem key={index} title={title} />
+      ))}
+    </Autocomplete>
+  );
+};
+```

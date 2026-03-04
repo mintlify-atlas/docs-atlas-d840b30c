@@ -1,0 +1,556 @@
+---
+title: Eva Design System Glossary
+description: Comprehensive glossary of terms used in Eva Design System and UI Kitten theming
+---
+
+This glossary defines key terms and concepts used throughout the Eva Design System and UI Kitten documentation.
+
+## Core Concepts
+
+### Parameter
+
+A parameter is a single style property that can be applied to a UI component. Each parameter represents a standard React Native style property using camelCase naming.
+
+<CodeGroup>
+```json Example
+{
+  "backgroundColor": "#3366FF",
+  "borderRadius": 8,
+  "paddingHorizontal": 16,
+  "fontSize": 14
+}
+```
+
+```tsx Usage in Mapping
+{
+  "Button": {
+    "appearances": {
+      "filled": {
+        "mapping": {
+          "backgroundColor": "color-primary-default",
+          "paddingVertical": 12,
+          "borderRadius": 4
+        }
+      }
+    }
+  }
+}
+```
+</CodeGroup>
+
+<Note>
+  Parameters use camelCase (e.g., `backgroundColor`) following React Native conventions, not kebab-case like CSS.
+</Note>
+
+---
+
+### Semantic Properties
+
+Semantic properties define sets of parameters applied to a UI component using a single property. In Eva Design System, semantic properties include appearances and variant groups.
+
+**Key semantic properties:**
+- **Appearance**: High-level visual style (e.g., `filled`, `outline`, `ghost`)
+- **Variant Groups**: Logical groups of variations (e.g., `status`, `size`)
+
+```tsx
+// Using semantic properties
+<Button 
+  appearance="outline"  // Semantic property
+  status="primary"      // Semantic property
+  size="large"          // Semantic property
+>
+  Click Me
+</Button>
+```
+
+---
+
+## Appearance
+
+An appearance is a semantic property that defines the high-level visual style of a component, including dimensions, shape, and main colors.
+
+### Characteristics
+
+- Must have at least one appearance marked as `default`
+- Can contain `variantGroups` and `state` definitions
+- Non-default appearances inherit from the default appearance
+
+### Example
+
+<Tabs>
+  <Tab title="Mapping Definition">
+    ```json
+    {
+      "Button": {
+        "meta": {
+          "appearances": {
+            "filled": {
+              "default": true
+            },
+            "outline": {
+              "default": false
+            },
+            "ghost": {
+              "default": false
+            }
+          }
+        },
+        "appearances": {
+          "filled": {
+            "mapping": {
+              "backgroundColor": "color-primary-default",
+              "borderWidth": 0
+            }
+          },
+          "outline": {
+            "mapping": {
+              "backgroundColor": "transparent",
+              "borderWidth": 2,
+              "borderColor": "color-primary-default"
+            }
+          },
+          "ghost": {
+            "mapping": {
+              "backgroundColor": "transparent",
+              "borderWidth": 0
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Component Usage">
+    ```tsx
+    // Default appearance (filled)
+    <Button>Default</Button>
+    
+    // Explicit appearances
+    <Button appearance="outline">Outline</Button>
+    <Button appearance="ghost">Ghost</Button>
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Variant Group
+
+A variant group is a logical collection of related variants. Each variant group represents a component property that can accept multiple predefined values.
+
+### Common Variant Groups
+
+<CardGroup cols={2}>
+  <Card title="status" icon="flag">
+    Color/status variations: `primary`, `success`, `info`, `warning`, `danger`
+  </Card>
+  <Card title="size" icon="ruler">
+    Size variations: `tiny`, `small`, `medium`, `large`, `giant`
+  </Card>
+</CardGroup>
+
+### Example
+
+```json
+{
+  "Button": {
+    "meta": {
+      "variantGroups": {
+        "status": {
+          "primary": { "default": true },
+          "success": { "default": false },
+          "danger": { "default": false }
+        },
+        "size": {
+          "small": { "default": false },
+          "medium": { "default": true },
+          "large": { "default": false }
+        }
+      }
+    },
+    "appearances": {
+      "filled": {
+        "variantGroups": {
+          "status": {
+            "primary": {
+              "backgroundColor": "color-primary-default"
+            },
+            "success": {
+              "backgroundColor": "color-success-default"
+            },
+            "danger": {
+              "backgroundColor": "color-danger-default"
+            }
+          },
+          "size": {
+            "small": {
+              "paddingVertical": 8,
+              "paddingHorizontal": 12
+            },
+            "medium": {
+              "paddingVertical": 12,
+              "paddingHorizontal": 16
+            },
+            "large": {
+              "paddingVertical": 16,
+              "paddingHorizontal": 24
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## Variant
+
+A variant is a specific value within a variant group that represents a distinct visual variation. Each variant defines a set of parameters that modify the component's appearance.
+
+### Example
+
+```tsx
+// 'primary' is a variant in the 'status' variant group
+<Button status="primary">Primary</Button>
+
+// 'large' is a variant in the 'size' variant group
+<Button size="large">Large</Button>
+
+// Combining multiple variants
+<Button status="success" size="small">Small Success</Button>
+```
+
+---
+
+## State
+
+A state represents a set of parameters applied to a component during a particular interaction or condition. States are similar to CSS pseudo-classes but implemented within the Eva Design System.
+
+### Available States
+
+<Tabs>
+  <Tab title="Interaction">
+    User interaction states:
+    
+    ```tsx
+    Interaction.HOVER       // Mouse hover
+    Interaction.ACTIVE      // Being pressed
+    Interaction.FOCUSED     // Has focus
+    Interaction.INDETERMINATE // Indeterminate state
+    Interaction.VISIBLE     // Visible state
+    ```
+  </Tab>
+  
+  <Tab title="Component">
+    Component condition states:
+    
+    ```tsx
+    State.CHECKED    // Checkbox/radio checked
+    State.SELECTED   // Item selected
+    State.DISABLED   // Component disabled
+    ```
+  </Tab>
+</Tabs>
+
+### Example
+
+<CodeGroup>
+```json Mapping
+{
+  "Button": {
+    "appearances": {
+      "filled": {
+        "mapping": {
+          "backgroundColor": "color-primary-default",
+          "state": {
+            "hover": {
+              "backgroundColor": "color-primary-hover"
+            },
+            "active": {
+              "backgroundColor": "color-primary-active"
+            },
+            "focused": {
+              "backgroundColor": "color-primary-focus",
+              "borderWidth": 2,
+              "borderColor": "color-primary-focus"
+            },
+            "disabled": {
+              "backgroundColor": "color-primary-disabled",
+              "opacity": 0.5
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+```tsx Component Usage
+import { styled, Interaction } from '@ui-kitten/components';
+
+@styled('CustomButton')
+class CustomButton extends React.Component {
+  onPressIn = () => {
+    this.props.eva.dispatch([Interaction.ACTIVE]);
+  };
+  
+  onPressOut = () => {
+    this.props.eva.dispatch([]);
+  };
+  
+  render() {
+    return (
+      <TouchableOpacity
+        style={this.props.eva.style}
+        onPressIn={this.onPressIn}
+        onPressOut={this.onPressOut}
+      />
+    );
+  }
+}
+```
+</CodeGroup>
+
+---
+
+## Theme
+
+A theme is a structured JSON or JavaScript object containing semantic variables that define an application's visual appearance. Themes enable easy customization and runtime theme switching.
+
+### Theme Structure
+
+```json
+{
+  // Color palette
+  "color-primary-500": "#3366FF",
+  "color-success-500": "#00E096",
+  "color-danger-500": "#FF3D71",
+  
+  // Color references
+  "color-primary-default": "$color-primary-500",
+  "color-primary-hover": "$color-primary-400",
+  
+  // Backgrounds
+  "background-basic-color-1": "#FFFFFF",
+  "background-basic-color-2": "#F7F9FC",
+  
+  // Text colors
+  "text-basic-color": "#222B45",
+  "text-hint-color": "#8F9BB3",
+  
+  // Typography
+  "text-heading-1-font-size": 36,
+  "text-heading-1-font-weight": "800"
+}
+```
+
+<Note>
+  The `$` prefix indicates a variable reference. For example, `"$color-primary-500"` references the value of `color-primary-500`.
+</Note>
+
+---
+
+## Mapping
+
+A mapping is a configuration file that describes the styling rules and behavior for UI components. Mappings define how theme variables are applied to components.
+
+### Mapping Structure
+
+```json
+{
+  "components": {
+    "ComponentName": {
+      "meta": {
+        "parameters": {},      // Available style parameters
+        "variantGroups": {},   // Available variant groups
+        "states": {},          // Available states
+        "appearances": {}      // Available appearances
+      },
+      "appearances": {
+        "appearanceName": {
+          "mapping": {},       // Default styles
+          "variantGroups": {}, // Variant styles
+          "state": {}          // State styles
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## Theme Variables
+
+Theme variables are named values within a theme that can be referenced throughout the application. They provide consistency and enable global styling changes.
+
+### Categories
+
+<Tabs>
+  <Tab title="Colors">
+    - Status colors: `color-primary-*`, `color-success-*`, etc.
+    - Basic colors: `color-basic-100` through `color-basic-1100`
+    - State colors: `color-primary-hover`, `color-primary-active`, etc.
+  </Tab>
+  
+  <Tab title="Backgrounds">
+    - Basic: `background-basic-color-1` through `background-basic-color-4`
+    - Alternative: `background-alternative-color-*`
+    - Primary: `background-primary-color-*`
+  </Tab>
+  
+  <Tab title="Borders">
+    - Basic: `border-basic-color-1` through `border-basic-color-5`
+    - Alternative: `border-alternative-color-*`
+    - Primary: `border-primary-color-*`
+  </Tab>
+  
+  <Tab title="Text">
+    - `text-basic-color`: Main text
+    - `text-alternate-color`: Alternative backgrounds
+    - `text-control-color`: On colored backgrounds
+    - `text-disabled-color`: Disabled state
+    - `text-hint-color`: Hints and placeholders
+  </Tab>
+  
+  <Tab title="Typography">
+    - Font sizes: `text-heading-1-font-size`, etc.
+    - Font weights: `text-heading-1-font-weight`, etc.
+    - Line heights: `text-heading-1-line-height`, etc.
+  </Tab>
+</Tabs>
+
+---
+
+## Variable Reference
+
+A variable reference allows one theme variable to reference another, creating a flexible and maintainable theme system.
+
+### Syntax
+
+```json
+{
+  "color-primary-500": "#3366FF",
+  "color-primary-default": "$color-primary-500",
+  "button-background": "$color-primary-default"
+}
+```
+
+<Note>
+  Variable references are resolved recursively, so you can reference a variable that itself references another variable.
+</Note>
+
+---
+
+## @styled Decorator
+
+The `@styled` decorator is a Higher-Order Function that applies Eva Design System mappings to a component, enabling theme-aware styling.
+
+### Usage
+
+```tsx
+import { styled, Interaction } from '@ui-kitten/components';
+
+@styled('CustomComponent')
+export class CustomComponent extends React.Component {
+  render() {
+    const { eva, style, ...restProps } = this.props;
+    
+    return (
+      <View style={[eva.style, style]} {...restProps} />
+    );
+  }
+}
+```
+
+### Injected Props
+
+```typescript
+interface EvaProp {
+  theme: ThemeType;                              // Current theme
+  style: StyleType;                              // Computed styles
+  dispatch: (interaction: Interaction[]) => void; // State dispatcher
+}
+```
+
+---
+
+## StyleService
+
+A service class for creating styles that support Eva theme variables.
+
+### Methods
+
+<CodeGroup>
+```tsx create
+import { StyleService } from '@ui-kitten/components';
+
+const themedStyles = StyleService.create({
+  container: {
+    backgroundColor: 'background-basic-color-1',
+    padding: 16,
+  },
+});
+```
+
+```tsx createThemed
+import { StyleService } from '@ui-kitten/components';
+
+const styles = StyleService.createThemed(rawStyles, theme);
+```
+
+```tsx createThemedEntry
+const style = StyleService.createThemedEntry(styleObject, theme);
+```
+</CodeGroup>
+
+---
+
+## Quick Reference
+
+<CardGroup cols={2}>
+  <Card title="Parameter">
+    Single style property (e.g., `backgroundColor`)
+  </Card>
+  <Card title="Appearance">
+    High-level component style (e.g., `filled`, `outline`)
+  </Card>
+  <Card title="Variant Group">
+    Logical group of variants (e.g., `status`, `size`)
+  </Card>
+  <Card title="Variant">
+    Specific variation (e.g., `primary`, `large`)
+  </Card>
+  <Card title="State">
+    Interaction/condition style (e.g., `hover`, `active`)
+  </Card>
+  <Card title="Theme">
+    Collection of design variables
+  </Card>
+  <Card title="Mapping">
+    Component styling configuration
+  </Card>
+  <Card title="Variable Reference">
+    Theme variable pointer (e.g., `$color-primary-500`)
+  </Card>
+</CardGroup>
+
+---
+
+## Related Resources
+
+<CardGroup cols={3}>
+  <Card title="Eva Design System" icon="palette" href="/design-system/eva-design-system">
+    Learn about Eva Design System
+  </Card>
+  <Card title="Theme Customization" icon="paintbrush" href="/design-system/theme-customization">
+    Customize your theme
+  </Card>
+  <Card title="Custom Mapping" icon="map" href="/design-system/custom-mapping">
+    Create custom components
+  </Card>
+</CardGroup>

@@ -1,0 +1,138 @@
+---
+title: Radio
+description: Radio buttons allow users to select one option from a set.
+---
+
+Radio buttons allow users to select a single option from a set of mutually exclusive options. They should be used within a RadioGroup for proper functionality.
+
+## Import
+
+```tsx
+import { Radio, RadioGroup } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { Radio } from '@ui-kitten/components';
+
+export const RadioExample = () => {
+  const [checked, setChecked] = React.useState(false);
+
+  return (
+    <Radio
+      checked={checked}
+      onChange={nextChecked => setChecked(nextChecked)}
+    >
+      Option
+    </Radio>
+  );
+};
+```
+
+<Note>
+Radio components should typically be used within a RadioGroup component for proper single-selection behavior.
+</Note>
+
+## States
+
+Radio supports checked, unchecked, and disabled states.
+
+```tsx
+<Radio checked={true}>
+  Checked
+</Radio>
+
+<Radio checked={false}>
+  Unchecked
+</Radio>
+
+<Radio checked={true} disabled>
+  Disabled Checked
+</Radio>
+
+<Radio checked={false} disabled>
+  Disabled Unchecked
+</Radio>
+```
+
+## Status
+
+Radio buttons can be styled with different status colors.
+
+```tsx
+<Radio status='primary' checked={true}>
+  Primary
+</Radio>
+
+<Radio status='success' checked={true}>
+  Success
+</Radio>
+
+<Radio status='info' checked={true}>
+  Info
+</Radio>
+
+<Radio status='warning' checked={true}>
+  Warning
+</Radio>
+
+<Radio status='danger' checked={true}>
+  Danger
+</Radio>
+
+<Radio status='control' checked={true}>
+  Control
+</Radio>
+```
+
+## Props
+
+<ParamField path="checked" type="boolean" default="false">
+  Whether the radio button is checked.
+</ParamField>
+
+<ParamField path="onChange" type="(checked: boolean) => void">
+  Called when the radio button should switch its value.
+</ParamField>
+
+<ParamField path="children" type="RenderProp<TextProps> | React.ReactText">
+  String, number or a function component to render next to the radio button. If it is a function, expected to return a Text component.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="basic">
+  Status of the component. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the radio button is disabled.
+</ParamField>
+
+## Form Examples
+
+### Single Radio
+
+```tsx
+import React from 'react';
+import { Radio, Layout } from '@ui-kitten/components';
+
+const SingleRadioExample = () => {
+  const [accepted, setAccepted] = React.useState(false);
+
+  return (
+    <Layout style={{ padding: 16 }}>
+      <Radio
+        checked={accepted}
+        onChange={setAccepted}
+      >
+        I agree to the terms and conditions
+      </Radio>
+    </Layout>
+  );
+};
+```
+
+<Note>
+For most use cases, you should use RadioGroup instead of individual Radio components. See the RadioGroup documentation for group selection examples.
+</Note>

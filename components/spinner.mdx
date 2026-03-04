@@ -1,0 +1,164 @@
+---
+title: 'Spinner'
+description: 'A loading indicator that displays a circular animation to show processing or loading states'
+---
+
+## Overview
+
+The Spinner component displays a circular loading animation to indicate that content is being loaded or processed. It's useful for providing visual feedback during asynchronous operations.
+
+## Basic Usage
+
+```jsx
+import { Spinner } from '@ui-kitten/components';
+
+const LoadingExample = () => (
+  <Spinner />
+);
+```
+
+## Props
+
+<ParamField path="animating" type="boolean" default="true">
+  Whether the spinner is animating. Set to `false` to stop the animation.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="primary">
+  Determines the color of the spinner. Available values:
+  - `basic`
+  - `primary`
+  - `success`
+  - `info`
+  - `warning`
+  - `danger`
+  - `control` - Use when displaying on high-contrast backgrounds
+</ParamField>
+
+<ParamField path="size" type="EvaSize" default="medium">
+  Controls the size of the spinner. Available values:
+  - `tiny`
+  - `small`
+  - `medium`
+  - `large`
+  - `giant`
+</ParamField>
+
+<ParamField path="style" type="ViewStyle">
+  Custom style object to override default styling.
+</ParamField>
+
+## Examples
+
+### Different Sizes
+
+<CodeGroup>
+```jsx Sizes
+import { Spinner, Layout } from '@ui-kitten/components';
+
+const SpinnerSizes = () => (
+  <Layout style={{ flexDirection: 'row', gap: 16 }}>
+    <Spinner size='tiny' />
+    <Spinner size='small' />
+    <Spinner size='medium' />
+    <Spinner size='large' />
+    <Spinner size='giant' />
+  </Layout>
+);
+```
+</CodeGroup>
+
+### Different Statuses
+
+<CodeGroup>
+```jsx Statuses
+import { Spinner, Layout } from '@ui-kitten/components';
+
+const SpinnerStatuses = () => (
+  <Layout style={{ flexDirection: 'row', gap: 16 }}>
+    <Spinner status='primary' />
+    <Spinner status='success' />
+    <Spinner status='info' />
+    <Spinner status='warning' />
+    <Spinner status='danger' />
+  </Layout>
+);
+```
+</CodeGroup>
+
+### Loading Data Pattern
+
+<CodeGroup>
+```jsx Loading Pattern
+import React, { useState, useEffect } from 'react';
+import { Spinner, Layout, Text } from '@ui-kitten/components';
+
+const DataLoadingExample = () => {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setData('Content loaded!');
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+  if (loading) {
+    return (
+      <Layout style={{ padding: 20, alignItems: 'center' }}>
+        <Spinner />
+        <Text style={{ marginTop: 10 }}>Loading...</Text>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout style={{ padding: 20 }}>
+      <Text>{data}</Text>
+    </Layout>
+  );
+};
+```
+</CodeGroup>
+
+### Conditional Animation
+
+<CodeGroup>
+```jsx Conditional Animation
+import React, { useState } from 'react';
+import { Spinner, Button, Layout } from '@ui-kitten/components';
+
+const ConditionalSpinner = () => {
+  const [animating, setAnimating] = useState(true);
+
+  return (
+    <Layout style={{ alignItems: 'center', gap: 16 }}>
+      <Spinner animating={animating} />
+      <Button onPress={() => setAnimating(!animating)}>
+        {animating ? 'Stop' : 'Start'} Animation
+      </Button>
+    </Layout>
+  );
+};
+```
+</CodeGroup>
+
+## Theming
+
+The Spinner component can be customized using Eva Design System theming. You can override colors, sizes, and animation properties in your custom theme.
+
+<Note>
+  The `control` status is specifically designed for use on high-contrast backgrounds and will automatically adapt to ensure visibility.
+</Note>
+
+## Accessibility
+
+- Consider adding accompanying text or labels to provide context for screen readers
+- Use the `accessibilityLabel` prop to describe what is loading
+- Ensure sufficient color contrast when using custom status colors
+
+## Related Components
+
+- [ProgressBar](/components/progress-bar) - For determinate loading states with percentage
+- [CircularProgressBar](/components/circular-progress-bar) - For circular progress with percentage display

@@ -1,0 +1,213 @@
+---
+title: Button
+description: Buttons allow users to take actions and make choices with a single tap.
+---
+
+Buttons allow users to take actions, and make choices, with a single tap. They communicate actions that users can perform and are typically placed in UI layouts.
+
+## Import
+
+```tsx
+import { Button } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { Button } from '@ui-kitten/components';
+
+export const ButtonExample = () => (
+  <Button onPress={() => console.log('Pressed')}>
+    BUTTON
+  </Button>
+);
+```
+
+## Appearances
+
+Buttons support three appearances: `filled` (default), `outline`, and `ghost`.
+
+<CodeGroup>
+```tsx Filled
+<Button appearance='filled'>FILLED</Button>
+```
+
+```tsx Outline
+<Button appearance='outline'>OUTLINE</Button>
+```
+
+```tsx Ghost
+<Button appearance='ghost'>GHOST</Button>
+```
+</CodeGroup>
+
+## Status
+
+Buttons can be styled with different status colors to indicate meaning.
+
+```tsx
+<Button status='primary'>PRIMARY</Button>
+<Button status='success'>SUCCESS</Button>
+<Button status='info'>INFO</Button>
+<Button status='warning'>WARNING</Button>
+<Button status='danger'>DANGER</Button>
+<Button status='basic'>BASIC</Button>
+<Button status='control'>CONTROL</Button>
+```
+
+<Note>
+Use `control` status when displaying buttons on high-contrast backgrounds.
+</Note>
+
+## Sizes
+
+Buttons come in five sizes: `tiny`, `small`, `medium` (default), `large`, and `giant`.
+
+```tsx
+<Button size='tiny'>TINY</Button>
+<Button size='small'>SMALL</Button>
+<Button size='medium'>MEDIUM</Button>
+<Button size='large'>LARGE</Button>
+<Button size='giant'>GIANT</Button>
+```
+
+## Accessories
+
+Buttons can display icons or images on the left or right side using `accessoryLeft` and `accessoryRight` props.
+
+```tsx
+import { Button, Icon } from '@ui-kitten/components';
+
+const StarIcon = (props) => (
+  <Icon {...props} name='star' />
+);
+
+const ArrowIcon = (props) => (
+  <Icon {...props} name='arrow-forward' />
+);
+
+export const ButtonWithAccessories = () => (
+  <>
+    <Button accessoryLeft={StarIcon}>LEFT ICON</Button>
+    <Button accessoryRight={ArrowIcon}>RIGHT ICON</Button>
+    <Button 
+      accessoryLeft={StarIcon} 
+      accessoryRight={ArrowIcon}
+    >
+      BOTH ICONS
+    </Button>
+  </>
+);
+```
+
+## States
+
+Buttons support disabled state.
+
+```tsx
+<Button disabled>DISABLED BUTTON</Button>
+```
+
+## Custom Styling
+
+Buttons can be customized using the `style` prop or by passing function components for children.
+
+```tsx
+import { Button, Text } from '@ui-kitten/components';
+
+<Button style={{ borderRadius: 20 }}>
+  {evaProps => <Text {...evaProps}>CUSTOM BUTTON</Text>}
+</Button>
+```
+
+## Props
+
+<ParamField path="children" type="RenderProp<TextProps> | React.ReactText">
+  String, number or a function component to render within the button. If it is a function, expected to return a Text component.
+</ParamField>
+
+<ParamField path="appearance" type="'filled' | 'outline' | 'ghost'" default="filled">
+  Appearance of the button.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="primary">
+  Status of the component. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="size" type="EvaSize" default="medium">
+  Size of the button. Can be `tiny`, `small`, `medium`, `large`, or `giant`.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render to the start of the text. Expected to return an Image or Icon.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render to the end of the text. Expected to return an Image or Icon.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the button is disabled.
+</ParamField>
+
+<ParamField path="onPress" type="(event: GestureResponderEvent) => void">
+  Called when button is pressed.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ViewStyle>">
+  Customizes the style of the button container.
+</ParamField>
+
+## Form Examples
+
+### Submit Button
+
+```tsx
+import React from 'react';
+import { Button } from '@ui-kitten/components';
+
+const FormExample = () => {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    // Submit form logic
+    await submitForm();
+    setLoading(false);
+  };
+
+  return (
+    <Button 
+      onPress={handleSubmit}
+      disabled={loading}
+    >
+      {loading ? 'SUBMITTING...' : 'SUBMIT'}
+    </Button>
+  );
+};
+```
+
+### Action Buttons
+
+```tsx
+import React from 'react';
+import { Button, Layout } from '@ui-kitten/components';
+
+const ActionButtons = ({ onSave, onCancel }) => (
+  <Layout style={{ flexDirection: 'row', gap: 16 }}>
+    <Button 
+      appearance='outline'
+      onPress={onCancel}
+    >
+      CANCEL
+    </Button>
+    <Button 
+      status='success'
+      onPress={onSave}
+    >
+      SAVE
+    </Button>
+  </Layout>
+);
+```

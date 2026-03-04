@@ -1,0 +1,414 @@
+---
+title: Menu
+description: A versatile navigation menu component for displaying selectable items with support for groups, icons, and nested navigation.
+---
+
+# Menu
+
+Menu is a versatile component for navigation and selection. It should contain `MenuItem` or `MenuGroup` components to provide a useful interface.
+
+## Import
+
+```tsx
+import { Menu, MenuItem, MenuGroup, IndexPath } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem, IndexPath } from '@ui-kitten/components';
+
+export const MenuSimple = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Menu
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <MenuItem title='Users'/>
+      <MenuItem title='Orders'/>
+      <MenuItem title='Transactions'/>
+    </Menu>
+  );
+};
+```
+
+## Props
+
+### Menu
+
+<ParamField path="children" type="ReactElement<MenuItemProps> | ReactElement<MenuItemProps>[]">
+  Items to be rendered within the menu. Should contain `MenuItem` or `MenuGroup` components.
+</ParamField>
+
+<ParamField path="selectedIndex" type="IndexPath">
+  Index of the selected item. For non-grouped items, use `new IndexPath(row)`. For grouped items, use `new IndexPath(row, section)`.
+</ParamField>
+
+<ParamField path="onSelect" type="(index: IndexPath) => void">
+  Callback called when an item is pressed. Receives an `IndexPath` object with `row` and optional `section` properties.
+</ParamField>
+
+<ParamField path="appearance" type="'default' | 'noDivider'" default="'default'">
+  Appearance of the component. Use `'noDivider'` to hide dividers between items.
+</ParamField>
+
+<ParamField path="...ListProps" type="ListProps">
+  Accepts all React Native [FlatList](https://reactnative.dev/docs/flatlist) component props, excluding `renderItem` and `data`.
+</ParamField>
+
+### MenuItem
+
+<ParamField path="title" type="RenderProp<TextProps> | ReactText">
+  String, number, or a function component to render within the item. If it is a function, it should return a `Text` component.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start of the title. Expected to return an `Image` or icon component.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end of the title. Expected to return an `Image` or icon component.
+</ParamField>
+
+<ParamField path="selected" type="boolean">
+  Whether the item is selected. Automatically controlled by the parent Menu component.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Whether the item is disabled and cannot be interacted with.
+</ParamField>
+
+<ParamField path="appearance" type="'default' | 'grouped'" default="'default'">
+  Appearance of the item. Use `'grouped'` for items within a MenuGroup.
+</ParamField>
+
+<ParamField path="...TouchableOpacityProps" type="TouchableOpacityProps">
+  Accepts all React Native [TouchableOpacity](https://reactnative.dev/docs/touchableopacity) component props.
+</ParamField>
+
+### MenuGroup
+
+<ParamField path="children" type="ReactElement<MenuItemProps> | ReactElement<MenuItemProps>[]">
+  Items to be rendered within the group.
+</ParamField>
+
+<ParamField path="title" type="RenderProp<TextProps> | ReactText">
+  String, number, or a function component to render as the group title.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start of the title.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end of the title.
+</ParamField>
+
+<ParamField path="initiallyExpanded" type="boolean">
+  Whether the group should be initially expanded.
+</ParamField>
+
+<ParamField path="...TouchableOpacityProps" type="TouchableOpacityProps">
+  Accepts all React Native [TouchableOpacity](https://reactnative.dev/docs/touchableopacity) component props.
+</ParamField>
+
+## IndexPath
+
+Menu uses a special `IndexPath` object to identify items:
+
+```tsx
+interface IndexPath {
+  row: number;      // Index of item
+  section?: number; // Index of group (optional)
+}
+```
+
+- For non-grouped items: `new IndexPath(0)` - only `row` is used
+- For grouped items: `new IndexPath(1, 2)` - `row` is the item index within the group, `section` is the group index
+
+## Examples
+
+### With Icons
+
+Add icons to menu items for better visual identification.
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem, IndexPath, Icon } from '@ui-kitten/components';
+
+const PersonIcon = (props) => (
+  <Icon {...props} name='person-outline'/>
+);
+
+const ShoppingCartIcon = (props) => (
+  <Icon {...props} name='shopping-cart-outline'/>
+);
+
+const BellIcon = (props) => (
+  <Icon {...props} name='bell-outline'/>
+);
+
+const ForwardIcon = (props) => (
+  <Icon {...props} name='arrow-ios-forward'/>
+);
+
+export const MenuWithIcons = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Menu
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <MenuItem
+        title='Users'
+        accessoryLeft={PersonIcon}
+        accessoryRight={ForwardIcon}
+      />
+      <MenuItem
+        title='Orders'
+        accessoryLeft={ShoppingCartIcon}
+        accessoryRight={ForwardIcon}
+      />
+      <MenuItem
+        title='Notifications'
+        accessoryLeft={BellIcon}
+        accessoryRight={ForwardIcon}
+      />
+    </Menu>
+  );
+};
+```
+
+### Without Selection Markers
+
+Handle item presses without showing selection state.
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem } from '@ui-kitten/components';
+
+export const MenuNoMarkers = () => {
+  const handleSelect = (index) => {
+    console.log('Selected:', index.row);
+    // Navigate or perform action
+  };
+
+  return (
+    <Menu onSelect={handleSelect}>
+      <MenuItem title='Profile'/>
+      <MenuItem title='Settings'/>
+      <MenuItem title='Logout'/>
+    </Menu>
+  );
+};
+```
+
+### With Groups
+
+Organize items into expandable groups.
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem, MenuGroup, IndexPath, Icon } from '@ui-kitten/components';
+
+const PersonIcon = (props) => (
+  <Icon {...props} name='person-outline'/>
+);
+
+const SettingsIcon = (props) => (
+  <Icon {...props} name='settings-outline'/>
+);
+
+const FileIcon = (props) => (
+  <Icon {...props} name='file-text-outline'/>
+);
+
+export const MenuWithGroups = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0, 0));
+
+  return (
+    <Menu
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <MenuGroup title='Account' accessoryLeft={PersonIcon}>
+        <MenuItem title='Profile'/>
+        <MenuItem title='Change Password'/>
+        <MenuItem title='Privacy'/>
+      </MenuGroup>
+      <MenuGroup title='Settings' accessoryLeft={SettingsIcon}>
+        <MenuItem title='General'/>
+        <MenuItem title='Notifications'/>
+        <MenuItem title='Appearance'/>
+      </MenuGroup>
+      <MenuGroup title='Documents' accessoryLeft={FileIcon} initiallyExpanded={false}>
+        <MenuItem title='Invoices'/>
+        <MenuItem title='Reports'/>
+        <MenuItem title='Receipts'/>
+      </MenuGroup>
+    </Menu>
+  );
+};
+```
+
+### Disabled Items
+
+Disable specific menu items to prevent interaction.
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem, IndexPath } from '@ui-kitten/components';
+
+export const MenuWithDisabledItems = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Menu
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <MenuItem title='Dashboard'/>
+      <MenuItem title='Analytics'/>
+      <MenuItem title='Reports' disabled/>
+      <MenuItem title='Settings'/>
+    </Menu>
+  );
+};
+```
+
+### Without Dividers
+
+Remove dividers between items using the `noDivider` appearance.
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem, IndexPath } from '@ui-kitten/components';
+
+export const MenuNoDividers = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Menu
+      appearance='noDivider'
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <MenuItem title='Home'/>
+      <MenuItem title='Profile'/>
+      <MenuItem title='Settings'/>
+    </Menu>
+  );
+};
+```
+
+### Custom Styling
+
+Customize the appearance of menu items.
+
+```tsx
+import React from 'react';
+import { Menu, MenuItem, IndexPath, Text } from '@ui-kitten/components';
+
+export const CustomStyledMenu = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+
+  return (
+    <Menu
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+      style={{ backgroundColor: '#F7F9FC' }}>
+      <MenuItem
+        title={evaProps => (
+          <Text {...evaProps} style={[evaProps.style, { fontWeight: 'bold', fontSize: 16 }]}>
+            Dashboard
+          </Text>
+        )}
+      />
+      <MenuItem
+        title={evaProps => (
+          <Text {...evaProps} style={[evaProps.style, { fontWeight: 'bold', fontSize: 16 }]}>
+            Analytics
+          </Text>
+        )}
+      />
+    </Menu>
+  );
+};
+```
+
+### As Dropdown Menu
+
+Combine Menu with Popover or Modal for dropdown functionality.
+
+```tsx
+import React from 'react';
+import { Button, Menu, MenuItem, Popover } from '@ui-kitten/components';
+
+export const MenuAsDropdown = () => {
+  const [visible, setVisible] = React.useState(false);
+
+  const renderToggleButton = () => (
+    <Button onPress={() => setVisible(true)}>
+      TOGGLE MENU
+    </Button>
+  );
+
+  return (
+    <Popover
+      visible={visible}
+      anchor={renderToggleButton}
+      onBackdropPress={() => setVisible(false)}>
+      <Menu
+        onSelect={index => {
+          console.log('Selected:', index.row);
+          setVisible(false);
+        }}>
+        <MenuItem title='Edit'/>
+        <MenuItem title='Share'/>
+        <MenuItem title='Delete'/>
+      </Menu>
+    </Popover>
+  );
+};
+```
+
+<Note>
+Menu is the base component for Drawer and OverflowMenu. It provides the core functionality for item selection and navigation.
+</Note>
+
+## Theming
+
+Menu can be themed using Eva Design System:
+
+```json
+{
+  "Menu": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {},
+        "variantGroups": {}
+      },
+      "noDivider": {
+        "mapping": {},
+        "variantGroups": {}
+      }
+    }
+  },
+  "MenuItem": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {},
+        "variantGroups": {}
+      },
+      "grouped": {
+        "mapping": {
+          "paddingLeft": 32
+        }
+      }
+    }
+  }
+}
+```
+
+For detailed theming instructions, refer to the [Branding Guide](/guides/branding).

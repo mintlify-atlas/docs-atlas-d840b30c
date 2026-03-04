@@ -1,0 +1,305 @@
+---
+title: TopNavigation
+description: A navigation header component positioned at the top of the screen, providing page titles, subtitles, and action buttons.
+---
+
+# TopNavigation
+
+TopNavigation provides a heading component for the entire page, typically positioned at the top of the screen. It can display a title, subtitle, and accessory actions on both sides.
+
+## Import
+
+```tsx
+import { TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { TopNavigation } from '@ui-kitten/components';
+
+export const TopNavigationSimple = () => (
+  <TopNavigation
+    title='Page Title'
+    subtitle='Subtitle'
+  />
+);
+```
+
+## Props
+
+### TopNavigation
+
+<ParamField path="title" type="RenderProp<TextProps> | ReactText">
+  String, number, or a function component to render as the title. If it is a function, it should return a `Text` component.
+</ParamField>
+
+<ParamField path="subtitle" type="RenderProp<TextProps> | ReactText">
+  String, number, or a function component to render as the subtitle. If it is a function, it should return a `Text` component.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="() => ReactElement">
+  Function component to render on the left edge of the top navigation. Commonly used for back buttons or menu toggles.
+</ParamField>
+
+<ParamField path="accessoryRight" type="() => ReactElement">
+  Function component to render on the right edge of the top navigation. Commonly used for action buttons or menus.
+</ParamField>
+
+<ParamField path="alignment" type="'start' | 'center'" default="'start'">
+  Alignment of the title and subtitle. Use `'center'` to center the text, or `'start'` to align to the left.
+</ParamField>
+
+<ParamField path="appearance" type="'default' | 'control'" default="'default'">
+  Appearance of the component. Use `'control'` when displaying within a contrast container.
+</ParamField>
+
+<ParamField path="...ViewProps" type="ViewProps">
+  Accepts all React Native [View](https://reactnative.dev/docs/view) component props.
+</ParamField>
+
+### TopNavigationAction
+
+<ParamField path="icon" type="RenderProp<Partial<ImageProps>>">
+  Function component to render an icon within the action. Expected to return an `Image` or icon component.
+</ParamField>
+
+<ParamField path="appearance" type="'default' | 'control'" default="'default'">
+  Appearance of the component. Use `'control'` when displaying within a contrast container.
+</ParamField>
+
+<ParamField path="...TouchableOpacityProps" type="TouchableOpacityProps">
+  Accepts all React Native [TouchableOpacity](https://reactnative.dev/docs/touchableopacity) component props.
+</ParamField>
+
+## Examples
+
+### With Actions
+
+Add action buttons to the left and right sides of the navigation.
+
+```tsx
+import React from 'react';
+import { TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
+
+const BackIcon = (props) => (
+  <Icon {...props} name='arrow-back'/>
+);
+
+const MenuIcon = (props) => (
+  <Icon {...props} name='more-vertical'/>
+);
+
+export const TopNavigationWithActions = () => {
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={() => {}}/>
+  );
+
+  const renderRightActions = () => (
+    <>
+      <TopNavigationAction icon={MenuIcon} onPress={() => {}}/>
+    </>
+  );
+
+  return (
+    <TopNavigation
+      title='Page Title'
+      subtitle='Subtitle'
+      accessoryLeft={renderBackAction}
+      accessoryRight={renderRightActions}
+    />
+  );
+};
+```
+
+### With Divider
+
+Separate the TopNavigation from content using a Divider component.
+
+```tsx
+import React from 'react';
+import { TopNavigation, Divider, Layout, Text } from '@ui-kitten/components';
+
+export const TopNavigationWithDivider = () => (
+  <>
+    <TopNavigation title='Page Title'/>
+    <Divider/>
+    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Content</Text>
+    </Layout>
+  </>
+);
+```
+
+### Centered Title
+
+Center the title and subtitle using the `alignment` prop.
+
+```tsx
+import React from 'react';
+import { TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
+
+const BackIcon = (props) => (
+  <Icon {...props} name='arrow-back'/>
+);
+
+const SearchIcon = (props) => (
+  <Icon {...props} name='search'/>
+);
+
+export const TopNavigationCentered = () => (
+  <TopNavigation
+    alignment='center'
+    title='Centered Title'
+    accessoryLeft={() => <TopNavigationAction icon={BackIcon}/>}
+    accessoryRight={() => <TopNavigationAction icon={SearchIcon}/>}
+  />
+);
+```
+
+### With Image Title
+
+Display an image as the title using a function component.
+
+```tsx
+import React from 'react';
+import { Image } from 'react-native';
+import { TopNavigation } from '@ui-kitten/components';
+
+export const TopNavigationWithImage = () => {
+  const renderTitle = (props) => (
+    <Image
+      source={require('./logo.png')}
+      style={{ width: 120, height: 40 }}
+    />
+  );
+
+  return (
+    <TopNavigation
+      title={renderTitle}
+      alignment='center'
+    />
+  );
+};
+```
+
+### With Overflow Menu
+
+Combine TopNavigation with OverflowMenu for additional actions.
+
+```tsx
+import React from 'react';
+import { TopNavigation, TopNavigationAction, Icon, OverflowMenu, MenuItem } from '@ui-kitten/components';
+
+const MenuIcon = (props) => (
+  <Icon {...props} name='more-vertical'/>
+);
+
+export const TopNavigationWithMenu = () => {
+  const [menuVisible, setMenuVisible] = React.useState(false);
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const renderMenuAction = () => (
+    <TopNavigationAction icon={MenuIcon} onPress={toggleMenu}/>
+  );
+
+  return (
+    <>
+      <TopNavigation
+        title='Page Title'
+        accessoryRight={renderMenuAction}
+      />
+      <OverflowMenu
+        anchor={renderMenuAction}
+        visible={menuVisible}
+        onBackdropPress={toggleMenu}>
+        <MenuItem title='Settings'/>
+        <MenuItem title='About'/>
+        <MenuItem title='Logout'/>
+      </OverflowMenu>
+    </>
+  );
+};
+```
+
+### Custom Styling
+
+Customize the appearance by passing custom styling functions.
+
+```tsx
+import React from 'react';
+import { TopNavigation, Text } from '@ui-kitten/components';
+
+export const CustomStyledTopNavigation = () => (
+  <TopNavigation
+    title={evaProps => (
+      <Text {...evaProps} style={[evaProps.style, { fontWeight: 'bold', fontSize: 20 }]}>
+        Custom Title
+      </Text>
+    )}
+    subtitle={evaProps => (
+      <Text {...evaProps} style={[evaProps.style, { fontSize: 12 }]}>
+        Custom Subtitle
+      </Text>
+    )}
+    style={{ backgroundColor: '#3366FF' }}
+  />
+);
+```
+
+### Control Appearance
+
+Use the `control` appearance when displaying on a colored background.
+
+```tsx
+import React from 'react';
+import { TopNavigation, TopNavigationAction, Icon, Layout } from '@ui-kitten/components';
+
+const BackIcon = (props) => (
+  <Icon {...props} name='arrow-back'/>
+);
+
+export const TopNavigationControl = () => (
+  <Layout style={{ backgroundColor: '#3366FF' }}>
+    <TopNavigation
+      appearance='control'
+      title='Control Appearance'
+      accessoryLeft={() => <TopNavigationAction appearance='control' icon={BackIcon}/>}
+    />
+  </Layout>
+);
+```
+
+<Note>
+When using TopNavigation with React Navigation, you can replace the default header by setting it in the navigator options.
+</Note>
+
+## Theming
+
+TopNavigation can be themed using Eva Design System. Customize the component by modifying your theme's JSON configuration:
+
+```json
+{
+  "TopNavigation": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {},
+        "variantGroups": {}
+      },
+      "control": {
+        "mapping": {
+          "titleColor": "text-control-color",
+          "subtitleColor": "text-control-color"
+        }
+      }
+    }
+  }
+}
+```
+
+For detailed theming instructions, refer to the [Branding Guide](/guides/branding).

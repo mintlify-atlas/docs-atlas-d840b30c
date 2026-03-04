@@ -1,0 +1,242 @@
+---
+title: ButtonGroup
+description: A group of buttons with additional styles provided by Eva Design System.
+---
+
+ButtonGroup allows you to group related buttons together with connected styling. The component automatically handles spacing, borders, and corner radius for grouped buttons.
+
+## Import
+
+```tsx
+import { ButtonGroup, Button } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { ButtonGroup, Button } from '@ui-kitten/components';
+
+export const ButtonGroupExample = () => (
+  <ButtonGroup>
+    <Button>LEFT</Button>
+    <Button>MIDDLE</Button>
+    <Button>RIGHT</Button>
+  </ButtonGroup>
+);
+```
+
+## Appearances
+
+ButtonGroup appearance is applied to all child buttons.
+
+<CodeGroup>
+```tsx Filled
+<ButtonGroup appearance='filled'>
+  <Button>ONE</Button>
+  <Button>TWO</Button>
+  <Button>THREE</Button>
+</ButtonGroup>
+```
+
+```tsx Outline
+<ButtonGroup appearance='outline'>
+  <Button>ONE</Button>
+  <Button>TWO</Button>
+  <Button>THREE</Button>
+</ButtonGroup>
+```
+
+```tsx Ghost
+<ButtonGroup appearance='ghost'>
+  <Button>ONE</Button>
+  <Button>TWO</Button>
+  <Button>THREE</Button>
+</ButtonGroup>
+```
+</CodeGroup>
+
+## Status
+
+Status prop is applied to all buttons in the group.
+
+```tsx
+<ButtonGroup status='primary'>
+  <Button>ONE</Button>
+  <Button>TWO</Button>
+  <Button>THREE</Button>
+</ButtonGroup>
+
+<ButtonGroup status='success'>
+  <Button>ONE</Button>
+  <Button>TWO</Button>
+  <Button>THREE</Button>
+</ButtonGroup>
+
+<ButtonGroup status='danger'>
+  <Button>ONE</Button>
+  <Button>TWO</Button>
+  <Button>THREE</Button>
+</ButtonGroup>
+```
+
+## Sizes
+
+Size prop is applied to all buttons in the group.
+
+```tsx
+<ButtonGroup size='small'>
+  <Button>SMALL</Button>
+  <Button>SMALL</Button>
+</ButtonGroup>
+
+<ButtonGroup size='medium'>
+  <Button>MEDIUM</Button>
+  <Button>MEDIUM</Button>
+</ButtonGroup>
+
+<ButtonGroup size='large'>
+  <Button>LARGE</Button>
+  <Button>LARGE</Button>
+</ButtonGroup>
+```
+
+## With Icons
+
+Buttons within a group can display icons using accessories.
+
+```tsx
+import { ButtonGroup, Button, Icon } from '@ui-kitten/components';
+
+const PlusIcon = (props) => <Icon {...props} name='plus' />;
+const MinusIcon = (props) => <Icon {...props} name='minus' />;
+const CloseIcon = (props) => <Icon {...props} name='close' />;
+
+export const ButtonGroupWithIcons = () => (
+  <ButtonGroup>
+    <Button accessoryLeft={PlusIcon} />
+    <Button accessoryLeft={MinusIcon} />
+    <Button accessoryLeft={CloseIcon} />
+  </ButtonGroup>
+);
+```
+
+## Props
+
+<ParamField path="children" type="ChildrenWithProps<ButtonProps>" required>
+  Buttons to be rendered within the group. Should be Button components.
+</ParamField>
+
+<ParamField path="appearance" type="'filled' | 'outline' | 'ghost'" default="filled">
+  Appearance applied to all child buttons.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="primary">
+  Status applied to all child buttons. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="size" type="EvaSize" default="medium">
+  Size applied to all child buttons. Can be `tiny`, `small`, `medium`, `large`, or `giant`.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<ViewStyle>">
+  Customizes the style of the button group container.
+</ParamField>
+
+## Form Examples
+
+### Segmented Control
+
+```tsx
+import React from 'react';
+import { ButtonGroup, Button } from '@ui-kitten/components';
+
+const SegmentedControl = () => {
+  const [selected, setSelected] = React.useState(0);
+
+  return (
+    <ButtonGroup>
+      <Button 
+        appearance={selected === 0 ? 'filled' : 'outline'}
+        onPress={() => setSelected(0)}
+      >
+        DAILY
+      </Button>
+      <Button 
+        appearance={selected === 1 ? 'filled' : 'outline'}
+        onPress={() => setSelected(1)}
+      >
+        WEEKLY
+      </Button>
+      <Button 
+        appearance={selected === 2 ? 'filled' : 'outline'}
+        onPress={() => setSelected(2)}
+      >
+        MONTHLY
+      </Button>
+    </ButtonGroup>
+  );
+};
+```
+
+### Quantity Selector
+
+```tsx
+import React from 'react';
+import { ButtonGroup, Button, Text } from '@ui-kitten/components';
+
+const QuantitySelector = () => {
+  const [quantity, setQuantity] = React.useState(1);
+
+  return (
+    <ButtonGroup>
+      <Button 
+        onPress={() => setQuantity(q => Math.max(1, q - 1))}
+        disabled={quantity <= 1}
+      >
+        -
+      </Button>
+      <Button disabled>
+        <Text>{quantity}</Text>
+      </Button>
+      <Button onPress={() => setQuantity(q => q + 1)}>
+        +
+      </Button>
+    </ButtonGroup>
+  );
+};
+```
+
+### Filter Buttons
+
+```tsx
+import React from 'react';
+import { ButtonGroup, Button } from '@ui-kitten/components';
+
+const FilterButtons = () => {
+  const [filter, setFilter] = React.useState('all');
+
+  return (
+    <ButtonGroup appearance='outline' size='small'>
+      <Button 
+        status={filter === 'all' ? 'primary' : 'basic'}
+        onPress={() => setFilter('all')}
+      >
+        ALL
+      </Button>
+      <Button 
+        status={filter === 'active' ? 'primary' : 'basic'}
+        onPress={() => setFilter('active')}
+      >
+        ACTIVE
+      </Button>
+      <Button 
+        status={filter === 'completed' ? 'primary' : 'basic'}
+        onPress={() => setFilter('completed')}
+      >
+        COMPLETED
+      </Button>
+    </ButtonGroup>
+  );
+};
+```

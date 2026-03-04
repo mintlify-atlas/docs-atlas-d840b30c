@@ -1,0 +1,232 @@
+---
+title: Theming
+description: Learn how to use Eva Design System themes with UI Kitten and understand the theming fundamentals
+---
+
+UI Kitten is built on top of **Eva Design System**, which provides a comprehensive theming solution for React Native applications. This guide covers the fundamentals of theming in UI Kitten.
+
+## Overview
+
+UI Kitten comes with two built-in themes provided by Eva Design System:
+
+- **Light Theme** - A clean, bright theme suitable for most applications
+- **Dark Theme** - A modern dark theme that reduces eye strain in low-light conditions
+
+Themes in UI Kitten are simple JavaScript objects that define color variables, spacing, typography, and component styles. The Eva Design System uses a semantic naming convention that makes themes consistent and predictable.
+
+## Basic Setup
+
+To use themes in your application, you need to configure the `ApplicationProvider` component at the root of your app:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+
+export default () => (
+  <ApplicationProvider {...eva} theme={eva.light}>
+    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text category='h1'>Welcome to UI Kitten</Text>
+    </Layout>
+  </ApplicationProvider>
+);
+```
+
+<Note>
+The `ApplicationProvider` must wrap your entire application to ensure all UI Kitten components have access to the theme.
+</Note>
+
+## Theme Structure
+
+Eva themes are organized around several key concepts:
+
+### Semantic Colors
+
+UI Kitten uses 6 semantic color groups:
+
+- `basic` - Backgrounds, borders, and default text colors
+- `primary` - Primary brand color for key actions and highlights
+- `success` - Positive actions and success states
+- `info` - Informational elements and states
+- `warning` - Warning messages and cautionary states
+- `danger` - Errors and destructive actions
+
+Each semantic color has 9 shades (100-900) that provide variations from lightest to darkest:
+
+```json
+{
+  "color-primary-100": "#FFECD2",
+  "color-primary-200": "#FFD3A6",
+  "color-primary-300": "#FFB979",
+  "color-primary-400": "#FF9B52",
+  "color-primary-500": "#FF6721",
+  "color-primary-600": "#DB4A18",
+  "color-primary-700": "#B73210",
+  "color-primary-800": "#931F0A",
+  "color-primary-900": "#7A0C06"
+}
+```
+
+### State Colors
+
+Each semantic color also includes state-specific variables:
+
+- `color-primary-default` - Default state
+- `color-primary-hover` - Hover/pressed state
+- `color-primary-focus` - Focused state
+- `color-primary-active` - Active/selected state
+- `color-primary-disabled` - Disabled state
+
+### Transparency
+
+Transparent variations are available for overlays and disabled states:
+
+```json
+{
+  "color-primary-transparent-100": "rgba(255, 103, 33, 0.08)",
+  "color-primary-transparent-200": "rgba(255, 103, 33, 0.16)",
+  "color-primary-transparent-300": "rgba(255, 103, 33, 0.24)",
+  "color-primary-transparent-400": "rgba(255, 103, 33, 0.32)",
+  "color-primary-transparent-500": "rgba(255, 103, 33, 0.4)",
+  "color-primary-transparent-600": "rgba(255, 103, 33, 0.48)"
+}
+```
+
+## Using Theme Variables
+
+You can access theme variables in your components using the `useTheme` hook:
+
+```tsx
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Text, useTheme } from '@ui-kitten/components';
+
+export const ThemedComponent = () => {
+  const theme = useTheme();
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme['color-primary-default'] }]}>
+      <Text category='h4' status='control'>
+        I use the primary color as background!
+      </Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+```
+
+## Typography
+
+Eva Design System includes 13 text categories:
+
+<Steps>
+  <Step title="Headings">
+    `h1`, `h2`, `h3`, `h4`, `h5`, `h6` - For page titles and section headers
+  </Step>
+  <Step title="Subtitles">
+    `s1`, `s2` - For secondary headings and subheadings
+  </Step>
+  <Step title="Paragraphs">
+    `p1`, `p2` - For body text and descriptions
+  </Step>
+  <Step title="Captions">
+    `c1`, `c2` - For small text, timestamps, and metadata
+  </Step>
+  <Step title="Label">
+    `label` - For form labels and buttons
+  </Step>
+</Steps>
+
+Use text categories with the `Text` component:
+
+```tsx
+import { Text } from '@ui-kitten/components';
+
+<Text category='h1'>Large Heading</Text>
+<Text category='p1'>Body text paragraph</Text>
+<Text category='c1'>Small caption text</Text>
+```
+
+## Background Levels
+
+UI Kitten uses 4 background levels to create visual hierarchy:
+
+```json
+{
+  "background-basic-color-1": "#FFFFFF",
+  "background-basic-color-2": "#F7F9FC",
+  "background-basic-color-3": "#EDF1F7",
+  "background-basic-color-4": "#E4E9F2"
+}
+```
+
+Use the `Layout` component with the `level` prop to apply background levels:
+
+```tsx
+import { Layout } from '@ui-kitten/components';
+
+<Layout level='1' style={{ flex: 1 }}>
+  <Layout level='2' style={{ padding: 16 }}>
+    <Layout level='3' style={{ padding: 16 }}>
+      {/* Content */}
+    </Layout>
+  </Layout>
+</Layout>
+```
+
+## ThemeProvider for Local Overrides
+
+Use `ThemeProvider` to apply theme overrides to a specific part of your component tree:
+
+```tsx
+import React from 'react';
+import { light, dark } from '@eva-design/eva';
+import { Card, Text, ThemeProvider } from '@ui-kitten/components';
+
+export const LocalThemeExample = () => (
+  <>
+    <ThemeProvider theme={light}>
+      <Card>
+        <Text>I use light theme</Text>
+      </Card>
+    </ThemeProvider>
+
+    <ThemeProvider theme={dark}>
+      <Card>
+        <Text>I use dark theme</Text>
+      </Card>
+    </ThemeProvider>
+
+    <ThemeProvider theme={{ ...light, 'color-primary-default': 'red' }}>
+      <Card>
+        <Text status='primary'>I use custom theme</Text>
+      </Card>
+    </ThemeProvider>
+  </>
+);
+```
+
+## Complete Theme Variables
+
+For a complete list of available theme variables, refer to:
+
+- [Eva Light Theme Variables](https://akveo.github.io/react-native-ui-kitten/docs/design-system/eva-light-theme)
+- [Eva Dark Theme Variables](https://akveo.github.io/react-native-ui-kitten/docs/design-system/eva-dark-theme)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Runtime Theming" icon="toggle-on" href="/guides/runtime-theming">
+    Learn how to switch themes dynamically at runtime
+  </Card>
+  <Card title="Branding" icon="palette" href="/guides/branding">
+    Create custom branded themes for your application
+  </Card>
+</CardGroup>

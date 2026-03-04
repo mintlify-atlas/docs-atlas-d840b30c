@@ -1,0 +1,348 @@
+---
+title: Tab
+description: Tabbed navigation components for organizing content into switchable views with TabBar and TabView.
+---
+
+# Tab
+
+The Tab components provide a way to organize content into switchable views. UI Kitten offers three main tab-related components: `Tab`, `TabBar`, and `TabView`.
+
+## Import
+
+```tsx
+import { Tab, TabBar, TabView } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+### TabBar
+
+```tsx
+import React from 'react';
+import { TabBar, Tab } from '@ui-kitten/components';
+
+export const TabBarSimple = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <TabBar
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <Tab title='TAB 1'/>
+      <Tab title='TAB 2'/>
+      <Tab title='TAB 3'/>
+    </TabBar>
+  );
+};
+```
+
+### TabView
+
+```tsx
+import React from 'react';
+import { TabView, Tab, Layout, Text } from '@ui-kitten/components';
+
+export const TabViewSimple = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <TabView
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <Tab title='TAB 1'>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>TAB 1 CONTENT</Text>
+        </Layout>
+      </Tab>
+      <Tab title='TAB 2'>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>TAB 2 CONTENT</Text>
+        </Layout>
+      </Tab>
+    </TabView>
+  );
+};
+```
+
+## Props
+
+### Tab
+
+<ParamField path="title" type="RenderProp<TextProps> | ReactText">
+  String, number, or a function component to render within the tab. If it is a function, it should return a `Text` component.
+</ParamField>
+
+<ParamField path="icon" type="RenderProp<Partial<ImageProps>>">
+  Function component to render an icon within the tab. Expected to return an `Image` or icon component.
+</ParamField>
+
+<ParamField path="children" type="ReactElement">
+  A component displayed below the tab (used with TabView).
+</ParamField>
+
+<ParamField path="selected" type="boolean" default="false">
+  Whether the tab is selected. Automatically controlled by the parent component.
+</ParamField>
+
+<ParamField path="onSelect" type="(selected: boolean) => void">
+  Callback called when the tab is pressed.
+</ParamField>
+
+<ParamField path="appearance" type="'default'" default="'default'">
+  Appearance of the component.
+</ParamField>
+
+<ParamField path="...TouchableOpacityProps" type="TouchableOpacityProps">
+  Accepts all React Native [TouchableOpacity](https://reactnative.dev/docs/touchableopacity) component props.
+</ParamField>
+
+### TabBar
+
+<ParamField path="children" type="ReactElement<TabProps> | ReactElement<TabProps>[]">
+  Tabs to be rendered within the bar.
+</ParamField>
+
+<ParamField path="selectedIndex" type="number" default="0">
+  Index of currently selected tab.
+</ParamField>
+
+<ParamField path="onSelect" type="(index: number) => void">
+  Callback called when a tab is pressed.
+</ParamField>
+
+<ParamField path="indicatorStyle" type="StyleProp<ViewStyle>">
+  Style of the indicator component.
+</ParamField>
+
+<ParamField path="appearance" type="'default'" default="'default'">
+  Appearance of the component.
+</ParamField>
+
+<ParamField path="...ViewProps" type="ViewProps">
+  Accepts all React Native [View](https://reactnative.dev/docs/view) component props.
+</ParamField>
+
+### TabView
+
+<ParamField path="children" type="ReactElement<TabProps> | ReactElement<TabProps>[]">
+  Tabs to be rendered within the view. Each tab should have a `children` prop with content.
+</ParamField>
+
+<ParamField path="selectedIndex" type="number" default="0">
+  Index of currently selected tab.
+</ParamField>
+
+<ParamField path="onSelect" type="(index: number) => void">
+  Callback called when tab is pressed or its content becomes visible.
+</ParamField>
+
+<ParamField path="shouldLoadComponent" type="(index: number) => boolean">
+  A function to determine whether content for a particular tab should be rendered. Useful for lazy loading.
+</ParamField>
+
+<ParamField path="onOffsetChange" type="(offset: number) => void">
+  Callback called when scroll offset changes.
+</ParamField>
+
+<ParamField path="tabBarStyle" type="StyleProp<ViewStyle>">
+  Style of the TabBar component.
+</ParamField>
+
+<ParamField path="indicatorStyle" type="StyleProp<ViewStyle>">
+  Style of the selected tab indicator.
+</ParamField>
+
+<ParamField path="...ViewProps" type="ViewProps">
+  Accepts all React Native [View](https://reactnative.dev/docs/view) component props.
+</ParamField>
+
+## Examples
+
+### TabBar with Icons
+
+Add icons to tabs for better visual recognition.
+
+```tsx
+import React from 'react';
+import { TabBar, Tab, Icon } from '@ui-kitten/components';
+
+const HomeIcon = (props) => (
+  <Icon {...props} name='home-outline'/>
+);
+
+const PersonIcon = (props) => (
+  <Icon {...props} name='person-outline'/>
+);
+
+const SettingsIcon = (props) => (
+  <Icon {...props} name='settings-outline'/>
+);
+
+export const TabBarWithIcons = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <TabBar
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}>
+      <Tab title='HOME' icon={HomeIcon}/>
+      <Tab title='PROFILE' icon={PersonIcon}/>
+      <Tab title='SETTINGS' icon={SettingsIcon}/>
+    </TabBar>
+  );
+};
+```
+
+### TabView with Lazy Loading
+
+Load tab content lazily to improve performance.
+
+```tsx
+import React from 'react';
+import { TabView, Tab, Layout, Text } from '@ui-kitten/components';
+
+export const TabViewLazyLoading = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const shouldLoadComponent = (index) => index === selectedIndex;
+
+  return (
+    <TabView
+      selectedIndex={selectedIndex}
+      shouldLoadComponent={shouldLoadComponent}
+      onSelect={index => setSelectedIndex(index)}>
+      <Tab title='TAB 1'>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>TAB 1 CONTENT</Text>
+        </Layout>
+      </Tab>
+      <Tab title='TAB 2'>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>TAB 2 CONTENT</Text>
+        </Layout>
+      </Tab>
+      <Tab title='TAB 3'>
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>TAB 3 CONTENT</Text>
+        </Layout>
+      </Tab>
+    </TabView>
+  );
+};
+```
+
+### With React Navigation
+
+Integrate TabBar with React Navigation's Material Top Tabs.
+
+```tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { TabBar, Tab, Layout, Text } from '@ui-kitten/components';
+
+const { Navigator, Screen } = createMaterialTopTabNavigator();
+
+const UsersScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>USERS</Text>
+  </Layout>
+);
+
+const OrdersScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>ORDERS</Text>
+  </Layout>
+);
+
+const TopTabBar = ({ navigation, state }) => (
+  <TabBar
+    selectedIndex={state.index}
+    onSelect={index => navigation.navigate(state.routeNames[index])}>
+    <Tab title='USERS'/>
+    <Tab title='ORDERS'/>
+  </TabBar>
+);
+
+const TabNavigator = () => (
+  <Navigator tabBar={props => <TopTabBar {...props} />}>
+    <Screen name='Users' component={UsersScreen}/>
+    <Screen name='Orders' component={OrdersScreen}/>
+  </Navigator>
+);
+
+export const AppNavigator = () => (
+  <NavigationContainer>
+    <TabNavigator/>
+  </NavigationContainer>
+);
+```
+
+### Custom Styling
+
+Customize the appearance of tabs and indicators.
+
+```tsx
+import React from 'react';
+import { TabBar, Tab, Text } from '@ui-kitten/components';
+
+export const CustomStyledTabBar = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  return (
+    <TabBar
+      selectedIndex={selectedIndex}
+      onSelect={index => setSelectedIndex(index)}
+      style={{ backgroundColor: '#222B45' }}
+      indicatorStyle={{ backgroundColor: '#3366FF', height: 4 }}>
+      <Tab
+        title={evaProps => (
+          <Text {...evaProps} style={[evaProps.style, { fontWeight: 'bold' }]}>
+            TAB 1
+          </Text>
+        )}
+      />
+      <Tab
+        title={evaProps => (
+          <Text {...evaProps} style={[evaProps.style, { fontWeight: 'bold' }]}>
+            TAB 2
+          </Text>
+        )}
+      />
+    </TabBar>
+  );
+};
+```
+
+<Note>
+**TabBar vs TabView**: Use `TabBar` when you need only the tab navigation header. Use `TabView` when you need both tabs and swipeable content areas.
+</Note>
+
+## Theming
+
+Tab components can be themed using Eva Design System:
+
+```json
+{
+  "Tab": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {},
+        "variantGroups": {}
+      }
+    }
+  },
+  "TabBar": {
+    "meta": {},
+    "appearances": {
+      "default": {
+        "mapping": {},
+        "variantGroups": {}
+      }
+    }
+  }
+}
+```
+
+For detailed theming instructions, refer to the [Branding Guide](/guides/branding).

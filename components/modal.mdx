@@ -1,0 +1,412 @@
+---
+title: 'Modal'
+description: 'A wrapper component that presents content above the main view with backdrop support'
+---
+
+## Overview
+
+The Modal component displays content in a layer above the current view, typically used for alerts, confirmations, forms, or focused content that requires user attention. It includes built-in backdrop support and flexible positioning.
+
+## Basic Usage
+
+```jsx
+import React, { useState } from 'react';
+import { Modal, Card, Text, Button } from '@ui-kitten/components';
+
+const BasicModal = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onPress={() => setVisible(true)}>
+        Show Modal
+      </Button>
+      <Modal
+        visible={visible}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card>
+          <Text>This is a modal</Text>
+          <Button onPress={() => setVisible(false)}>
+            Close
+          </Button>
+        </Card>
+      </Modal>
+    </>
+  );
+};
+```
+
+## Props
+
+<ParamField path="visible" type="boolean" default="false">
+  Controls whether the modal is visible. When `true`, the modal is displayed; when `false`, it's hidden.
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  Content to render within the modal. Typically wrapped in a Card or custom container component.
+</ParamField>
+
+<ParamField path="onBackdropPress" type="() => void">
+  Callback function triggered when the backdrop (area outside the modal content) is pressed. Commonly used to close the modal on outside touches.
+</ParamField>
+
+<ParamField path="backdropStyle" type="ViewStyle">
+  Custom style object for the backdrop overlay. Can be used to adjust opacity, color, or other visual properties.
+</ParamField>
+
+<ParamField path="shouldUseContainer" type="boolean" default="true">
+  Whether children should be wrapped in an absolute positioned container. When `true`, the modal centers content automatically. Set to `false` for custom positioning.
+</ParamField>
+
+<ParamField path="animationType" type="'none' | 'slide' | 'fade'" default="none">
+  Controls the animation when the modal appears and disappears:
+  - `none` - No animation
+  - `slide` - Modal slides in from bottom
+  - `fade` - Modal fades in/out
+</ParamField>
+
+<ParamField path="hardwareAccelerated" type="boolean" default="false">
+  Forces hardware acceleration for the underlying window. Can improve performance on some devices.
+</ParamField>
+
+<ParamField path="supportedOrientations" type="Orientation[]">
+  Array of allowed orientations. Available values:
+  - `portrait`
+  - `portrait-upside-down`
+  - `landscape`
+  - `landscape-left`
+  - `landscape-right`
+  
+  Note: On iOS, the modal is still restricted by the app's Info.plist UISupportedInterfaceOrientations.
+</ParamField>
+
+<ParamField path="onShow" type="(event: NativeSyntheticEvent<any>) => void">
+  Callback function triggered once the modal has been fully shown.
+</ParamField>
+
+<ParamField path="style" type="ViewStyle">
+  Custom style object for the modal content container.
+</ParamField>
+
+## Examples
+
+### Modal with Backdrop
+
+<CodeGroup>
+```jsx Custom Backdrop
+import React, { useState } from 'react';
+import { Modal, Card, Text, Button } from '@ui-kitten/components';
+
+const BackdropModal = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onPress={() => setVisible(true)}>
+        Open Modal
+      </Button>
+      <Modal
+        visible={visible}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <Text category='h6'>Modal Title</Text>
+          <Text>Click outside to close</Text>
+          <Button 
+            onPress={() => setVisible(false)}
+            style={{ marginTop: 16 }}
+          >
+            Dismiss
+          </Button>
+        </Card>
+      </Modal>
+    </>
+  );
+};
+```
+</CodeGroup>
+
+### Confirmation Dialog
+
+<CodeGroup>
+```jsx Confirmation
+import React, { useState } from 'react';
+import { Modal, Card, Text, Button, Layout } from '@ui-kitten/components';
+
+const ConfirmationModal = () => {
+  const [visible, setVisible] = useState(false);
+
+  const handleConfirm = () => {
+    // Perform action
+    console.log('Confirmed!');
+    setVisible(false);
+  };
+
+  return (
+    <>
+      <Button 
+        onPress={() => setVisible(true)}
+        status='danger'
+      >
+        Delete Item
+      </Button>
+      <Modal
+        visible={visible}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <Text category='h6'>Confirm Deletion</Text>
+          <Text style={{ marginVertical: 16 }}>
+            Are you sure you want to delete this item? This action cannot be undone.
+          </Text>
+          <Layout style={{ flexDirection: 'row', gap: 8 }}>
+            <Button 
+              status='basic'
+              onPress={() => setVisible(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              status='danger'
+              onPress={handleConfirm}
+            >
+              Delete
+            </Button>
+          </Layout>
+        </Card>
+      </Modal>
+    </>
+  );
+};
+```
+</CodeGroup>
+
+### Form Modal
+
+<CodeGroup>
+```jsx Form Modal
+import React, { useState } from 'react';
+import { Modal, Card, Text, Button, Input, Layout } from '@ui-kitten/components';
+
+const FormModal = () => {
+  const [visible, setVisible] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = () => {
+    console.log('Form submitted:', { name, email });
+    setVisible(false);
+    setName('');
+    setEmail('');
+  };
+
+  return (
+    <>
+      <Button onPress={() => setVisible(true)}>
+        Add User
+      </Button>
+      <Modal
+        visible={visible}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <Text category='h6'>Add New User</Text>
+          <Layout style={{ gap: 12, marginTop: 16 }}>
+            <Input
+              placeholder='Name'
+              value={name}
+              onChangeText={setName}
+            />
+            <Input
+              placeholder='Email'
+              value={email}
+              onChangeText={setEmail}
+              keyboardType='email-address'
+            />
+          </Layout>
+          <Layout style={{ flexDirection: 'row', gap: 8, marginTop: 16 }}>
+            <Button 
+              status='basic'
+              onPress={() => setVisible(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onPress={handleSubmit}
+              disabled={!name || !email}
+            >
+              Submit
+            </Button>
+          </Layout>
+        </Card>
+      </Modal>
+    </>
+  );
+};
+```
+</CodeGroup>
+
+### Animated Modal
+
+<CodeGroup>
+```jsx Animation
+import React, { useState } from 'react';
+import { Modal, Card, Text, Button } from '@ui-kitten/components';
+
+const AnimatedModal = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onPress={() => setVisible(true)}>
+        Slide Modal
+      </Button>
+      <Modal
+        visible={visible}
+        animationType='slide'
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <Text category='h6'>Animated Modal</Text>
+          <Text style={{ marginVertical: 16 }}>
+            This modal slides in from the bottom
+          </Text>
+          <Button onPress={() => setVisible(false)}>
+            Close
+          </Button>
+        </Card>
+      </Modal>
+    </>
+  );
+};
+```
+</CodeGroup>
+
+### Loading Modal
+
+<CodeGroup>
+```jsx Loading
+import React, { useState, useEffect } from 'react';
+import { Modal, Card, Text, Button, Spinner, Layout } from '@ui-kitten/components';
+
+const LoadingModal = () => {
+  const [visible, setVisible] = useState(false);
+
+  const handleAction = () => {
+    setVisible(true);
+    
+    // Simulate async operation
+    setTimeout(() => {
+      setVisible(false);
+    }, 3000);
+  };
+
+  return (
+    <>
+      <Button onPress={handleAction}>
+        Process Data
+      </Button>
+      <Modal
+        visible={visible}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      >
+        <Card disabled={true}>
+          <Layout style={{ alignItems: 'center', padding: 20 }}>
+            <Spinner size='giant' />
+            <Text style={{ marginTop: 16 }} category='h6'>
+              Processing...
+            </Text>
+            <Text appearance='hint'>
+              Please wait
+            </Text>
+          </Layout>
+        </Card>
+      </Modal>
+    </>
+  );
+};
+```
+</CodeGroup>
+
+### Full Screen Modal
+
+<CodeGroup>
+```jsx Full Screen
+import React, { useState } from 'react';
+import { Modal, Layout, Text, Button, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
+
+const BackIcon = (props) => (
+  <Icon {...props} name='arrow-back' />
+);
+
+const FullScreenModal = () => {
+  const [visible, setVisible] = useState(false);
+
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={() => setVisible(false)} />
+  );
+
+  return (
+    <>
+      <Button onPress={() => setVisible(true)}>
+        Open Full Screen
+      </Button>
+      <Modal
+        visible={visible}
+        shouldUseContainer={false}
+        animationType='slide'
+      >
+        <Layout style={{ flex: 1 }}>
+          <TopNavigation
+            title='Full Screen Modal'
+            accessoryLeft={renderBackAction}
+          />
+          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text category='h5'>Full Screen Content</Text>
+            <Text appearance='hint' style={{ marginTop: 8 }}>
+              This modal takes up the entire screen
+            </Text>
+          </Layout>
+        </Layout>
+      </Modal>
+    </>
+  );
+};
+```
+</CodeGroup>
+
+## Best Practices
+
+<Note>
+  Always provide a way to dismiss the modal, either through an explicit close button or by enabling `onBackdropPress`.
+</Note>
+
+- Use modals sparingly - they interrupt the user's workflow
+- Keep modal content concise and focused on a single task
+- Provide clear action buttons (primary and secondary actions)
+- Consider using slide or fade animations for better UX
+- Disable backdrop press for critical actions that require explicit confirmation
+- Use loading modals for operations that take more than a few seconds
+
+## Accessibility
+
+- Modal automatically handles focus management
+- Ensure all interactive elements within the modal are keyboard accessible
+- Use descriptive labels for action buttons
+- Consider announcing modal appearance to screen readers
+- Provide clear visual hierarchy within modal content
+
+## Theming
+
+The Modal component's appearance can be customized through the backdrop style. The content styling is controlled by the child components (typically Card).
+
+## Related Components
+
+- [Card](/components/card) - Commonly used as modal content container
+- [Button](/components/button) - For modal actions
+- [Popover](/components/popover) - For contextual overlays

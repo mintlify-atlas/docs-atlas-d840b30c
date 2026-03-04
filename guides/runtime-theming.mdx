@@ -1,0 +1,411 @@
+---
+title: Runtime Theming
+description: Learn how to dynamically switch between light and dark themes at runtime in your UI Kitten application
+---
+
+UI Kitten supports dynamic theme switching at runtime, allowing users to toggle between light and dark modes or switch to custom themes without reloading the application.
+
+## Overview
+
+This guide demonstrates how to implement runtime theme switching using React Context and Hooks. You'll learn how to:
+
+- Create a theme context to manage theme state
+- Toggle between light and dark themes
+- Persist theme preferences
+- Apply theme changes throughout your app
+
+<Note>
+This guide builds upon the basic theming concepts. Make sure you're familiar with [Theming fundamentals](/guides/theming) before proceeding.
+</Note>
+
+## Create Theme Context
+
+First, create a context to share theme state across your application. Create a `theme-context.js` file:
+
+```js
+import React from 'react';
+
+export const ThemeContext = React.createContext({
+  theme: 'light',
+  toggleTheme: () => {},
+});
+```
+
+This context provides:
+
+- `theme` - The name of the current theme (`'light'` or `'dark'`)
+- `toggleTheme` - A function to switch between themes
+
+## Configure Application Provider
+
+Update your `App.js` to provide theme context to your application:
+
+```js
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { AppNavigator } from './navigation.component';
+import { ThemeContext } from './theme-context';
+
+export default () => {
+  const [theme, setTheme] = React.useState('light');
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+  };
+
+  return (
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ApplicationProvider {...eva} theme={eva[theme]}>
+          <AppNavigator />
+        </ApplicationProvider>
+      </ThemeContext.Provider>
+    </>
+  );
+};
+```
+
+<Steps>
+  <Step title="Create State">
+    Use `useState` to track the current theme name (`'light'` or `'dark'`)
+  </Step>
+  <Step title="Toggle Function">
+    Implement `toggleTheme` to switch between light and dark themes
+  </Step>
+  <Step title="Provide Context">
+    Wrap your app with `ThemeContext.Provider` to share theme state
+  </Step>
+  <Step title="Apply Theme">
+    Pass `eva[theme]` to ApplicationProvider to apply the selected theme
+  </Step>
+</Steps>
+
+## Use Theme Context in Components
+
+Access the theme context in any component using the `useContext` hook:
+
+```jsx
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import { Button, Divider, Layout, TopNavigation } from '@ui-kitten/components';
+import { ThemeContext } from './theme-context';
+
+export const HomeScreen = ({ navigation }) => {
+  const themeContext = React.useContext(ThemeContext);
+
+  const navigateDetails = () => {
+    navigation.navigate('Details');
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <TopNavigation title='MyApp' alignment='center' />
+      <Divider />
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Button style={{ marginVertical: 4 }} onPress={navigateDetails}>
+          OPEN DETAILS
+        </Button>
+        <Button style={{ marginVertical: 4 }} onPress={themeContext.toggleTheme}>
+          TOGGLE THEME
+        </Button>
+      </Layout>
+    </SafeAreaView>
+  );
+};
+```
+
+## Advanced Implementation
+
+For production applications, consider these enhancements:
+
+### Persist Theme Preference
+
+Save the user's theme preference using AsyncStorage:
+
+```jsx
+import React, { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+import { ThemeContext } from './theme-context';
+
+const THEME_KEY = 'app-theme';
+
+export default () => {
+  const [theme, setTheme] = React.useState('light');
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  useEffect(() => {
+    // Load saved theme on mount
+    const loadTheme = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem(THEME_KEY);
+        if (savedTheme !== null) {
+          setTheme(savedTheme);
+        }
+      } catch (error) {
+        console.error('Failed to load theme:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTheme();
+  }, []);
+
+  const toggleTheme = async () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    
+    try {
+      await AsyncStorage.setItem(THEME_KEY, nextTheme);
+    } catch (error) {
+      console.error('Failed to save theme:', error);
+    }
+  };
+
+  if (isLoading) {
+    return null; // Or a loading screen
+  }
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <ApplicationProvider {...eva} theme={eva[theme]}>
+        {/* Your app content */}
+      </ApplicationProvider>
+    </ThemeContext.Provider>
+  );
+};
+```
+
+### Multiple Theme Options
+
+Support more than two themes:
+
+```jsx
+import * as eva from '@eva-design/eva';
+import * as material from '@eva-design/material';
+
+const themes = {
+  'eva-light': eva.light,
+  'eva-dark': eva.dark,
+  'material-light': material.light,
+  'material-dark': material.dark,
+};
+
+export default () => {
+  const [theme, setTheme] = React.useState('eva-light');
+
+  const changeTheme = (themeName) => {
+    if (themes[themeName]) {
+      setTheme(themeName);
+    }
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, changeTheme }}>
+      <ApplicationProvider {...eva} theme={themes[theme]}>
+        {/* Your app content */}
+      </ApplicationProvider>
+    </ThemeContext.Provider>
+  );
+};
+```
+
+### Custom Hook for Theme
+
+Create a custom hook for cleaner theme access:
+
+```jsx
+// useAppTheme.js
+import React from 'react';
+import { ThemeContext } from './theme-context';
+
+export const useAppTheme = () => {
+  const context = React.useContext(ThemeContext);
+  
+  if (!context) {
+    throw new Error('useAppTheme must be used within ThemeContext.Provider');
+  }
+  
+  return context;
+};
+
+// Usage in components
+import { useAppTheme } from './useAppTheme';
+
+export const HomeScreen = () => {
+  const { theme, toggleTheme } = useAppTheme();
+  
+  return (
+    <Button onPress={toggleTheme}>
+      Current theme: {theme}
+    </Button>
+  );
+};
+```
+
+## State Management Integration
+
+For larger applications, integrate theme management with your state management solution:
+
+### With Redux
+
+```jsx
+// themeSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const themeSlice = createSlice({
+  name: 'theme',
+  initialState: { current: 'light' },
+  reducers: {
+    setTheme: (state, action) => {
+      state.current = action.payload;
+    },
+    toggleTheme: (state) => {
+      state.current = state.current === 'light' ? 'dark' : 'light';
+    },
+  },
+});
+
+export const { setTheme, toggleTheme } = themeSlice.actions;
+export default themeSlice.reducer;
+
+// App.js
+import { useSelector } from 'react-redux';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+
+export default () => {
+  const theme = useSelector((state) => state.theme.current);
+
+  return (
+    <ApplicationProvider {...eva} theme={eva[theme]}>
+      {/* Your app content */}
+    </ApplicationProvider>
+  );
+};
+```
+
+### With MobX
+
+```jsx
+// ThemeStore.js
+import { makeAutoObservable } from 'mobx';
+
+class ThemeStore {
+  theme = 'light';
+
+  constructor() {
+    makeAutoObservable(this);
+  }
+
+  toggleTheme() {
+    this.theme = this.theme === 'light' ? 'dark' : 'light';
+  }
+
+  setTheme(themeName) {
+    this.theme = themeName;
+  }
+}
+
+export const themeStore = new ThemeStore();
+
+// App.js
+import { observer } from 'mobx-react-lite';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+import { themeStore } from './ThemeStore';
+
+const App = observer(() => {
+  return (
+    <ApplicationProvider {...eva} theme={eva[themeStore.theme]}>
+      {/* Your app content */}
+    </ApplicationProvider>
+  );
+});
+
+export default App;
+```
+
+## Theme Toggle UI
+
+Create a reusable theme toggle component:
+
+```tsx
+import React from 'react';
+import { Toggle, Icon, Layout, Text } from '@ui-kitten/components';
+import { ThemeContext } from './theme-context';
+
+const SunIcon = (props) => <Icon {...props} name='sun-outline' />;
+const MoonIcon = (props) => <Icon {...props} name='moon-outline' />;
+
+export const ThemeToggle = () => {
+  const themeContext = React.useContext(ThemeContext);
+  const isDarkMode = themeContext.theme === 'dark';
+
+  return (
+    <Layout style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+      <SunIcon style={{ width: 24, height: 24, marginRight: 8 }} />
+      <Toggle
+        checked={isDarkMode}
+        onChange={themeContext.toggleTheme}
+      />
+      <MoonIcon style={{ width: 24, height: 24, marginLeft: 8 }} />
+    </Layout>
+  );
+};
+```
+
+<Warning>
+When switching themes, all UI Kitten components will re-render. This is expected behavior and ensures the theme is applied consistently throughout your app.
+</Warning>
+
+## Testing Theme Switching
+
+Test theme switching in your components:
+
+```tsx
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+import { ThemeContext } from './theme-context';
+import { HomeScreen } from './home.component';
+
+const renderWithTheme = (component, theme = 'light') => {
+  const toggleTheme = jest.fn();
+  
+  return render(
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <ApplicationProvider {...eva} theme={eva[theme]}>
+        {component}
+      </ApplicationProvider>
+    </ThemeContext.Provider>
+  );
+};
+
+test('toggles theme when button is pressed', () => {
+  const { getByText } = renderWithTheme(<HomeScreen />);
+  const toggleButton = getByText('TOGGLE THEME');
+  
+  fireEvent.press(toggleButton);
+  
+  expect(toggleTheme).toHaveBeenCalled();
+});
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Branding" icon="palette" href="/guides/branding">
+    Create custom themes with your brand colors
+  </Card>
+  <Card title="Custom Icons" icon="star" href="/guides/custom-icons">
+    Add custom icon packages to your themed application
+  </Card>
+</CardGroup>

@@ -1,0 +1,209 @@
+---
+title: Eva Design System
+description: Learn about Eva Design System and its implementation in UI Kitten for React Native applications
+---
+
+Starting with version 4.0, UI Kitten becomes a React Native implementation of [Eva Design System](https://eva.design). This means that components' visual style and behavior are based on Design System rules and agreements.
+
+## What is Eva Design System?
+
+Eva is a customizable Design System based on Atomic Design Principles. All components are built on basic elements with shared styles, connected with a single Visual Language for both Mobile and Web platforms.
+
+## Key Principles
+
+<Steps>
+  <Step title="Atomic Design">
+    Components are built from basic elements with shared styles, creating a cohesive design language.
+  </Step>
+  
+  <Step title="Cross-Platform Consistency">
+    Single visual language works across both Mobile and Web platforms.
+  </Step>
+  
+  <Step title="Customizable Architecture">
+    Built for customization with architectural support for multiple themes across all components.
+  </Step>
+  
+  <Step title="Theme System">
+    Unified theming system with a single source of truth for styles.
+  </Step>
+</Steps>
+
+## Eva Ecosystem
+
+Eva Design System is implemented for two platforms:
+
+<CardGroup cols={2}>
+  <Card title="Mobile - UI Kitten" icon="mobile">
+    React Native implementation with full Eva Design System support
+  </Card>
+  <Card title="Web - Nebular" icon="globe">
+    Angular implementation for web applications
+  </Card>
+</CardGroup>
+
+Both implementations share:
+- Single source of truth for styles
+- Unified theming system
+- Consistent design language
+- Cross-platform compatibility
+
+## Built-in Themes
+
+Eva Design System provides two themes out of the box:
+
+### Light Theme
+
+A clean, bright theme with white backgrounds, perfect for most applications.
+
+```json
+{
+  "color-primary-500": "#3366ff",
+  "color-success-500": "#00e096",
+  "color-info-500": "#0095ff",
+  "color-warning-500": "#ffaa00",
+  "color-danger-500": "#ff3d71",
+  "background-basic-color-1": "#ffffff",
+  "text-basic-color": "#222b45"
+}
+```
+
+### Dark Theme
+
+A sophisticated dark theme optimized for low-light environments.
+
+```json
+{
+  "color-primary-500": "#3366ff",
+  "color-success-500": "#00e096",
+  "color-info-500": "#0095ff",
+  "color-warning-500": "#ffaa00",
+  "color-danger-500": "#ff3d71",
+  "background-basic-color-1": "#222b45",
+  "text-basic-color": "#ffffff"
+}
+```
+
+<Note>
+  The theme extension mechanism allows modifying one theme with another, making it easy to create custom variations.
+</Note>
+
+## Theme Structure
+
+Eva themes are organized into semantic groups:
+
+<Tabs>
+  <Tab title="Colors">
+    5 semantic colors (`primary`, `success`, `info`, `warning`, `danger`) and `basic` color for backgrounds and text. Each color has 9 shades (11 for basic).
+    
+    ```json
+    {
+      "color-primary-100": "#f2f6ff",
+      "color-primary-500": "#3366ff",
+      "color-primary-900": "#14236e"
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Backgrounds & Borders">
+    3 background types (`basic`, `alternative`, `primary`) with 4 shades each, and 3 border types with 5 shades.
+    
+    ```json
+    {
+      "background-basic-color-1": "#ffffff",
+      "background-basic-color-2": "#f7f9fc",
+      "border-basic-color-1": "#ffffff"
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Text Colors">
+    5 text colors: `basic`, `alternate`, `control`, `disabled`, and `hint`.
+    
+    ```json
+    {
+      "text-basic-color": "#222b45",
+      "text-hint-color": "#8f9bb3",
+      "text-disabled-color": "#c5cee0"
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Typography">
+    13 text styles including 6 heading styles, 2 subtitle styles, 2 paragraph styles, 2 caption styles, and 1 label style.
+    
+    ```json
+    {
+      "text-heading-1-font-size": 36,
+      "text-heading-1-font-weight": "800",
+      "text-subtitle-1-font-size": 15
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Variable References
+
+Eva themes support variable references using the `$` prefix:
+
+```json
+{
+  "color-primary-500": "#3366ff",
+  "color-primary-default": "$color-primary-500",
+  "color-primary-hover": "$color-primary-400",
+  "color-primary-active": "$color-primary-600"
+}
+```
+
+<Note>
+  The dollar sign (`$`) before a value means it references another variable in the theme scope. This creates a flexible system where changing one base color automatically updates all dependent colors.
+</Note>
+
+## Enterprise Ready
+
+As part of the Eva Ecosystem, UI Kitten is an excellent choice for enterprise-grade products:
+
+- Complete control over application look & feel
+- Professional, polished design out of the box
+- Comprehensive theming capabilities
+- Cross-platform consistency
+- Well-documented and maintained
+
+## Getting Started
+
+To start using Eva Design System with UI Kitten:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+
+export default () => (
+  <ApplicationProvider {...eva} theme={eva.light}>
+    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text category='h1'>Welcome to UI Kitten</Text>
+    </Layout>
+  </ApplicationProvider>
+);
+```
+
+<Warning>
+  Make sure to wrap your entire application with `ApplicationProvider` and pass the Eva theme configuration to enable the design system.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Theme Customization" icon="palette" href="/design-system/theme-customization">
+    Learn how to customize themes to match your brand
+  </Card>
+  <Card title="Custom Mapping" icon="map" href="/design-system/custom-mapping">
+    Create custom component mappings
+  </Card>
+  <Card title="Theme Variables" icon="code" href="/design-system/theme-variables">
+    Use theme variables in your components
+  </Card>
+  <Card title="Glossary" icon="book" href="/design-system/glossary">
+    Understand Eva Design System terminology
+  </Card>
+</CardGroup>

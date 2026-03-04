@@ -1,0 +1,514 @@
+---
+title: Custom Icons
+description: Integrate third-party icon packages and custom icons with UI Kitten using IconRegistry
+---
+
+While Eva Icons work great with UI Kitten, you may want to use other icon libraries like Material Icons, FontAwesome, or Feather Icons. This guide shows you how to integrate any icon package with UI Kitten.
+
+## Icon Adapter Pattern
+
+UI Kitten uses an adapter pattern to support any icon library. You create an icon pack object that UI Kitten can use to render icons by name.
+
+### Adapter Structure
+
+An icon pack consists of:
+
+```tsx
+export const CustomIconsPack = {
+  name: 'custom',  // Unique identifier
+  icons: {         // Icon mapping
+    'icon-name': IconProvider('icon-name'),
+    // ...
+  },
+};
+```
+
+The `IconProvider` returns an object with a `toReactElement` method that renders the icon.
+
+## Vector Icons Integration
+
+Let's integrate `react-native-vector-icons`, a popular icon library.
+
+### Installation
+
+Install the package:
+
+<CodeGroup>
+
+```bash npm
+npm install react-native-vector-icons
+```
+
+```bash yarn
+yarn add react-native-vector-icons
+```
+
+</CodeGroup>
+
+Follow the [official installation guide](https://github.com/oblador/react-native-vector-icons#installation) to complete platform-specific setup.
+
+### Create Feather Icons Adapter
+
+Create a `feather-icons.js` file:
+
+```tsx
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+
+export const FeatherIconsPack = {
+  name: 'feather',
+  icons: createIconsMap(),
+};
+
+function createIconsMap() {
+  return new Proxy({}, {
+    get(target, name) {
+      return IconProvider(name);
+    },
+  });
+}
+
+const IconProvider = (name) => ({
+  toReactElement: (props) => FeatherIcon({ name, ...props }),
+});
+
+function FeatherIcon({ name, style }) {
+  const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
+  return (
+    <Icon name={name} size={height} color={tintColor} style={iconStyle} />
+  );
+}
+```
+
+<Note>
+The Proxy object dynamically creates icon providers for any requested icon name, eliminating the need to manually map every icon.
+</Note>
+
+### Register Custom Icons
+
+Register your custom icon pack:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
+import { FeatherIconsPack } from './feather-icons';
+
+const HomeScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>HOME</Text>
+  </Layout>
+);
+
+export default () => (
+  <>
+    <IconRegistry icons={FeatherIconsPack} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <HomeScreen />
+    </ApplicationProvider>
+  </>
+);
+```
+
+### Usage
+
+Use Feather Icons with UI Kitten components:
+
+```tsx
+import React from 'react';
+import { Button, Icon } from '@ui-kitten/components';
+
+const FacebookIcon = (props) => (
+  <Icon {...props} name='facebook' />
+);
+
+export const LoginButton = () => (
+  <Button accessoryLeft={FacebookIcon}>
+    Login with Facebook
+  </Button>
+);
+```
+
+## Multiple Icon Packs
+
+Register multiple icon packages to use different icon libraries in your app.
+
+### Create Material Icons Adapter
+
+Create a `material-icons.js` file:
+
+```tsx
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+export const MaterialIconsPack = {
+  name: 'material',
+  icons: createIconsMap(),
+};
+
+function createIconsMap() {
+  return new Proxy({}, {
+    get(target, name) {
+      return IconProvider(name);
+    },
+  });
+}
+
+const IconProvider = (name) => ({
+  toReactElement: (props) => MaterialIcon({ name, ...props }),
+});
+
+function MaterialIcon({ name, style }) {
+  const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
+  return (
+    <Icon name={name} size={height} color={tintColor} style={iconStyle} />
+  );
+}
+```
+
+### Register Multiple Packs
+
+Pass an array of icon packs to `IconRegistry`:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { FeatherIconsPack } from './feather-icons';
+import { MaterialIconsPack } from './material-icons';
+
+const HomeScreen = () => (
+  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text category='h1'>HOME</Text>
+  </Layout>
+);
+
+export default () => (
+  <>
+    <IconRegistry icons={[EvaIconsPack, FeatherIconsPack, MaterialIconsPack]} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <HomeScreen />
+    </ApplicationProvider>
+  </>
+);
+```
+
+### Select Icon Pack
+
+Use the `pack` prop to choose which icon library to use:
+
+```tsx
+import React from 'react';
+import { Button, Icon } from '@ui-kitten/components';
+
+// Eva Icons (default)
+const HeartIcon = (props) => (
+  <Icon {...props} name='heart-outline' />
+);
+
+// Material Icons
+const HomeIcon = (props) => (
+  <Icon {...props} name='home' pack='material' />
+);
+
+// Feather Icons
+const SearchIcon = (props) => (
+  <Icon {...props} name='search' pack='feather' />
+);
+
+export const MultiPackButtons = () => (
+  <>
+    <Button accessoryLeft={HeartIcon}>Eva</Button>
+    <Button accessoryLeft={HomeIcon}>Material</Button>
+    <Button accessoryLeft={SearchIcon}>Feather</Button>
+  </>
+);
+```
+
+<Note>
+If you don't specify a `pack` prop, UI Kitten uses the first registered icon pack.
+</Note>
+
+## Asset Icons
+
+You can also create an icon pack from image assets.
+
+### Create Asset Icons Pack
+
+Create an `asset-icons.js` file:
+
+```tsx
+import React from 'react';
+import { Image } from 'react-native';
+
+const IconProvider = (source) => ({
+  toReactElement: ({ animation, ...props }) => (
+    <Image {...props} source={source} />
+  ),
+});
+
+export const AssetIconsPack = {
+  name: 'assets',
+  icons: {
+    'github': IconProvider(require('../assets/images/github.png')),
+    'gitlab': IconProvider(require('../assets/images/gitlab.png')),
+    'bitbucket': IconProvider(require('../assets/images/bitbucket.png')),
+    'color-palette': IconProvider(require('../assets/images/color-palette.png')),
+  },
+};
+```
+
+### Register Asset Icons
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { AssetIconsPack } from './asset-icons';
+
+export default () => (
+  <>
+    <IconRegistry icons={[EvaIconsPack, AssetIconsPack]} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      {/* Your app */}
+    </ApplicationProvider>
+  </>
+);
+```
+
+### Use Asset Icons
+
+```tsx
+import React from 'react';
+import { Button, Icon } from '@ui-kitten/components';
+
+const GithubIcon = (props) => (
+  <Icon {...props} name='github' pack='assets' />
+);
+
+export const GithubButton = () => (
+  <Button accessoryLeft={GithubIcon}>
+    View on GitHub
+  </Button>
+);
+```
+
+## FontAwesome Integration
+
+Integrate FontAwesome icons with UI Kitten:
+
+```tsx
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
+export const FontAwesomeIconsPack = {
+  name: 'font-awesome',
+  icons: createIconsMap(),
+};
+
+function createIconsMap() {
+  return new Proxy({}, {
+    get(target, name) {
+      return IconProvider(name);
+    },
+  });
+}
+
+const IconProvider = (name) => ({
+  toReactElement: (props) => FontAwesomeIcon({ name, ...props }),
+});
+
+function FontAwesomeIcon({ name, style }) {
+  const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
+  return (
+    <Icon
+      name={name}
+      size={height}
+      color={tintColor}
+      style={iconStyle}
+      solid  // Use solid variant by default
+    />
+  );
+}
+```
+
+## Custom SVG Icons
+
+Integrate custom SVG icons using `react-native-svg`:
+
+```tsx
+import React from 'react';
+import { Svg, Path } from 'react-native-svg';
+
+// Define your custom SVG icons
+const CustomIcon = ({ width, height, fill }) => (
+  <Svg width={width} height={height} viewBox="0 0 24 24">
+    <Path
+      fill={fill}
+      d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"
+    />
+  </Svg>
+);
+
+const IconProvider = (Component) => ({
+  toReactElement: ({ style, ...props }) => {
+    const { height, tintColor } = StyleSheet.flatten(style);
+    return (
+      <Component
+        {...props}
+        width={height}
+        height={height}
+        fill={tintColor}
+      />
+    );
+  },
+});
+
+export const CustomSvgIconsPack = {
+  name: 'custom-svg',
+  icons: {
+    'shield': IconProvider(CustomIcon),
+    // Add more custom icons
+  },
+};
+```
+
+## Icon Pack Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Proxy for Large Icon Sets">
+    Use a Proxy object instead of manually mapping every icon when working with large icon libraries like Material Icons (1000+ icons).
+  </Accordion>
+
+  <Accordion title="Consistent Sizing">
+    Ensure your icon adapter respects the `height` property from the style prop to maintain consistent sizing across all icon packs.
+  </Accordion>
+
+  <Accordion title="Support Tint Color">
+    Extract `tintColor` from the style prop and pass it as the color property to ensure icons can be themed properly.
+  </Accordion>
+
+  <Accordion title="Handle Missing Icons Gracefully">
+    Consider adding fallback icons or error handling for missing icon names:
+    ```tsx
+    function FeatherIcon({ name, style }) {
+      const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
+      
+      // Check if icon exists
+      const iconExists = Icon.hasIcon(name);
+      
+      return (
+        <Icon
+          name={iconExists ? name : 'alert-circle'}
+          size={height}
+          color={tintColor}
+          style={iconStyle}
+        />
+      );
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Document Available Icons">
+    Keep a list of available icons in your asset icon packs to help developers know what's available.
+  </Accordion>
+</AccordionGroup>
+
+## TypeScript Support
+
+Add type safety for your custom icon packs:
+
+```typescript
+import { IconPack } from '@ui-kitten/components';
+
+type FeatherIconNames = 'facebook' | 'twitter' | 'instagram' | 'github';
+
+export const FeatherIconsPack: IconPack<FeatherIconNames> = {
+  name: 'feather',
+  icons: createIconsMap(),
+};
+
+// Usage with type checking
+const MyIcon = (props) => (
+  <Icon<FeatherIconNames> {...props} name='facebook' pack='feather' />
+);
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Icons Not Rendering">
+    - Verify the icon library is properly installed and linked
+    - Check that the icon name exists in the library
+    - Ensure `IconRegistry` is placed before `ApplicationProvider`
+    - Confirm the `pack` prop matches the registered pack name
+  </Accordion>
+
+  <Accordion title="Icon Colors Not Working">
+    Make sure your adapter extracts `tintColor` from the style prop and passes it to the underlying icon component:
+    ```tsx
+    const { height, tintColor } = StyleSheet.flatten(style);
+    return <Icon size={height} color={tintColor} />;
+    ```
+  </Accordion>
+
+  <Accordion title="Icon Sizing Issues">
+    Extract the `height` property from the style and use it for both width and height to maintain aspect ratio:
+    ```tsx
+    const { height } = StyleSheet.flatten(style);
+    return <Icon width={height} height={height} />;
+    ```
+  </Accordion>
+
+  <Accordion title="Performance Issues with Many Icons">
+    - Use the Proxy pattern instead of creating individual icon providers
+    - Memoize icon components with `React.memo()`
+    - Consider lazy loading icon packs for large applications
+  </Accordion>
+</AccordionGroup>
+
+## Example: Complete Setup
+
+Here's a complete example with multiple icon packs:
+
+```tsx
+// App.tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { FeatherIconsPack } from './icon-packs/feather-icons';
+import { MaterialIconsPack } from './icon-packs/material-icons';
+import { AssetIconsPack } from './icon-packs/asset-icons';
+import { AppNavigator } from './navigation';
+
+export default () => (
+  <>
+    <IconRegistry icons={[
+      EvaIconsPack,
+      FeatherIconsPack,
+      MaterialIconsPack,
+      AssetIconsPack,
+    ]} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <AppNavigator />
+    </ApplicationProvider>
+  </>
+);
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configure Navigation" icon="compass" href="/guides/configure-navigation">
+    Set up navigation with custom icon-based tab bars
+  </Card>
+  <Card title="Theming" icon="palette" href="/guides/theming">
+    Learn how icons adapt to your app's theme
+  </Card>
+</CardGroup>

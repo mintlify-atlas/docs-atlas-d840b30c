@@ -1,0 +1,211 @@
+---
+title: Text
+description: Basic text writing component with pre-defined typography styles for headings, subtitles, paragraphs, and more.
+---
+
+The Text component is a styled text element that provides typography hierarchy through categories, status colors, and appearance variations.
+
+## Import
+
+```tsx
+import { Text } from '@ui-kitten/components';
+```
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { Text } from '@ui-kitten/components';
+
+export const TextSimple = () => (
+  <Text>Simple text content</Text>
+);
+```
+
+## Categories
+
+Text supports multiple category types for different typography hierarchies:
+
+<CodeGroup>
+```tsx Headings
+<Text category='h1'>Heading 1</Text>
+<Text category='h2'>Heading 2</Text>
+<Text category='h3'>Heading 3</Text>
+<Text category='h4'>Heading 4</Text>
+<Text category='h5'>Heading 5</Text>
+<Text category='h6'>Heading 6</Text>
+```
+
+```tsx Subtitles
+<Text category='s1'>Subtitle 1</Text>
+<Text category='s2'>Subtitle 2</Text>
+```
+
+```tsx Paragraphs
+<Text category='p1'>Paragraph 1 (default)</Text>
+<Text category='p2'>Paragraph 2</Text>
+```
+
+```tsx Labels & Captions
+<Text category='c1'>Caption 1</Text>
+<Text category='c2'>Caption 2</Text>
+<Text category='label'>Label</Text>
+```
+</CodeGroup>
+
+## Appearances
+
+Text has three appearance variations for different contexts:
+
+```tsx
+<Text appearance='default'>Default appearance</Text>
+<Text appearance='alternative'>Alternative appearance</Text>
+<Text appearance='hint'>Hint appearance</Text>
+```
+
+<Note>
+Use `alternative` for displaying light text on dark content and vice versa. Use `hint` when giving users a hint or secondary information.
+</Note>
+
+## Status Colors
+
+Text supports status colors to convey different semantic meanings:
+
+```tsx
+<Text status='basic'>Basic</Text>
+<Text status='primary'>Primary</Text>
+<Text status='success'>Success</Text>
+<Text status='info'>Info</Text>
+<Text status='warning'>Warning</Text>
+<Text status='danger'>Danger</Text>
+<Text status='control'>Control</Text>
+```
+
+<Note>
+Use `control` status when displaying text within a contrast container.
+</Note>
+
+## Nested Text
+
+Text components can be nested to create rich text compositions:
+
+```tsx
+<Text category='h4'>
+  Welcome to 
+  <Text status='primary'>UI Kitten</Text>
+</Text>
+```
+
+## Custom Styling
+
+Text can be styled with the `style` property:
+
+```tsx
+<Text
+  category='h5'
+  style={{
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  }}
+>
+  Custom styled text
+</Text>
+```
+
+## Props
+
+<ParamField path="children" type="React.ReactText | TextElement | TextElement[]">
+  String, number, or nested Text component(s) to be rendered.
+</ParamField>
+
+<ParamField path="category" type="string" default="p1">
+  Typography category. Can be:
+  - **Headings**: `h1`, `h2`, `h3`, `h4`, `h5`, `h6`
+  - **Subtitles**: `s1`, `s2`
+  - **Paragraphs**: `p1`, `p2`
+  - **Labels/Captions**: `c1`, `c2`, `label`
+</ParamField>
+
+<ParamField path="appearance" type="string" default="default">
+  Visual appearance variant:
+  - `default` - Default text appearance
+  - `alternative` - Light text on dark/dark text on light
+  - `hint` - Secondary, hint-style text
+</ParamField>
+
+<ParamField path="status" type="string" default="basic">
+  Status color of the text. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger`, or `control`.
+</ParamField>
+
+<ParamField path="style" type="StyleProp<TextStyle>">
+  Custom style to apply to the text component.
+</ParamField>
+
+<ParamField path="...TextProps" type="TextProps">
+  Accepts all React Native Text component props.
+</ParamField>
+
+## Accessibility
+
+```tsx
+<Text
+  accessible={true}
+  accessibilityRole="text"
+  accessibilityLabel="Welcome message"
+>
+  Welcome to our app
+</Text>
+```
+
+## Examples
+
+### Combining Properties
+
+```tsx
+<Text
+  category='h3'
+  status='primary'
+  appearance='default'
+  style={{ marginVertical: 8 }}
+>
+  Featured Content
+</Text>
+```
+
+### Error Message
+
+```tsx
+<Text
+  category='c1'
+  status='danger'
+  appearance='hint'
+>
+  This field is required
+</Text>
+```
+
+### Styled Paragraph
+
+```tsx
+<Text
+  category='p2'
+  appearance='hint'
+  style={{
+    textAlign: 'justify',
+    lineHeight: 24,
+  }}
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</Text>
+```
+
+## Theming
+
+Text appearance can be customized through Eva Design System theme. In most cases, custom styling is redundant if a [custom theme is configured](guides/branding).
+
+```tsx
+import { Text } from '@ui-kitten/components';
+
+<Text category='h1'>Themed Text</Text>
+```

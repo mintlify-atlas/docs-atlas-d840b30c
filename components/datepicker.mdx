@@ -1,0 +1,414 @@
+---
+title: Datepicker
+description: Datepicker provides a simple way to select a date within a picker displayed in modal.
+---
+
+Datepicker displays a calendar in a popover for selecting dates. It supports date filtering, min/max dates, and custom date formatting.
+
+## Import
+
+```tsx
+import { Datepicker } from '@ui-kitten/components';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { Datepicker } from '@ui-kitten/components';
+
+export const DatepickerExample = () => {
+  const [date, setDate] = React.useState(new Date());
+
+  return (
+    <Datepicker
+      date={date}
+      onSelect={nextDate => setDate(nextDate)}
+    />
+  );
+};
+```
+
+## With Label and Caption
+
+```tsx
+<Datepicker
+  label='Birth Date'
+  placeholder='Select date'
+  caption='MM/DD/YYYY'
+  date={date}
+  onSelect={setDate}
+/>
+```
+
+## Date Range
+
+Restrict selectable dates with `min` and `max` props.
+
+```tsx
+import React from 'react';
+import { Datepicker } from '@ui-kitten/components';
+
+const DateRangePicker = () => {
+  const [date, setDate] = React.useState(new Date());
+  
+  const minDate = new Date(2020, 0, 1);
+  const maxDate = new Date(2025, 11, 31);
+
+  return (
+    <Datepicker
+      label='Select Date'
+      date={date}
+      onSelect={setDate}
+      min={minDate}
+      max={maxDate}
+    />
+  );
+};
+```
+
+## Filter Dates
+
+Disable specific dates with a filter function.
+
+```tsx
+import React from 'react';
+import { Datepicker } from '@ui-kitten/components';
+
+const FilteredDatepicker = () => {
+  const [date, setDate] = React.useState(new Date());
+
+  // Disable weekends
+  const filter = (date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 6;
+  };
+
+  return (
+    <Datepicker
+      label='Weekdays Only'
+      date={date}
+      onSelect={setDate}
+      filter={filter}
+    />
+  );
+};
+```
+
+## Status
+
+```tsx
+<Datepicker
+  status='success'
+  label='Valid Date'
+  date={date}
+  onSelect={setDate}
+/>
+
+<Datepicker
+  status='danger'
+  label='Invalid Date'
+  caption='Date is required'
+  date={null}
+  onSelect={setDate}
+/>
+```
+
+## Sizes
+
+```tsx
+<Datepicker size='small' date={date} onSelect={setDate} />
+<Datepicker size='medium' date={date} onSelect={setDate} />
+<Datepicker size='large' date={date} onSelect={setDate} />
+```
+
+## Accessories
+
+```tsx
+import { Datepicker, Icon } from '@ui-kitten/components';
+
+const CalendarIcon = (props) => <Icon {...props} name='calendar' />;
+
+<Datepicker
+  accessoryRight={CalendarIcon}
+  date={date}
+  onSelect={setDate}
+/>
+```
+
+## Auto Dismiss
+
+Control whether the picker closes after selection.
+
+```tsx
+<Datepicker
+  date={date}
+  onSelect={setDate}
+  autoDismiss={false}
+/>
+```
+
+## Props
+
+<ParamField path="date" type="Date">
+  Currently selected date.
+</ParamField>
+
+<ParamField path="onSelect" type="(date: Date) => void">
+  Called when a date is selected.
+</ParamField>
+
+<ParamField path="min" type="Date">
+  Minimum selectable date.
+</ParamField>
+
+<ParamField path="max" type="Date">
+  Maximum selectable date.
+</ParamField>
+
+<ParamField path="filter" type="(date: Date) => boolean">
+  Function to determine whether a date should be disabled. Return true to enable, false to disable.
+</ParamField>
+
+<ParamField path="autoDismiss" type="boolean" default="true">
+  Whether to hide the calendar when a date is selected.
+</ParamField>
+
+<ParamField path="placeholder" type="RenderProp<TextProps> | React.ReactText">
+  Text to display when no date is selected.
+</ParamField>
+
+<ParamField path="label" type="RenderProp<TextProps> | React.ReactText">
+  String, number or function component to render above the input.
+</ParamField>
+
+<ParamField path="caption" type="RenderProp<TextProps> | React.ReactText">
+  String, number or function component to render below the input.
+</ParamField>
+
+<ParamField path="status" type="EvaStatus" default="basic">
+  Status of the component. Can be `basic`, `primary`, `success`, `info`, `warning`, `danger` or `control`.
+</ParamField>
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="medium">
+  Size of the input field.
+</ParamField>
+
+<ParamField path="accessoryLeft" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the start.
+</ParamField>
+
+<ParamField path="accessoryRight" type="RenderProp<Partial<ImageProps>>">
+  Function component to render at the end.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  Whether the datepicker is disabled.
+</ParamField>
+
+<ParamField path="placement" type="string" default="'bottom'">
+  Position of the calendar popup.
+</ParamField>
+
+## Methods
+
+<ParamField path="focus()" type="() => void">
+  Focuses the datepicker and shows the calendar.
+</ParamField>
+
+<ParamField path="blur()" type="() => void">
+  Removes focus and hides the calendar.
+</ParamField>
+
+<ParamField path="isFocused()" type="() => boolean">
+  Returns whether the calendar is currently visible.
+</ParamField>
+
+<ParamField path="clear()" type="() => void">
+  Clears the selected date.
+</ParamField>
+
+<ParamField path="scrollToToday()" type="() => void">
+  Shows the current date in the picker. The picker must be visible.
+</ParamField>
+
+<ParamField path="scrollToDate(date)" type="(date: Date) => void">
+  Shows a specific date in the picker. The picker must be visible.
+</ParamField>
+
+## Form Examples
+
+### Birth Date Picker
+
+```tsx
+import React from 'react';
+import { Datepicker, Layout } from '@ui-kitten/components';
+
+const BirthDatePicker = () => {
+  const [birthDate, setBirthDate] = React.useState(null);
+  
+  const maxDate = new Date();
+  const minDate = new Date(1900, 0, 1);
+
+  return (
+    <Layout style={{ padding: 16 }}>
+      <Datepicker
+        label='Birth Date'
+        placeholder='Select your birth date'
+        date={birthDate}
+        onSelect={setBirthDate}
+        min={minDate}
+        max={maxDate}
+      />
+    </Layout>
+  );
+};
+```
+
+### Appointment Scheduler
+
+```tsx
+import React from 'react';
+import { Datepicker, Button, Layout, Text } from '@ui-kitten/components';
+
+const AppointmentScheduler = () => {
+  const [date, setDate] = React.useState(null);
+  const [error, setError] = React.useState('');
+
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() + 1); // Start from tomorrow
+
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 90); // Up to 90 days ahead
+
+  // Disable weekends
+  const filter = (date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 6;
+  };
+
+  const handleBooking = () => {
+    if (!date) {
+      setError('Please select a date');
+      return;
+    }
+    setError('');
+    // Book appointment
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>Book an Appointment</Text>
+      
+      <Datepicker
+        label='Appointment Date'
+        placeholder='Select date (weekdays only)'
+        date={date}
+        onSelect={(nextDate) => {
+          setDate(nextDate);
+          setError('');
+        }}
+        min={minDate}
+        max={maxDate}
+        filter={filter}
+        status={error ? 'danger' : 'basic'}
+        caption={error}
+      />
+      
+      <Button onPress={handleBooking}>
+        BOOK APPOINTMENT
+      </Button>
+    </Layout>
+  );
+};
+```
+
+### Date Range Form
+
+```tsx
+import React from 'react';
+import { Datepicker, Layout, Text } from '@ui-kitten/components';
+
+const DateRangeForm = () => {
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(null);
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>Select Date Range</Text>
+      
+      <Datepicker
+        label='Start Date'
+        date={startDate}
+        onSelect={setStartDate}
+      />
+      
+      <Datepicker
+        label='End Date'
+        date={endDate}
+        onSelect={setEndDate}
+        min={startDate}
+      />
+    </Layout>
+  );
+};
+```
+
+### Vacation Planner
+
+```tsx
+import React from 'react';
+import { Datepicker, Layout, Text } from '@ui-kitten/components';
+
+const VacationPlanner = () => {
+  const [startDate, setStartDate] = React.useState(null);
+  const [endDate, setEndDate] = React.useState(null);
+
+  const minDate = new Date();
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() + 1);
+
+  const calculateDays = () => {
+    if (!startDate || !endDate) return 0;
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  return (
+    <Layout style={{ padding: 16, gap: 16 }}>
+      <Text category='h6'>Plan Your Vacation</Text>
+      
+      <Datepicker
+        label='Departure Date'
+        placeholder='Select departure date'
+        date={startDate}
+        onSelect={(date) => {
+          setStartDate(date);
+          if (endDate && date > endDate) {
+            setEndDate(null);
+          }
+        }}
+        min={minDate}
+        max={maxDate}
+      />
+      
+      <Datepicker
+        label='Return Date'
+        placeholder='Select return date'
+        date={endDate}
+        onSelect={setEndDate}
+        min={startDate || minDate}
+        max={maxDate}
+        disabled={!startDate}
+      />
+      
+      {startDate && endDate && (
+        <Text appearance='hint'>
+          Duration: {calculateDays()} days
+        </Text>
+      )}
+    </Layout>
+  );
+};
+```

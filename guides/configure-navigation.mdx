@@ -1,0 +1,493 @@
+---
+title: Configure Navigation
+description: Set up React Navigation with UI Kitten components for seamless navigation in your mobile app
+---
+
+UI Kitten components integrate seamlessly with [React Navigation](https://reactnavigation.org), the standard navigation library for React Native. This guide shows you how to set up navigation with UI Kitten's built-in navigation components.
+
+## Installation
+
+Install React Navigation and its dependencies:
+
+<CodeGroup>
+
+```bash npm
+npm install @react-navigation/native @react-navigation/stack
+npm install react-native-screens react-native-safe-area-context
+```
+
+```bash yarn
+yarn add @react-navigation/native @react-navigation/stack
+yarn add react-native-screens react-native-safe-area-context
+```
+
+</CodeGroup>
+
+<Note>
+Refer to the [React Navigation documentation](https://reactnavigation.org/docs/getting-started) for platform-specific setup instructions, as they differ between Expo and bare React Native projects.
+</Note>
+
+### iOS Setup (Non-Expo)
+
+For bare React Native projects on iOS:
+
+```bash
+cd ios && pod install && cd ..
+```
+
+## Create Screens
+
+Let's create two screens with UI Kitten components.
+
+### Home Screen
+
+Create `home.component.js`:
+
+```tsx
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import { Button, Divider, Layout, TopNavigation } from '@ui-kitten/components';
+
+export const HomeScreen = ({ navigation }) => {
+  const navigateDetails = () => {
+    navigation.navigate('Details');
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <TopNavigation title='MyApp' alignment='center' />
+      <Divider />
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Button onPress={navigateDetails}>OPEN DETAILS</Button>
+      </Layout>
+    </SafeAreaView>
+  );
+};
+```
+
+<Steps>
+  <Step title="SafeAreaView">
+    Wraps the screen to avoid notches and system UI on modern devices
+  </Step>
+  <Step title="TopNavigation">
+    Provides a consistent header across your app
+  </Step>
+  <Step title="Divider">
+    Visually separates the header from content
+  </Step>
+  <Step title="Layout">
+    Contains the main content with theme-aware backgrounds
+  </Step>
+</Steps>
+
+### Details Screen
+
+Create `details.component.js`:
+
+```tsx
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import {
+  Divider,
+  Icon,
+  Layout,
+  Text,
+  TopNavigation,
+  TopNavigationAction,
+} from '@ui-kitten/components';
+
+const BackIcon = (props) => (
+  <Icon {...props} name='arrow-back' />
+);
+
+export const DetailsScreen = ({ navigation }) => {
+  const navigateBack = () => {
+    navigation.goBack();
+  };
+
+  const BackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+  );
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <TopNavigation title='MyApp' alignment='center' accessoryLeft={BackAction} />
+      <Divider />
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h1'>DETAILS</Text>
+      </Layout>
+    </SafeAreaView>
+  );
+};
+```
+
+Key features:
+- `TopNavigationAction` - Renders the back button
+- `BackIcon` - Uses Eva Icons for consistent styling
+- `accessoryLeft` - Places the back button on the left side of the header
+
+## Create Navigator
+
+Create `navigation.component.js` to set up your navigation structure:
+
+```tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { HomeScreen } from './home.component';
+import { DetailsScreen } from './details.component';
+
+const { Navigator, Screen } = createStackNavigator();
+
+const HomeNavigator = () => (
+  <Navigator screenOptions={{ headerShown: false }}>
+    <Screen name='Home' component={HomeScreen} />
+    <Screen name='Details' component={DetailsScreen} />
+  </Navigator>
+);
+
+export const AppNavigator = () => (
+  <NavigationContainer>
+    <HomeNavigator />
+  </NavigationContainer>
+);
+```
+
+<Note>
+We set `headerShown: false` because we're using UI Kitten's `TopNavigation` component instead of React Navigation's built-in header.
+</Note>
+
+## Configure Application Root
+
+Update `App.js` to render your navigator:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { AppNavigator } from './navigation.component';
+
+export default () => (
+  <>
+    <IconRegistry icons={EvaIconsPack} />
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <AppNavigator />
+    </ApplicationProvider>
+  </>
+);
+```
+
+That's it! Your app now has working navigation between screens.
+
+## Bottom Tab Navigation
+
+UI Kitten's `BottomNavigation` component integrates with React Navigation's tab navigator.
+
+### Install Bottom Tabs
+
+```bash
+npm install @react-navigation/bottom-tabs
+```
+
+### Create Tab Navigator
+
+```tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/components';
+import { HomeScreen } from './home.component';
+import { ProfileScreen } from './profile.component';
+import { NotificationsScreen } from './notifications.component';
+
+const { Navigator, Screen } = createBottomTabNavigator();
+
+const HomeIcon = (props) => <Icon {...props} name='home-outline' />;
+const ProfileIcon = (props) => <Icon {...props} name='person-outline' />;
+const NotificationsIcon = (props) => <Icon {...props} name='bell-outline' />;
+
+const BottomTabBar = ({ navigation, state }) => (
+  <BottomNavigation
+    selectedIndex={state.index}
+    onSelect={index => navigation.navigate(state.routeNames[index])}
+  >
+    <BottomNavigationTab title='Home' icon={HomeIcon} />
+    <BottomNavigationTab title='Profile' icon={ProfileIcon} />
+    <BottomNavigationTab title='Notifications' icon={NotificationsIcon} />
+  </BottomNavigation>
+);
+
+export const TabNavigator = () => (
+  <Navigator tabBar={props => <BottomTabBar {...props} />}>
+    <Screen name='Home' component={HomeScreen} />
+    <Screen name='Profile' component={ProfileScreen} />
+    <Screen name='Notifications' component={NotificationsScreen} />
+  </Navigator>
+);
+
+export const AppNavigator = () => (
+  <NavigationContainer>
+    <TabNavigator />
+  </NavigationContainer>
+);
+```
+
+## Top Tab Navigation
+
+Use `TabBar` for top tab navigation:
+
+### Install Material Top Tabs
+
+```bash
+npm install @react-navigation/material-top-tabs react-native-tab-view react-native-pager-view
+```
+
+### Create Top Tab Navigator
+
+```tsx
+import React from 'react';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { Tab, TabBar } from '@ui-kitten/components';
+import { ArticlesScreen } from './articles.component';
+import { NewsScreen } from './news.component';
+import { VideosScreen } from './videos.component';
+
+const { Navigator, Screen } = createMaterialTopTabNavigator();
+
+const TopTabBar = ({ navigation, state }) => (
+  <TabBar
+    selectedIndex={state.index}
+    onSelect={index => navigation.navigate(state.routeNames[index])}
+  >
+    <Tab title='Articles' />
+    <Tab title='News' />
+    <Tab title='Videos' />
+  </TabBar>
+);
+
+export const TopTabNavigator = () => (
+  <Navigator tabBar={props => <TopTabBar {...props} />}>
+    <Screen name='Articles' component={ArticlesScreen} />
+    <Screen name='News' component={NewsScreen} />
+    <Screen name='Videos' component={VideosScreen} />
+  </Navigator>
+);
+```
+
+## Drawer Navigation
+
+Create a side drawer menu with `Drawer` component:
+
+### Install Drawer
+
+```bash
+npm install @react-navigation/drawer react-native-gesture-handler react-native-reanimated
+```
+
+### Create Drawer Navigator
+
+```tsx
+import React from 'react';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Drawer, DrawerItem, Icon, IndexPath } from '@ui-kitten/components';
+import { HomeScreen } from './home.component';
+import { SettingsScreen } from './settings.component';
+import { AboutScreen } from './about.component';
+
+const { Navigator, Screen } = createDrawerNavigator();
+
+const HomeIcon = (props) => <Icon {...props} name='home-outline' />;
+const SettingsIcon = (props) => <Icon {...props} name='settings-outline' />;
+const AboutIcon = (props) => <Icon {...props} name='info-outline' />;
+
+const DrawerContent = ({ navigation, state }) => (
+  <Drawer
+    selectedIndex={new IndexPath(state.index)}
+    onSelect={index => navigation.navigate(state.routeNames[index.row])}
+  >
+    <DrawerItem title='Home' accessoryLeft={HomeIcon} />
+    <DrawerItem title='Settings' accessoryLeft={SettingsIcon} />
+    <DrawerItem title='About' accessoryLeft={AboutIcon} />
+  </Drawer>
+);
+
+export const DrawerNavigator = () => (
+  <Navigator drawerContent={props => <DrawerContent {...props} />}>
+    <Screen name='Home' component={HomeScreen} />
+    <Screen name='Settings' component={SettingsScreen} />
+    <Screen name='About' component={AboutScreen} />
+  </Navigator>
+);
+```
+
+### Open Drawer with Button
+
+```tsx
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import {
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+  Layout,
+} from '@ui-kitten/components';
+
+const MenuIcon = (props) => <Icon {...props} name='menu-outline' />;
+
+export const HomeScreen = ({ navigation }) => {
+  const MenuAction = () => (
+    <TopNavigationAction
+      icon={MenuIcon}
+      onPress={() => navigation.toggleDrawer()}
+    />
+  );
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <TopNavigation
+        title='Home'
+        alignment='center'
+        accessoryLeft={MenuAction}
+      />
+      <Layout style={{ flex: 1 }}>
+        {/* Screen content */}
+      </Layout>
+    </SafeAreaView>
+  );
+};
+```
+
+## Combined Navigation
+
+Combine multiple navigation patterns:
+
+```tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
+
+// Stack navigator for Home flow
+const HomeStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name='Home' component={HomeScreen} />
+    <Stack.Screen name='Details' component={DetailsScreen} />
+  </Stack.Navigator>
+);
+
+// Tab navigator with multiple stacks
+const TabNavigator = () => (
+  <Tab.Navigator tabBar={props => <BottomTabBar {...props} />}>
+    <Tab.Screen name='HomeTab' component={HomeStack} />
+    <Tab.Screen name='Profile' component={ProfileScreen} />
+    <Tab.Screen name='Settings' component={SettingsScreen} />
+  </Tab.Navigator>
+);
+
+// Root drawer navigator
+const RootNavigator = () => (
+  <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
+    <Drawer.Screen name='Main' component={TabNavigator} />
+    <Drawer.Screen name='About' component={AboutScreen} />
+  </Drawer.Navigator>
+);
+
+export const AppNavigator = () => (
+  <NavigationContainer>
+    <RootNavigator />
+  </NavigationContainer>
+);
+```
+
+## Styling Navigation Components
+
+Customize navigation components to match your theme:
+
+```tsx
+import { useTheme } from '@ui-kitten/components';
+
+const ThemedTopNavigation = ({ title, ...props }) => {
+  const theme = useTheme();
+
+  return (
+    <TopNavigation
+      {...props}
+      title={title}
+      style={{
+        backgroundColor: theme['color-primary-500'],
+      }}
+      appearance='control'
+    />
+  );
+};
+```
+
+## Other Navigation Libraries
+
+UI Kitten works with React Navigation by default. If you're using other navigation libraries like React Native Navigation by Wix, you may need to [improve performance](/guides/improving-performance) by precompiling Eva themes.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Navigation Not Working">
+    Ensure:
+    - React Navigation dependencies are properly installed
+    - iOS pods are installed (`cd ios && pod install`)
+    - `NavigationContainer` wraps your navigators
+    - Screen names in `navigation.navigate()` match your `Screen` component names
+  </Accordion>
+
+  <Accordion title="Tabs Not Switching">
+    Make sure:
+    - `selectedIndex` matches the current route index
+    - `onSelect` handler navigates to the correct route
+    - Route names match the screen names exactly
+  </Accordion>
+
+  <Accordion title="Drawer Not Opening">
+    Verify:
+    - `react-native-gesture-handler` is properly installed
+    - You're calling `navigation.toggleDrawer()` or `navigation.openDrawer()`
+    - Drawer is the root navigator (or has access to drawer navigation)
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Hide React Navigation Headers">
+    When using UI Kitten's `TopNavigation`, hide React Navigation's built-in headers:
+    ```tsx
+    <Navigator screenOptions={{ headerShown: false }}>
+    ```
+  </Accordion>
+
+  <Accordion title="Use SafeAreaView">
+    Always wrap your screens with `SafeAreaView` to avoid rendering under notches and system UI.
+  </Accordion>
+
+  <Accordion title="Consistent Navigation Structure">
+    Keep navigation structure consistent across screens for better UX. Use the same header style and placement.
+  </Accordion>
+
+  <Accordion title="Memoize Icon Components">
+    Wrap icon components with `React.memo()` to prevent unnecessary re-renders in navigation bars.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Runtime Theming" icon="toggle-on" href="/guides/runtime-theming">
+    Add theme switching to your navigation
+  </Card>
+  <Card title="Web Support" icon="globe" href="/guides/web-support">
+    Run your app with navigation on the web
+  </Card>
+</CardGroup>

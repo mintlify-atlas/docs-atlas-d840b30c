@@ -1,0 +1,451 @@
+---
+title: Improving Performance
+description: Optimize UI Kitten applications by precompiling Eva themes and improving load times
+---
+
+By default, UI Kitten processes Eva Design System themes at runtime, which can impact initial load time and performance. This guide shows you how to precompile themes during build time for better performance.
+
+## Overview
+
+Runtime theme processing can cause:
+- Slower app startup
+- Delayed first render
+- Performance issues with mapping customization
+- Compatibility issues with certain navigation libraries
+
+Precompiling themes solves these issues by processing Eva themes during your build process instead of at runtime.
+
+## Installation
+
+Install the UI Kitten Metro Config package:
+
+<CodeGroup>
+
+```bash npm
+npm install --save-dev @ui-kitten/metro-config
+```
+
+```bash yarn
+yarn add --dev @ui-kitten/metro-config
+```
+
+</CodeGroup>
+
+## Update Application Provider
+
+Modify your app to use precompiled themes:
+
+```tsx
+import React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+
+export default () => (
+  <ApplicationProvider {...eva} theme={eva.light}>
+    {/* Your app content */}
+  </ApplicationProvider>
+);
+```
+
+<Note>
+By spreading `{...eva}`, you tell UI Kitten to use precompiled mapping if available. If not found, it falls back to runtime compilation.
+</Note>
+
+Notice we no longer need the `customMapping` prop - it's handled automatically by the build process.
+
+## Metro Bundler Configuration
+
+Metro is the JavaScript bundler for React Native. Configure it to precompile Eva themes during the build.
+
+### Bare React Native Projects
+
+Create or update `metro.config.js` at your project root:
+
+```js
+const MetroConfig = require('@ui-kitten/metro-config');
+
+const evaConfig = {
+  evaPackage: '@eva-design/eva',
+  // Optional: Specify custom mapping if you use mapping customization
+  // customMappingPath: './custom-mapping.json',
+};
+
+module.exports = (() => {
+  // Start with your existing config or an empty object
+  const previousConfig = {};
+  
+  // Merge with UI Kitten config
+  const uiKittenConfig = MetroConfig.create(evaConfig, previousConfig);
+  
+  // Return the merged config
+  return uiKittenConfig;
+})();
+```
+
+### Expo Projects
+
+For Expo projects, merge with Expo's default Metro config:
+
+```js
+const { getDefaultConfig } = require('expo/metro-config');
+const MetroConfig = require('@ui-kitten/metro-config');
+
+const evaConfig = {
+  evaPackage: '@eva-design/eva',
+  // Optional: Specify custom mapping if you use mapping customization
+  // customMappingPath: './custom-mapping.json',
+};
+
+module.exports = (async () => {
+  // Get Expo's default config
+  const defaultConfig = await getDefaultConfig(__dirname);
+  
+  // Merge with UI Kitten config
+  const uiKittenConfig = MetroConfig.create(evaConfig, defaultConfig);
+  
+  // Return the merged config
+  return uiKittenConfig;
+})();
+```
+
+### Configuration Options
+
+#### evaPackage
+
+Specifies which Eva Design System package to compile:
+
+```js
+const evaConfig = {
+  evaPackage: '@eva-design/eva',  // or '@eva-design/material'
+};
+```
+
+#### customMappingPath
+
+Path to your custom mapping file if you use [mapping customization](/design-system/customize-mapping):
+
+```js
+const evaConfig = {
+  evaPackage: '@eva-design/eva',
+  customMappingPath: './custom-mapping.json',
+};
+```
+
+Omit this option if you don't customize Eva mappings.
+
+### Restart Bundler
+
+After configuring Metro, restart your bundler with cleared cache:
+
+<CodeGroup>
+
+```bash React Native
+npm start -- --reset-cache
+```
+
+```bash Expo
+npx expo start --clear
+```
+
+</CodeGroup>
+
+## Command Line Interface
+
+For CI/CD environments or manual builds, use the CLI to precompile themes:
+
+### Basic Usage
+
+```bash
+ui-kitten bootstrap @eva-design/eva
+```
+
+### With Custom Mapping
+
+```bash
+ui-kitten bootstrap @eva-design/eva ./path-to/custom-mapping.json
+```
+
+This generates precompiled mapping files that UI Kitten will use at runtime.
+
+### CI/CD Integration
+
+Add to your build pipeline:
+
+```yaml
+# .github/workflows/build.yml
+name: Build
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Precompile Eva themes
+        run: npx ui-kitten bootstrap @eva-design/eva
+      - name: Build app
+        run: npm run build
+```
+
+## Custom Mapping
+
+If you customize Eva Design System mappings, specify the path:
+
+### Create Custom Mapping
+
+Create `custom-mapping.json`:
+
+```json
+{
+  "components": {
+    "Button": {
+      "meta": {},
+      "appearances": {
+        "filled": {
+          "mapping": {
+            "borderRadius": 8,
+            "paddingHorizontal": 24
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Configure Metro
+
+Update `metro.config.js` to include your custom mapping:
+
+```js
+const MetroConfig = require('@ui-kitten/metro-config');
+
+const evaConfig = {
+  evaPackage: '@eva-design/eva',
+  customMappingPath: './custom-mapping.json',  // Your custom mapping
+};
+
+module.exports = MetroConfig.create(evaConfig);
+```
+
+### CLI with Custom Mapping
+
+```bash
+ui-kitten bootstrap @eva-design/eva ./custom-mapping.json
+```
+
+## Material Design Theme
+
+UI Kitten also supports Eva's Material Design theme:
+
+```js
+const evaConfig = {
+  evaPackage: '@eva-design/material',
+};
+```
+
+Update your app:
+
+```tsx
+import React from 'react';
+import * as material from '@eva-design/material';
+import { ApplicationProvider } from '@ui-kitten/components';
+
+export default () => (
+  <ApplicationProvider {...material} theme={material.light}>
+    {/* Your app content */}
+  </ApplicationProvider>
+);
+```
+
+## Verify Precompilation
+
+Check if themes are precompiled:
+
+```tsx
+import React, { useEffect } from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+
+export default () => {
+  useEffect(() => {
+    // Check if mapping is precompiled
+    if (eva.mapping) {
+      console.log('✅ Using precompiled Eva mapping');
+    } else {
+      console.log('⚠️ Falling back to runtime compilation');
+    }
+  }, []);
+
+  return (
+    <ApplicationProvider {...eva} theme={eva.light}>
+      {/* Your app content */}
+    </ApplicationProvider>
+  );
+};
+```
+
+## Performance Comparison
+
+Precompilation typically provides:
+
+- **50-70% faster initial render** - App starts up quicker
+- **Reduced memory usage** - No runtime theme processing
+- **Smoother navigation** - Especially with React Native Navigation
+- **Better bundle optimization** - Smaller JavaScript bundle
+
+## Advanced Configuration
+
+### Multiple Eva Packages
+
+If you switch between Eva and Material themes:
+
+```js
+const MetroConfig = require('@ui-kitten/metro-config');
+
+// Compile Eva theme
+const evaPrecompiled = MetroConfig.create({
+  evaPackage: '@eva-design/eva',
+});
+
+// You'll need to run bootstrap for each theme separately
+module.exports = evaPrecompiled;
+```
+
+### Custom Transformer
+
+If you use custom Metro transformers:
+
+```js
+const MetroConfig = require('@ui-kitten/metro-config');
+
+const evaConfig = {
+  evaPackage: '@eva-design/eva',
+};
+
+const customConfig = {
+  transformer: {
+    // Your custom transformer options
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
+  },
+};
+
+module.exports = MetroConfig.create(evaConfig, customConfig);
+```
+
+## React Native Navigation (Wix)
+
+If you use React Native Navigation instead of React Navigation, precompilation is especially important:
+
+```bash
+npm install --save-dev @ui-kitten/metro-config
+```
+
+Configure as shown above, then restart your bundler. This eliminates the performance issues that can occur with React Native Navigation.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Themes Still Compiling at Runtime">
+    - Verify `metro.config.js` is in your project root
+    - Ensure you restarted the bundler with `--reset-cache`
+    - Check that `@ui-kitten/metro-config` is installed
+    - Confirm `{...eva}` spread is used in ApplicationProvider
+  </Accordion>
+
+  <Accordion title="Custom Mapping Not Working">
+    - Verify the path in `customMappingPath` is correct
+    - Ensure the mapping JSON is valid
+    - Check that the mapping file exists before running Metro
+    - Try running the CLI command manually to test
+  </Accordion>
+
+  <Accordion title="Build Errors After Configuration">
+    - Clear Metro cache: `npm start -- --reset-cache`
+    - Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
+    - Check for conflicting Metro configurations
+    - Ensure all peer dependencies are installed
+  </Accordion>
+
+  <Accordion title="CI/CD Pipeline Failures">
+    - Run `npx ui-kitten bootstrap` before the build step
+    - Ensure `@ui-kitten/metro-config` is in devDependencies
+    - Check that the Eva package is installed in CI environment
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always Clear Cache">
+    When changing Metro configuration, always restart with cleared cache:
+    ```bash
+    npm start -- --reset-cache
+    ```
+  </Accordion>
+
+  <Accordion title="Version Control">
+    Add generated files to `.gitignore`:
+    ```gitignore
+    # UI Kitten generated files
+    node_modules/@eva-design/*/mapping.json.compiled
+    ```
+  </Accordion>
+
+  <Accordion title="Test Both Modes">
+    Test your app with and without precompilation to ensure compatibility.
+  </Accordion>
+
+  <Accordion title="Monitor Bundle Size">
+    Use bundle analyzers to verify precompilation reduces bundle size:
+    ```bash
+    npx react-native-bundle-visualizer
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Production Checklist
+
+<Steps>
+  <Step title="Install metro-config">
+    Install `@ui-kitten/metro-config` as a dev dependency
+  </Step>
+  <Step title="Configure Metro">
+    Create or update `metro.config.js` with Eva config
+  </Step>
+  <Step title="Update ApplicationProvider">
+    Spread `{...eva}` in ApplicationProvider props
+  </Step>
+  <Step title="Remove customMapping">
+    Remove `customMapping` prop if specified
+  </Step>
+  <Step title="Clear Cache">
+    Restart bundler with `--reset-cache`
+  </Step>
+  <Step title="Test Thoroughly">
+    Test all screens to ensure themes render correctly
+  </Step>
+  <Step title="Configure CI/CD">
+    Add bootstrap step to your build pipeline
+  </Step>
+  <Step title="Monitor Performance">
+    Measure startup time and verify improvement
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Theming" icon="palette" href="/guides/theming">
+    Learn more about Eva Design System theming
+  </Card>
+  <Card title="Web Support" icon="globe" href="/guides/web-support">
+    Optimize your web build with precompiled themes
+  </Card>
+</CardGroup>
