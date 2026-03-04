@@ -1,0 +1,175 @@
+{
+  "projectType": "frontend",
+  "projectName": "UI Kitten",
+  "projectDescription": "React Native UI Library based on Eva Design System with 30+ customizable components and theming support",
+  "theme": "willow",
+  "primaryColor": "#0f45ec",
+  "lightColor": "#84a4f4",
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/theming",
+              "guides/runtime-theming",
+              "guides/branding",
+              "guides/eva-icons",
+              "guides/custom-icons",
+              "guides/configure-navigation",
+              "guides/web-support",
+              "guides/improving-performance"
+            ]
+          },
+          {
+            "group": "Design System",
+            "pages": [
+              "design-system/eva-design-system",
+              "design-system/theme-customization",
+              "design-system/custom-mapping",
+              "design-system/customize-mapping",
+              "design-system/theme-variables",
+              "design-system/glossary"
+            ]
+          },
+          {
+            "group": "Migration",
+            "pages": [
+              "migration/4x-to-5x"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Components",
+        "groups": [
+          {
+            "group": "Layout",
+            "pages": [
+              "components/layout",
+              "components/divider",
+              "components/card"
+            ]
+          },
+          {
+            "group": "Navigation",
+            "pages": [
+              "components/bottom-navigation",
+              "components/top-navigation",
+              "components/tab",
+              "components/drawer",
+              "components/menu",
+              "components/view-pager"
+            ]
+          },
+          {
+            "group": "Forms",
+            "pages": [
+              "components/button",
+              "components/button-group",
+              "components/input",
+              "components/checkbox",
+              "components/radio",
+              "components/radio-group",
+              "components/toggle",
+              "components/select",
+              "components/autocomplete",
+              "components/datepicker",
+              "components/calendar"
+            ]
+          },
+          {
+            "group": "Display",
+            "pages": [
+              "components/text",
+              "components/avatar",
+              "components/icon",
+              "components/list",
+              "components/tooltip",
+              "components/popover",
+              "components/overflow-menu"
+            ]
+          },
+          {
+            "group": "Feedback",
+            "pages": [
+              "components/spinner",
+              "components/progress-bar",
+              "components/circular-progress-bar",
+              "components/modal"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "30+ customizable React Native UI components",
+    "Eva Design System integration with light and dark themes",
+    "Runtime theme switching without app reload",
+    "480+ Eva Icons support",
+    "TypeScript support with full type definitions",
+    "Right-to-left (RTL) writing system support",
+    "React Native Web browser support",
+    "Date handling with moment and date-fns integrations"
+  ],
+  "publicApiSurface": [
+    "ApplicationProvider",
+    "Layout",
+    "Text",
+    "Button",
+    "ButtonGroup",
+    "Input",
+    "Card",
+    "List",
+    "ListItem",
+    "Avatar",
+    "Icon",
+    "BottomNavigation",
+    "BottomNavigationTab",
+    "TopNavigation",
+    "TopNavigationAction",
+    "Tab",
+    "TabView",
+    "TabBar",
+    "Drawer",
+    "DrawerItem",
+    "DrawerGroup",
+    "Menu",
+    "MenuItem",
+    "MenuGroup",
+    "ViewPager",
+    "Divider",
+    "Modal",
+    "Popover",
+    "Tooltip",
+    "OverflowMenu",
+    "Select",
+    "SelectItem",
+    "SelectGroup",
+    "Autocomplete",
+    "AutocompleteItem",
+    "CheckBox",
+    "Radio",
+    "RadioGroup",
+    "Toggle",
+    "Datepicker",
+    "RangeDatepicker",
+    "Calendar",
+    "RangeCalendar",
+    "Spinner",
+    "ProgressBar",
+    "CircularProgressBar"
+  ]
+}
